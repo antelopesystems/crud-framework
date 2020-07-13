@@ -1,0 +1,9 @@
+package com.antelopesystem.crudframework.jpa.annotation
+
+import com.antelopesystem.crudframework.crud.annotation.EnableCrudFramework
+import com.antelopesystem.crudframework.jpa.config.CrudHibernate5ConnectorConfiguration
+import org.springframework.context.annotation.Import
+
+@EnableCrudFramework
+@Import(CrudHibernate5ConnectorConfiguration::class)
+annotation class EnableJpaCrud
