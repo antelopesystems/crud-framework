@@ -5,17 +5,21 @@ import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField
 import com.antelopesystem.crudframework.fieldmapper.transformer.DateToLongTransformer
 import com.antelopesystem.crudframework.model.BaseCrudEntity
 import com.antelopesystem.crudframework.mongo.ro.BaseMongoRO
+import org.bson.conversions.Bson
+import org.bson.types.ObjectId
+import org.springframework.data.annotation.Id
 import java.util.*
 
 
 @MongoCrudEntity
 abstract class BaseMongoEntity : BaseCrudEntity<String>() {
     @MappedField(target = BaseMongoRO::class)
-    override var id: String = ""
+    @Id
+    override lateinit var id: String
 
     @MappedField(target = BaseMongoRO::class, transformer = DateToLongTransformer::class)
     override var creationTime: Date = Date()
 
-    override fun exists(): Boolean = id.isNotBlank()
+    override fun exists(): Boolean = this::id.isInitialized
 }
 
