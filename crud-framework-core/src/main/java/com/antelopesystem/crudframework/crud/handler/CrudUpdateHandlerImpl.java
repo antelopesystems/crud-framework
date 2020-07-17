@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Component("crudUpdateHandler")
 public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUpdateHandler {
 
 	@Autowired

@@ -26,8 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Component("crudCreateHandler")
-class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCreateHandler {
+public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCreateHandler {
 
 	@Autowired
 	private CrudHelper crudHelper;

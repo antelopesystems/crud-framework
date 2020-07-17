@@ -9,7 +9,7 @@ import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import java.io.Serializable;
 import java.util.List;
 
-interface CrudCreateHandler {
+public interface CrudCreateHandler {
 
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createInternal(Entity entity, HooksDTO<CRUDPreCreateHook<ID, Entity>, CRUDOnCreateHook<ID, Entity>, CRUDPostCreateHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO);

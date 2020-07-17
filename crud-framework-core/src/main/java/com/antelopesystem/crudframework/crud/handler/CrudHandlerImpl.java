@@ -34,12 +34,10 @@ import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.PagingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
 import java.util.List;
 
-@Component("crudHandler")
 @ExceptionOverride(CRUDException.class)
 public class CrudHandlerImpl implements CrudHandler {
 

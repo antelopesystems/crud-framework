@@ -34,9 +34,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-@Component("crudReadHandler")
 @ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.ShowError)
-class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudReadHandler {
+public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudReadHandler {
 
 	@Autowired
 	private CrudHelper crudHelper;

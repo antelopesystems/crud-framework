@@ -13,7 +13,9 @@ import com.antelopesystem.crudframework.exception.tree.core.ExceptionOverride;
 import com.antelopesystem.crudframework.fieldmapper.FieldMapper;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
-import com.antelopesystem.crudframework.modelfilter.*;
+import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
+import com.antelopesystem.crudframework.modelfilter.FilterField;
+import com.antelopesystem.crudframework.modelfilter.FilterFields;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import com.antelopesystem.crudframework.utils.CacheUtils;
@@ -28,18 +30,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.validation.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
 
-@Component("crudHelper")
-class CrudHelperImpl implements CrudHelper {
+public class CrudHelperImpl implements CrudHelper {
 
 	private FieldMapper fieldMapper = new FieldMapper();
 

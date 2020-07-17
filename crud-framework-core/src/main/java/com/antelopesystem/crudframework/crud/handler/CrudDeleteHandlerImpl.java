@@ -22,7 +22,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-@Component("crudDeleteHandler")
 public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDeleteHandler {
 
 	@Autowired

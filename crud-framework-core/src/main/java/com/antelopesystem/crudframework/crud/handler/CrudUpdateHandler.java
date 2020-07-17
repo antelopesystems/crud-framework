@@ -14,7 +14,7 @@ import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import java.io.Serializable;
 import java.util.List;
 
-interface CrudUpdateHandler {
+public interface CrudUpdateHandler {
 
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateInternal(Entity entity, HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO);

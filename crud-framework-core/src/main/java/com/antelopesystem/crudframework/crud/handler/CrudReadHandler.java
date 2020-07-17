@@ -19,7 +19,7 @@ import com.antelopesystem.crudframework.ro.PagingDTO;
 import java.io.Serializable;
 import java.util.List;
 
-interface CrudReadHandler {
+public interface CrudReadHandler {
 
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> PagingDTO<Entity> indexInternal(Filter filter, Class<Entity> clazz,
 			HooksDTO<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>> hooks,
