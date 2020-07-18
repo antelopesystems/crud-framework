@@ -1,15 +1,17 @@
 package com.antelopesystem.crudframework.components.componentmap;
 
 import com.antelopesystem.crudframework.utils.ReflectionUtils;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.TargetClassAware;
 import org.springframework.aop.framework.Advised;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,44 +21,49 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ComponentMapHandler {
+public class ComponentMapPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 
-	@Autowired
 	private ApplicationContext applicationContext;
 
-	@PostConstruct
-	public void map() throws Exception {
-		Map<String, Object> beans = applicationContext.getBeansWithAnnotation(Component.class);
-		for(Map.Entry<String, Object> entry : beans.entrySet()) {
-			Object handler = entry.getValue();
-			if(handler instanceof TargetClassAware) {
+	@Override
+	public void setApplicationContext(@NotNull ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	@Override
+	public Object postProcessBeforeInitialization(@NotNull Object bean, @NotNull String beanName) throws BeansException {
+		Object handler = bean;
+		if(handler instanceof TargetClassAware) {
+			try {
 				handler = ((Advised) handler).getTargetSource().getTarget();
+			} catch (Exception e) {
 			}
+		}
 
-			List<Field> fields = ReflectionUtils.getFields(handler.getClass());
+		List<Field> fields = ReflectionUtils.getFields(handler.getClass());
 
-			for(Field field : fields) {
-				if(field.isAnnotationPresent(ComponentMap.class) && field.getType() == Map.class) {
-					ComponentMap mapped = field.getAnnotation(ComponentMap.class);
-					try {
-						Class<?> keyClazz = mapped.key();
-						Class<?> valueClazz = mapped.value();
+		for(Field field : fields) {
+			if(field.isAnnotationPresent(ComponentMap.class) && field.getType() == Map.class) {
+				ComponentMap mapped = field.getAnnotation(ComponentMap.class);
+				try {
+					Class<?> keyClazz = mapped.key();
+					Class<?> valueClazz = mapped.value();
 
-						if(keyClazz == void.class) {
-							keyClazz = ((Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-						}
-
-						if(valueClazz == void.class) {
-							valueClazz = ((Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1]);
-						}
-
-						field.setAccessible(true);
-						field.set(handler, initMap(keyClazz, valueClazz));
-					} catch(Exception e) {
+					if(keyClazz == void.class) {
+						keyClazz = ((Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
 					}
+
+					if(valueClazz == void.class) {
+						valueClazz = ((Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1]);
+					}
+
+					field.setAccessible(true);
+					field.set(handler, initMap(keyClazz, valueClazz));
+				} catch(Exception e) {
 				}
 			}
 		}
+		return bean;
 	}
 
 	private <T, E> Map<T, E> initMap(Class<T> key, Class<E> value) {
@@ -80,5 +87,4 @@ public class ComponentMapHandler {
 
 		return map;
 	}
-
 }
