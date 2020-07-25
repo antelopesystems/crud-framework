@@ -1,7 +1,4 @@
-package com.antelopesystem.crudframework.components.startup
-
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
+package com.antelopesystem.crudframework.utils.component.startup.annotation
 
 /**
  * Created by Shani on 27/12/2018.

@@ -23,9 +23,8 @@ import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.PagingDTO;
 import com.antelopesystem.crudframework.ro.PagingRO;
-import com.antelopesystem.crudframework.utils.CacheUtils;
+import com.antelopesystem.crudframework.utils.utils.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;

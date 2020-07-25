@@ -1,4 +1,4 @@
-package com.antelopesystem.crudframework.utils;
+package com.antelopesystem.crudframework.utils.utils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

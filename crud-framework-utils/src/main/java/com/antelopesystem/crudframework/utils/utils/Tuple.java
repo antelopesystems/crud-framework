@@ -1,4 +1,4 @@
-package com.antelopesystem.crudframework.utils;
+package com.antelopesystem.crudframework.utils.utils;
 
 public class Tuple<X, Y> {
 

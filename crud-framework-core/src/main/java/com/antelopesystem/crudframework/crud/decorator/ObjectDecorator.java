@@ -1,6 +1,6 @@
 package com.antelopesystem.crudframework.crud.decorator;
 
-import com.antelopesystem.crudframework.components.componentmap.ComponentMapKey;
+import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey;
 
 /**
  * Class that handles decorations when converting {@code fromObject} to {@code toObject}. Must be defined as a bean

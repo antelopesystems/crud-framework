@@ -1,6 +1,8 @@
-package com.antelopesystem.crudframework.components.componentmap;
+package com.antelopesystem.crudframework.utils.component.componentmap;
 
-import com.antelopesystem.crudframework.utils.ReflectionUtils;
+import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
+import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey;
+import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.aop.TargetClassAware;
 import org.springframework.aop.framework.Advised;
@@ -10,16 +12,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.*;
+import java.util.*;
 
 public class ComponentMapPostProcessor implements BeanPostProcessor, ApplicationContextAware {
 

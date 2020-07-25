@@ -5,7 +5,7 @@ import com.antelopesystem.crudframework.crud.handler.CrudDao
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks
 import com.antelopesystem.crudframework.model.BaseCrudEntity
 import com.antelopesystem.crudframework.model.PersistentEntity
-import com.antelopesystem.crudframework.utils.ReflectionUtils
+import com.antelopesystem.crudframework.utils.utils.ReflectionUtils
 import org.springframework.core.annotation.AnnotationUtils
 import java.lang.reflect.Field
 import kotlin.reflect.KClass

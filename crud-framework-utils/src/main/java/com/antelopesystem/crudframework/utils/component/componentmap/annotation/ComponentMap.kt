@@ -1,4 +1,4 @@
-package com.antelopesystem.crudframework.components.componentmap
+package com.antelopesystem.crudframework.utils.component.componentmap.annotation
 
 import kotlin.reflect.KClass
 

@@ -1,4 +1,4 @@
-package com.antelopesystem.crudframework.utils;
+package com.antelopesystem.crudframework.utils.utils;
 
 
 import org.springframework.cache.Cache;

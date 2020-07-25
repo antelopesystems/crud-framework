@@ -1,6 +1,6 @@
 package com.antelopesystem.crudframework.crud.dataaccess;
 
-import com.antelopesystem.crudframework.components.componentmap.ComponentMapKey;
+import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 
 import java.io.Serializable;

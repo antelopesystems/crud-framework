@@ -1,6 +1,6 @@
 package com.antelopesystem.crudframework.crud.handler;
 
-import com.antelopesystem.crudframework.components.componentmap.ComponentMap;
+import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
@@ -18,8 +18,8 @@ import com.antelopesystem.crudframework.modelfilter.FilterField;
 import com.antelopesystem.crudframework.modelfilter.FilterFields;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
-import com.antelopesystem.crudframework.utils.CacheUtils;
-import com.antelopesystem.crudframework.utils.ReflectionUtils;
+import com.antelopesystem.crudframework.utils.utils.CacheUtils;
+import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;

@@ -1,6 +1,7 @@
-package com.antelopesystem.crudframework.components.startup;
+package com.antelopesystem.crudframework.utils.component.startup;
 
-import com.antelopesystem.crudframework.utils.ReflectionUtils;
+import com.antelopesystem.crudframework.utils.component.startup.annotation.PostStartUp;
+import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.TargetClassAware;
@@ -81,7 +82,7 @@ public class PostStartupHandler implements ApplicationListener<ContextRefreshedE
 		}
 	}
 
-	private class MethodHandlerDTO {
+	class MethodHandlerDTO {
 
 		Method method;
 

@@ -7,8 +7,8 @@ import com.antelopesystem.crudframework.fieldmapper.dto.EntityStructureDTO;
 import com.antelopesystem.crudframework.fieldmapper.exception.InvalidConfigurationException;
 import com.antelopesystem.crudframework.fieldmapper.transformer.DefaultTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
-import com.antelopesystem.crudframework.utils.ReflectionUtils;
-import com.antelopesystem.crudframework.utils.Tuple;
+import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
+import com.antelopesystem.crudframework.utils.utils.Tuple;
 
 import java.lang.reflect.Field;
 import java.util.*;
