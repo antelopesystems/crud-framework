@@ -2,7 +2,7 @@ package com.antelopesystem.crudframework.crud.handler;
 
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
+import com.antelopesystem.crudframework.crud.exception.*;
 import com.antelopesystem.crudframework.crud.hooks.HooksDTO;
 import com.antelopesystem.crudframework.crud.hooks.create.CRUDOnCreateHook;
 import com.antelopesystem.crudframework.crud.hooks.create.CRUDPostCreateHook;
@@ -13,8 +13,7 @@ import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDPreCreateFrom
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CreateFromHooks;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CreateHooks;
-import com.antelopesystem.crudframework.exception.tree.core.ErrorCode;
-import com.antelopesystem.crudframework.exception.tree.core.ExceptionOverride;
+import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@WrapException(CrudCreateException.class)
 public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCreateHandler {
 
 	@Autowired
@@ -39,7 +39,6 @@ public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCr
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.CreateError)
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createInternal(Entity entity, HooksDTO<CRUDPreCreateHook<ID, Entity>, CRUDOnCreateHook<ID, Entity>, CRUDPostCreateHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO) {
 		Objects.requireNonNull(entity, "Entity cannot be null");
@@ -87,7 +86,6 @@ public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCr
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.CreateError)
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createFromInternal(Object object, Class<Entity> clazz,
 			HooksDTO<CRUDPreCreateFromHook<ID, Entity>, CRUDOnCreateFromHook<ID, Entity>, CRUDPostCreateFromHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO) {
@@ -122,9 +120,7 @@ public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCr
 		Entity entity = crudHelper.fill(object, clazz);
 
 		if(entity.exists()) {
-			throw new CRUDException()
-					.withErrorCode(ErrorCode.CreateError)
-					.withDisplayMessage("Entity of type [ " + clazz.getSimpleName() + " ] with ID [ " + entity.getId() + " ] already exists and cannot be created");
+			throw new CrudDeleteException("Entity of type [ " + clazz.getSimpleName() + " ] with ID [ " + entity.getId() + " ] already exists and cannot be created");
 		}
 
 		if(accessorDTO != null) {

@@ -2,23 +2,13 @@ package com.antelopesystem.crudframework.crud.handler;
 
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.enums.ShowByMode;
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
+import com.antelopesystem.crudframework.crud.exception.CrudReadException;
 import com.antelopesystem.crudframework.crud.hooks.HooksDTO;
-import com.antelopesystem.crudframework.crud.hooks.index.CRUDOnIndexHook;
-import com.antelopesystem.crudframework.crud.hooks.index.CRUDPostIndexHook;
-import com.antelopesystem.crudframework.crud.hooks.index.CRUDPreIndexHook;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.IndexHooks;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.ShowByHooks;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.ShowHooks;
-import com.antelopesystem.crudframework.crud.hooks.show.CRUDOnShowHook;
-import com.antelopesystem.crudframework.crud.hooks.show.CRUDPostShowHook;
-import com.antelopesystem.crudframework.crud.hooks.show.CRUDPreShowHook;
-import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDOnShowByHook;
-import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPostShowByHook;
-import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPreShowByHook;
-import com.antelopesystem.crudframework.exception.tree.core.ErrorCode;
-import com.antelopesystem.crudframework.exception.tree.core.ExceptionOverride;
+import com.antelopesystem.crudframework.crud.hooks.index.*;
+import com.antelopesystem.crudframework.crud.hooks.interfaces.*;
+import com.antelopesystem.crudframework.crud.hooks.show.*;
+import com.antelopesystem.crudframework.crud.hooks.show.by.*;
+import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.PagingDTO;
@@ -29,11 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.ShowError)
+@WrapException(CrudReadException.class)
 public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudReadHandler {
 
 	@Autowired
@@ -194,9 +182,7 @@ public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudRead
 		switch(mode) {
 			case THROW_EXCEPTION:
 				if(entities.size() > 1) {
-					throw new CRUDException()
-							.withErrorCode(ErrorCode.ShowError)
-							.withDisplayMessage("Non unique result");
+					throw new CrudReadException("Received a non unique result");
 				}
 				entity = entities.size() > 0 ? entities.get(0) : null;
 

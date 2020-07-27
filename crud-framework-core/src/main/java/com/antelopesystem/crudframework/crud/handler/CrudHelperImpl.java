@@ -1,23 +1,20 @@
 package com.antelopesystem.crudframework.crud.handler;
 
-import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
+import com.antelopesystem.crudframework.crud.exception.*;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
 import com.antelopesystem.crudframework.exception.dto.ErrorField;
-import com.antelopesystem.crudframework.exception.tree.core.ErrorCode;
-import com.antelopesystem.crudframework.exception.tree.core.ExceptionOverride;
+import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.fieldmapper.FieldMapper;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
-import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
-import com.antelopesystem.crudframework.modelfilter.FilterField;
-import com.antelopesystem.crudframework.modelfilter.FilterFields;
+import com.antelopesystem.crudframework.modelfilter.*;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
+import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
 import com.antelopesystem.crudframework.utils.utils.CacheUtils;
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
 import net.sf.ehcache.Element;
@@ -34,9 +31,7 @@ import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
+import javax.validation.*;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -244,9 +239,7 @@ public class CrudHelperImpl implements CrudHelper {
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void checkEntityImmutability(Class<Entity> clazz) {
 		EntityMetadataDTO metadataDTO = getEntityMetadata(clazz);
 		if(metadataDTO.getImmutable()) {
-			throw new CRUDException()
-					.withDisplayMessage("Entity of type [ " + clazz.getSimpleName() + " ] is immutable")
-					.withErrorCode(ErrorCode.OperationNotSupported);
+			throw new CrudInvalidStateException("Entity of type [ " + clazz.getSimpleName() + " ] is immutable");
 		}
 	}
 
@@ -254,9 +247,7 @@ public class CrudHelperImpl implements CrudHelper {
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void checkEntityDeletability(Class<Entity> clazz) {
 		EntityMetadataDTO metadataDTO = getEntityMetadata(clazz);
 		if(metadataDTO.getDeleteableType() == EntityMetadataDTO.DeleteableType.None) {
-			throw new CRUDException()
-					.withDisplayMessage("Entity of type [ " + clazz.getSimpleName() + " ] can not be deleted")
-					.withErrorCode(ErrorCode.OperationNotSupported);
+			throw new CrudInvalidStateException("Entity of type [ " + clazz.getSimpleName() + " ] can not be deleted");
 		}
 	}
 
@@ -269,9 +260,7 @@ public class CrudHelperImpl implements CrudHelper {
 					CRUDHooks<ID, Entity> hooks = (CRUDHooks<ID, Entity>) applicationContext.getBean(hookType);
 					metadataDTO.getHooksFromAnnotations().add(hooks);
 				} catch(BeansException e) {
-					throw new CRUDException()
-							.withDisplayMessage("Could not get bean for persistent hooks class of type [ " + hookType.getCanonicalName() + " ]. Error: " + e.getMessage())
-							.withErrorCode(ErrorCode.RequirementNotFulfilled);
+					throw new CrudInvalidStateException("Could not get bean for persistent hooks class of type [ " + hookType.getCanonicalName() + " ]. Error: " + e.getMessage());
 				}
 			}
 			return metadataDTO;
@@ -297,7 +286,7 @@ public class CrudHelperImpl implements CrudHelper {
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.GeneralError)
+	@WrapException(CrudException.class)
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Cache getEntityCache(Class<Entity> clazz) {
 		if(cacheManager == null) {
 			return null;
@@ -315,9 +304,7 @@ public class CrudHelperImpl implements CrudHelper {
 
 		Cache cache = cacheManager.getCache(dto.getCacheName());
 		if(cache == null) {
-			throw new CRUDException()
-					.withDisplayMessage("Cache for entity [ " + clazz.getSimpleName() + " ] with name [ " + dto.getCacheName() + " ] not found")
-					.withErrorCode(ErrorCode.NotFound);
+			throw new CrudException("Cache for entity [ " + clazz.getSimpleName() + " ] with name [ " + dto.getCacheName() + " ] not found");
 		}
 
 		cacheMap.put(clazz.getName(), cache);
@@ -326,7 +313,7 @@ public class CrudHelperImpl implements CrudHelper {
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.ValidationError)
+	@WrapException(CrudValidationException.class)
 	public void validate(Object target) {
 		Objects.requireNonNull(target, "target cannot be null");
 		Set<ConstraintViolation<Object>> violations = validator.validate(target);
@@ -336,15 +323,12 @@ public class CrudHelperImpl implements CrudHelper {
 		}
 
 		if(!errorFields.isEmpty()) {
-			throw new CRUDException()
-					.withDisplayMessage("Field Validation Failed")
-					.withErrorCode(ErrorCode.ValidationError)
-					.withErrorFields(errorFields);
+			throw new CrudValidationException("Field Validation Failed");
 		}
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.ROGenerationError)
+	@WrapException(CrudTransformationException.class)
 	public <Entity, RO> RO getRO(Entity fromObject, Class<RO> toClazz) {
 		Objects.requireNonNull(fromObject, "fromObject cannot be null");
 		Objects.requireNonNull(toClazz, "toClazz cannot be null");
@@ -359,7 +343,7 @@ public class CrudHelperImpl implements CrudHelper {
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.ROGenerationError)
+	@WrapException(CrudTransformationException.class)
 	public <Entity, RO> List<RO> getROs(List<Entity> fromObjects, Class<RO> toClazz) {
 		List<RO> toObjects = new ArrayList<RO>();
 		for(Entity fromObject : fromObjects) {
@@ -370,7 +354,7 @@ public class CrudHelperImpl implements CrudHelper {
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.FillError)
+	@WrapException(CrudTransformationException.class)
 	public <Entity, RO> RO fill(Entity fromObject, Class<RO> toClazz) {
 		Objects.requireNonNull(fromObject, "fromObject cannot be null");
 		Objects.requireNonNull(toClazz, "toClazz cannot be null");
@@ -385,7 +369,7 @@ public class CrudHelperImpl implements CrudHelper {
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.FillError)
+	@WrapException(CrudTransformationException.class)
 	public <Entity, RO> void fill(Entity fromObject, RO toObject) {
 		Objects.requireNonNull(fromObject, "fromObject cannot be null");
 		Objects.requireNonNull(toObject, "toObject cannot be null");

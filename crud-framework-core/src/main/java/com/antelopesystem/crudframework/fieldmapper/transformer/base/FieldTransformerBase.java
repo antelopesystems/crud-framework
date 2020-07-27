@@ -1,7 +1,6 @@
 package com.antelopesystem.crudframework.fieldmapper.transformer.base;
 
-import com.antelopesystem.crudframework.exception.tree.core.ErrorCode;
-import com.antelopesystem.crudframework.fieldmapper.transformer.exception.TransformationException;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -45,15 +44,11 @@ public abstract class FieldTransformerBase<T, E> implements FieldTransformer<T, 
 		}
 
 		if(!tClazz.isAssignableFrom(getActualClass(fromField.getType()))) {
-			throw new TransformationException()
-					.withDisplayMessage(fromField.toString() + " - fromField type [ " + fromField.getType().getSimpleName() + " ] does not match transformer fromType [ " + tClazz.getSimpleName() + " ]")
-					.withErrorCode(ErrorCode.FieldTypeMismatch);
+			throw new InvalidStateException(fromField.toString() + " - fromField type [ " + fromField.getType().getSimpleName() + " ] does not match transformer fromType [ " + tClazz.getSimpleName() + " ]");
 		}
 
 		if(!eClazz.isAssignableFrom(getActualClass(toField.getType()))) {
-			throw new TransformationException()
-					.withDisplayMessage(toField.toString() + " - toField type [ " + toField.getType().getSimpleName() + " ] does not match transformer toType [ " + eClazz.getSimpleName() + " ]")
-					.withErrorCode(ErrorCode.FieldTypeMismatch);
+			throw new InvalidStateException(toField.toString() + " - toField type [ " + toField.getType().getSimpleName() + " ] does not match transformer toType [ " + eClazz.getSimpleName() + " ]");
 		}
 
 		return innerTransform(fromField, toField, originalValue);

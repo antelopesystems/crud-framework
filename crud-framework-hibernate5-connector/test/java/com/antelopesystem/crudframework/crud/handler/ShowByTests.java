@@ -1,7 +1,7 @@
 package com.antelopesystem.crudframework.crud.handler;
 
 import com.antelopesystem.crudframework.crud.enums.ShowByMode;
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
+import com.antelopesystem.crudframework.crud.exception.CrudReadException;
 import com.antelopesystem.crudframework.crud.model.TestEntity;
 import com.antelopesystem.crudframework.crud.model.TestEntityRO;
 import org.junit.Test;
@@ -65,7 +65,7 @@ public class ShowByTests extends BaseCrudTest {
 		assertEquals(readOnlyEntity1, testEntity);
 	}
 
-	@Test(expected = CRUDException.class)
+	@Test(expected = CrudReadException.class)
 	public void testShowByWithThrowExceptionMode() {
 		crudHandler.showBy(entity1and2AscendingFilter, TestEntity.class, ShowByMode.THROW_EXCEPTION)
 				.execute();

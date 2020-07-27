@@ -1,6 +1,5 @@
 package com.antelopesystem.crudframework.web.controller;
 
-import com.antelopesystem.crudframework.exception.tree.exception.ServerException;
 import com.antelopesystem.crudframework.ro.PagingDTO;
 import com.antelopesystem.crudframework.web.ro.ResultRO;
 import org.jetbrains.annotations.NotNull;
@@ -38,12 +37,6 @@ public class BaseController {
 			} else {
 				resultRO.setResult(data);
 			}
-		} catch(ServerException e) {
-			resultRO.setSuccess(false);
-			resultRO.setError(e.getDisplayMessage());
-			resultRO.setShortErrorCode(e.getErrorCode().getCode());
-			resultRO.setFullErrorCode(e.getFullErrorCode());
-			resultRO.setErrorFields(e.getErrorFields());
 		} catch(Exception e) {
 			resultRO.setError(e.getMessage());
 			resultRO.setSuccess(false);

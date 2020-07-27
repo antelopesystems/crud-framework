@@ -1,16 +1,13 @@
 package com.antelopesystem.crudframework.crud.handler;
 
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
+import com.antelopesystem.crudframework.crud.exception.CrudDeleteException;
 import com.antelopesystem.crudframework.crud.hooks.HooksDTO;
-import com.antelopesystem.crudframework.crud.hooks.delete.CRUDOnDeleteHook;
-import com.antelopesystem.crudframework.crud.hooks.delete.CRUDPostDeleteHook;
-import com.antelopesystem.crudframework.crud.hooks.delete.CRUDPreDeleteHook;
+import com.antelopesystem.crudframework.crud.hooks.delete.*;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.DeleteHooks;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
-import com.antelopesystem.crudframework.exception.tree.core.ErrorCode;
-import com.antelopesystem.crudframework.exception.tree.core.ExceptionOverride;
+import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +18,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+@WrapException(CrudDeleteException.class)
 public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDeleteHandler {
 
 	@Autowired
@@ -35,7 +33,6 @@ public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDe
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.DeleteError)
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Object deleteInternal(ID id, Class<Entity> clazz,
 			HooksDTO<CRUDPreDeleteHook<ID, Entity>, CRUDOnDeleteHook<ID, Entity>, CRUDPostDeleteHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO) {
@@ -65,15 +62,11 @@ public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDe
 			entity = crudDeleteHandlerProxy.deleteHardTransactional(id, clazz, hooks.getOnHooks(), accessorDTO);
 		} else {
 			if(metadataDTO.getDeleteField() == null) {
-				throw new CRUDException()
-						.withDisplayMessage("No deleteColumn specified")
-						.withErrorCode(ErrorCode.OperationNotSupported);
+				throw new CrudDeleteException("No deleteColumn specified");
 			}
 
 			if(!ClassUtils.isAssignable(boolean.class, metadataDTO.getDeleteField().getType())) {
-				throw new CRUDException()
-						.withDisplayMessage("deleteColumn must be a boolean")
-						.withErrorCode(ErrorCode.OperationNotSupported);
+				throw new CrudDeleteException("deleteColumn must be a boolean");
 			}
 
 			entity = crudDeleteHandlerProxy.deleteSoftTransactional(id, metadataDTO.getDeleteField().getName(), clazz, hooks.getOnHooks(), accessorDTO);
@@ -93,9 +86,7 @@ public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDe
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity deleteHardTransactional(ID id, Class<Entity> clazz, List<CRUDOnDeleteHook<ID, Entity>> onHooks, DataAccessorDTO accessorDTO) {
 		Entity entity = crudHelper.getEntityById(id, clazz, null, accessorDTO, true);
 		if(crudHelper.isEntityDeleted(entity)) {
-			throw new CRUDException()
-					.withErrorCode(ErrorCode.DeleteError)
-					.withDisplayMessage("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be deleted");
+			throw new CrudDeleteException("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be deleted");
 		}
 
 		for(CRUDOnDeleteHook<ID, Entity> onHook : onHooks) {
@@ -113,9 +104,7 @@ public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDe
 		Entity entity = crudHelper.getEntityById(id, clazz, null, accessorDTO, true);
 
 		if(crudHelper.isEntityDeleted(entity)) {
-			throw new CRUDException()
-					.withErrorCode(ErrorCode.DeleteError)
-					.withDisplayMessage("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be deleted");
+			throw new CrudDeleteException("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be deleted");
 		}
 
 

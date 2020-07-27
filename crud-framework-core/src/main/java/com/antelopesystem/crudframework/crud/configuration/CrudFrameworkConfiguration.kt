@@ -1,7 +1,7 @@
 package com.antelopesystem.crudframework.crud.configuration
 
 import com.antelopesystem.crudframework.crud.handler.*
-import com.antelopesystem.crudframework.exception.tree.ExceptionOverrideAspect
+import com.antelopesystem.crudframework.exception.WrapExceptionAspect
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -27,5 +27,5 @@ class CrudFrameworkConfiguration {
     fun crudReadHandler(): CrudReadHandler = CrudReadHandlerImpl()
 
     @Bean
-    fun exceptionOverrideAspect(): ExceptionOverrideAspect = ExceptionOverrideAspect()
+    fun wrapExceptionAspect(): WrapExceptionAspect = WrapExceptionAspect()
 }

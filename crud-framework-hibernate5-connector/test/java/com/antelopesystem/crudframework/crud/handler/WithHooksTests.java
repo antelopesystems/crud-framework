@@ -1,6 +1,6 @@
 package com.antelopesystem.crudframework.crud.handler;
 
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
+import com.antelopesystem.crudframework.crud.exception.CrudInvalidStateException;
 import com.antelopesystem.crudframework.crud.model.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class WithHooksTests extends BaseCrudTest {
 		assertEquals(Collections.singleton(GenericPersistentHooks.class), metadataDTO.getHookTypesFromAnnotations());
 	}
 
-	@Test(expected = CRUDException.class)
+	@Test(expected = CrudInvalidStateException.class)
 	public void testNonComponentPersistentHooksClass() {
 		crudHelper.getEntityMetadata(TestKotlinEntity.class);
 	}

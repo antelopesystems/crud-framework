@@ -1,15 +1,12 @@
 package com.antelopesystem.crudframework.fieldmapper.transformer;
 
-import com.antelopesystem.crudframework.exception.tree.core.ErrorCode;
 import com.antelopesystem.crudframework.fieldmapper.transformer.annotation.EnumType;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformerBase;
-import com.antelopesystem.crudframework.fieldmapper.transformer.exception.TransformationException;
+import sun.plugin.dom.exception.InvalidStateException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class CommaDelimitedStringToEnumListTransformer extends FieldTransformerBase<String, List> {
 
@@ -26,7 +23,7 @@ public class CommaDelimitedStringToEnumListTransformer extends FieldTransformerB
 		List<String> enumValues = Arrays.asList(originalValue.split(","));
 		Annotation annotation = toField.getAnnotation(EnumType.class);
 		if(annotation == null) {
-			throw new TransformationException().withDisplayMessage("EnumType annotation missing on field - " + toField.toString()).withErrorCode(ErrorCode.FieldTypeMismatch);
+			throw new InvalidStateException("EnumType annotation missing on field - " + toField.toString());
 		}
 		Class<? extends Enum> clazz = ((EnumType) annotation).value();
 

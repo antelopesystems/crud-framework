@@ -1,35 +1,17 @@
 package com.antelopesystem.crudframework.crud.handler;
 
 import com.antelopesystem.crudframework.crud.enums.ShowByMode;
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
-import com.antelopesystem.crudframework.crud.hooks.create.CRUDOnCreateHook;
-import com.antelopesystem.crudframework.crud.hooks.create.CRUDPostCreateHook;
-import com.antelopesystem.crudframework.crud.hooks.create.CRUDPreCreateHook;
-import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDOnCreateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDPostCreateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDPreCreateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.delete.CRUDOnDeleteHook;
-import com.antelopesystem.crudframework.crud.hooks.delete.CRUDPostDeleteHook;
-import com.antelopesystem.crudframework.crud.hooks.delete.CRUDPreDeleteHook;
-import com.antelopesystem.crudframework.crud.hooks.index.CRUDOnIndexHook;
-import com.antelopesystem.crudframework.crud.hooks.index.CRUDPostIndexHook;
-import com.antelopesystem.crudframework.crud.hooks.index.CRUDPreIndexHook;
-import com.antelopesystem.crudframework.crud.hooks.show.CRUDOnShowHook;
-import com.antelopesystem.crudframework.crud.hooks.show.CRUDPostShowHook;
-import com.antelopesystem.crudframework.crud.hooks.show.CRUDPreShowHook;
-import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDOnShowByHook;
-import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPostShowByHook;
-import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPreShowByHook;
-import com.antelopesystem.crudframework.crud.hooks.update.CRUDOnUpdateHook;
-import com.antelopesystem.crudframework.crud.hooks.update.CRUDPostUpdateHook;
-import com.antelopesystem.crudframework.crud.hooks.update.CRUDPreUpdateHook;
-import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDOnUpdateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDPostUpdateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDPreUpdateFromHook;
-import com.antelopesystem.crudframework.crud.model.MassUpdateCRUDRequestBuilder;
-import com.antelopesystem.crudframework.crud.model.ReadCRUDRequestBuilder;
-import com.antelopesystem.crudframework.crud.model.UpdateCRUDRequestBuilder;
-import com.antelopesystem.crudframework.exception.tree.core.ExceptionOverride;
+import com.antelopesystem.crudframework.crud.exception.CrudException;
+import com.antelopesystem.crudframework.crud.hooks.create.*;
+import com.antelopesystem.crudframework.crud.hooks.create.from.*;
+import com.antelopesystem.crudframework.crud.hooks.delete.*;
+import com.antelopesystem.crudframework.crud.hooks.index.*;
+import com.antelopesystem.crudframework.crud.hooks.show.*;
+import com.antelopesystem.crudframework.crud.hooks.show.by.*;
+import com.antelopesystem.crudframework.crud.hooks.update.*;
+import com.antelopesystem.crudframework.crud.hooks.update.from.*;
+import com.antelopesystem.crudframework.crud.model.*;
+import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.PagingDTO;
@@ -38,7 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.Serializable;
 import java.util.List;
 
-@ExceptionOverride(CRUDException.class)
+@WrapException(CrudException.class)
 public class CrudHandlerImpl implements CrudHandler {
 
 	@Autowired

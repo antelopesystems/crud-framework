@@ -1,19 +1,12 @@
 package com.antelopesystem.crudframework.crud.handler;
 
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
-import com.antelopesystem.crudframework.crud.exception.CRUDException;
+import com.antelopesystem.crudframework.crud.exception.CrudUpdateException;
 import com.antelopesystem.crudframework.crud.hooks.HooksDTO;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.UpdateFromHooks;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.UpdateHooks;
-import com.antelopesystem.crudframework.crud.hooks.update.CRUDOnUpdateHook;
-import com.antelopesystem.crudframework.crud.hooks.update.CRUDPostUpdateHook;
-import com.antelopesystem.crudframework.crud.hooks.update.CRUDPreUpdateHook;
-import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDOnUpdateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDPostUpdateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDPreUpdateFromHook;
-import com.antelopesystem.crudframework.exception.tree.core.ErrorCode;
-import com.antelopesystem.crudframework.exception.tree.core.ExceptionOverride;
+import com.antelopesystem.crudframework.crud.hooks.interfaces.*;
+import com.antelopesystem.crudframework.crud.hooks.update.*;
+import com.antelopesystem.crudframework.crud.hooks.update.from.*;
+import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,11 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
+@WrapException(value = CrudUpdateException.class)
 public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUpdateHandler {
 
 	@Autowired
@@ -64,7 +55,6 @@ public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUp
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.UpdateError)
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateInternal(Entity entity, HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO) {
 		Objects.requireNonNull(entity, "Entity cannot be null");
@@ -100,9 +90,7 @@ public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUp
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateTransactional(Entity entity, List<CRUDOnUpdateHook<ID, Entity>> onHooks, DataAccessorDTO accessorDTO) {
 		// check id exists and has access to entity
 		if(!entity.exists() || crudHelper.getEntityCountById(entity.getId(), entity.getClass(), accessorDTO, true) == 0) {
-			throw new CRUDException()
-					.withErrorCode(ErrorCode.UpdateError)
-					.withDisplayMessage("Entity of type [ " + entity.getClass().getSimpleName() + " ] does not exist or cannot be updated");
+			throw new CrudUpdateException("Entity of type [ " + entity.getClass().getSimpleName() + " ] does not exist or cannot be updated");
 		}
 
 		for(CRUDOnUpdateHook<ID, Entity> onHook : onHooks) {
@@ -115,7 +103,6 @@ public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUp
 	}
 
 	@Override
-	@ExceptionOverride(value = CRUDException.class, errorCode = ErrorCode.UpdateError)
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity updateFromInternal(ID id, Object object, Class<Entity> clazz,
 			HooksDTO<CRUDPreUpdateFromHook<ID, Entity>, CRUDOnUpdateFromHook<ID, Entity>, CRUDPostUpdateFromHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO) {
@@ -156,9 +143,7 @@ public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUp
 		Entity entity = crudHelper.getEntityById(id, clazz, null, accessorDTO, true);
 
 		if(entity == null) {
-			throw new CRUDException()
-					.withErrorCode(ErrorCode.UpdateError)
-					.withDisplayMessage("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be updated");
+			throw new CrudUpdateException("Entity of type [ " + clazz.getSimpleName() + " ] does not exist or cannot be updated");
 		}
 
 		crudHelper.fill(object, entity);
