@@ -1,7 +1,6 @@
 package com.antelopesystem.crudframework.mongo.ro
 
-abstract class BaseMongoRO(
-        var id: String? = null,
-        var creationTime: Long? = null
-)
+import com.antelopesystem.crudframework.ro.BaseRO
+
+abstract class BaseMongoRO: BaseRO<String?>()
 

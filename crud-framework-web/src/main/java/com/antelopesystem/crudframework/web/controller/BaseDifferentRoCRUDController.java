@@ -5,9 +5,11 @@ import com.antelopesystem.crudframework.crud.model.CRUDRequestBuilder;
 import com.antelopesystem.crudframework.crud.model.ReadCRUDRequestBuilder;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
+import com.antelopesystem.crudframework.ro.BaseRO;
 import com.antelopesystem.crudframework.web.annotation.CRUDActions;
-import com.antelopesystem.crudframework.web.ro.MassUpdateResult;
 import com.antelopesystem.crudframework.web.ro.ResultRO;
+import com.mycompany.crudframework.crud.ro.ManyCrudResult;
+import com.mycompany.crudframework.crud.ro.ManyFailedReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,9 +17,12 @@ import javax.annotation.PostConstruct;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
-public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Entity extends BaseCrudEntity<ID>, CreateRO, UpdateRO, ReturnRO> extends BaseController {
+public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Entity extends BaseCrudEntity<ID>, CreateRO extends BaseRO<ID>, UpdateRO extends BaseRO<ID>, ReturnRO extends BaseRO<ID>> extends BaseController {
 
 	@Autowired
 	private CrudHandler crudHandler;
@@ -132,6 +137,30 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 		});
 	}
 
+	@RequestMapping(value = "/many", method = RequestMethod.POST)
+	@ResponseBody
+	public ResultRO createMany(@RequestBody List<CreateRO> ros) {
+		verifyOperation(CRUDActionType.Create);
+		return wrapResult(() -> {
+			Set<ReturnRO> successful = new HashSet<>();
+			List<ManyFailedReason<CreateRO>> failed = new ArrayList();
+			for(CreateRO ro : ros) {
+				CRUDRequestBuilder builder = crudHandler.createFrom(ro, entityClazz, roClazz);
+				if(shouldEnforce()) {
+					builder.enforceAccess(getAccessorType(), getAccessorId());
+				}
+
+				try {
+					successful.add((ReturnRO) builder.execute());
+				} catch(Exception e) {
+					failed.add(new ManyFailedReason(ro, e.getMessage()));
+				}
+			}
+
+			return new ManyCrudResult(successful, failed);
+		});
+	}
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	@ResponseBody
 	public ResultRO update(@PathVariable ID id, @RequestBody UpdateRO ro) {
@@ -143,6 +172,30 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 			}
 
 			return builder.execute();
+		});
+	}
+
+	@RequestMapping(value = "/many", method = RequestMethod.PUT)
+	@ResponseBody
+	public ResultRO updateMany(@RequestBody List<UpdateRO> ros) {
+		verifyOperation(CRUDActionType.Update);
+		return wrapResult(() -> {
+			Set<ReturnRO> successful = new HashSet<>();
+			List<ManyFailedReason<UpdateRO>> failed = new ArrayList();
+			for(UpdateRO ro : ros) {
+				CRUDRequestBuilder builder = crudHandler.updateFrom(ro.getId(), ro, entityClazz, roClazz);
+				if(shouldEnforce()) {
+					builder.enforceAccess(getAccessorType(), getAccessorId());
+				}
+
+				try {
+					successful.add((ReturnRO) builder.execute());
+				} catch(Exception e) {
+					failed.add(new ManyFailedReason(ro, e.getMessage()));
+				}
+			}
+
+			return new ManyCrudResult(successful, failed);
 		});
 	}
 
@@ -165,8 +218,8 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO deleteMany(@RequestBody List<ID> ids) {
 		verifyOperation(CRUDActionType.Delete);
 		return wrapResult(() -> {
-			Set<ID> successfulIds = new HashSet<>();
-			Map<ID, String> failedIds = new HashMap<>();
+			Set<ID> successful = new HashSet<>();
+			List<ManyFailedReason<ID>> failed = new ArrayList<>();
 			for(ID id : ids) {
 				CRUDRequestBuilder builder = crudHandler.delete(id, entityClazz);
 				if(shouldEnforce()) {
@@ -175,13 +228,13 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 
 				try {
 					builder.execute();
-					successfulIds.add(id);
+					successful.add(id);
 				} catch(Exception e) {
-					failedIds.put(id, e.getMessage());
+					failed.add(new ManyFailedReason(id, e.getMessage()));
 				}
 			}
 
-			return new MassUpdateResult<ID>(successfulIds, failedIds);
+			return new ManyCrudResult(successful, failed);
 		});
 	}
 

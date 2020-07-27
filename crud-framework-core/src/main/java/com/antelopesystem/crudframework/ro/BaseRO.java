@@ -1,5 +1,6 @@
-package com.antelopesystem.crudframework.jpa.ro;
+package com.antelopesystem.crudframework.ro;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -8,23 +9,33 @@ import java.util.Objects;
  * @author Shani Holdengreber
  * @author thewizkid@gmail.com
  */
-public abstract class BaseUpdatableRO extends BaseRO {
+public abstract class BaseRO<ID> implements Serializable {
 
 	//------------------------ Constants -----------------------
 	private static final long serialVersionUID = 1L;
 
-	//------------------------ Fields --------------------------
-	private long lastUpdateTime;
+	//------------------------ Fields --------------------------s
+	private ID id;
+
+	private long creationTime;
 
 	//------------------------ Public methods ------------------
 	//------------------------ Constructors --------------------
 	//------------------------ Field's handlers ----------------
-	public long getLastUpdateTime() {
-		return lastUpdateTime;
+	public ID getId() {
+		return id;
 	}
 
-	public void setLastUpdateTime(long lastUpdateTime) {
-		this.lastUpdateTime = lastUpdateTime;
+	public void setId(ID id) {
+		this.id = id;
+	}
+
+	public long getCreationTime() {
+		return creationTime;
+	}
+
+	public void setCreationTime(long creationTime) {
+		this.creationTime = creationTime;
 	}
 
 	//------------------------ Other public methods ------------
@@ -37,16 +48,14 @@ public abstract class BaseUpdatableRO extends BaseRO {
 		if(o == null || getClass() != o.getClass()) {
 			return false;
 		}
-		if(!super.equals(o)) {
-			return false;
-		}
-		BaseUpdatableRO that = (BaseUpdatableRO) o;
-		return lastUpdateTime == that.lastUpdateTime;
+		BaseRO baseRO = (BaseRO) o;
+		return id == baseRO.id &&
+				creationTime == baseRO.creationTime;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(super.hashCode(), lastUpdateTime);
+		return Objects.hash(id, creationTime);
 	}
 
 
