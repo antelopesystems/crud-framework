@@ -2,7 +2,6 @@ package com.antelopesystem.crudframework.fieldmapper.transformer;
 
 import com.antelopesystem.crudframework.fieldmapper.transformer.annotation.EnumType;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformerBase;
-import sun.plugin.dom.exception.InvalidStateException;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -23,7 +22,7 @@ public class CommaDelimitedStringToEnumListTransformer extends FieldTransformerB
 		List<String> enumValues = Arrays.asList(originalValue.split(","));
 		Annotation annotation = toField.getAnnotation(EnumType.class);
 		if(annotation == null) {
-			throw new InvalidStateException("EnumType annotation missing on field - " + toField.toString());
+			throw new IllegalStateException("EnumType annotation missing on field - " + toField.toString());
 		}
 		Class<? extends Enum> clazz = ((EnumType) annotation).value();
 

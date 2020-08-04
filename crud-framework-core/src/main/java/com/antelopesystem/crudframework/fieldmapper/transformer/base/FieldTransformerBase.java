@@ -1,7 +1,5 @@
 package com.antelopesystem.crudframework.fieldmapper.transformer.base;
 
-import sun.plugin.dom.exception.InvalidStateException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
@@ -44,11 +42,11 @@ public abstract class FieldTransformerBase<T, E> implements FieldTransformer<T, 
 		}
 
 		if(!tClazz.isAssignableFrom(getActualClass(fromField.getType()))) {
-			throw new InvalidStateException(fromField.toString() + " - fromField type [ " + fromField.getType().getSimpleName() + " ] does not match transformer fromType [ " + tClazz.getSimpleName() + " ]");
+			throw new IllegalStateException(fromField.toString() + " - fromField type [ " + fromField.getType().getSimpleName() + " ] does not match transformer fromType [ " + tClazz.getSimpleName() + " ]");
 		}
 
 		if(!eClazz.isAssignableFrom(getActualClass(toField.getType()))) {
-			throw new InvalidStateException(toField.toString() + " - toField type [ " + toField.getType().getSimpleName() + " ] does not match transformer toType [ " + eClazz.getSimpleName() + " ]");
+			throw new IllegalStateException(toField.toString() + " - toField type [ " + toField.getType().getSimpleName() + " ] does not match transformer toType [ " + eClazz.getSimpleName() + " ]");
 		}
 
 		return innerTransform(fromField, toField, originalValue);
