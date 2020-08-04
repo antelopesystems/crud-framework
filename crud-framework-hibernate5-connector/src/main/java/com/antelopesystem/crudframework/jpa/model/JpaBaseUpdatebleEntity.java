@@ -33,18 +33,4 @@ public abstract class JpaBaseUpdatebleEntity extends JpaBaseEntity {
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
 	}
-
-	//------------------------ Other public methods ------------
-	@SuppressWarnings("unchecked")
-	@Transient
-	@Override
-	public <T extends BaseJpaRO> T getRepresentation() {
-		BaseUpdatableJpaRO ro = super.getRepresentation();
-		if(null != getLastUpdateTime()) {
-			ro.setLastUpdateTime(getLastUpdateTime().getTime());
-		}
-		return (T) ro;
-	}
-
-	//------------------------ Private methods -----------------
 }

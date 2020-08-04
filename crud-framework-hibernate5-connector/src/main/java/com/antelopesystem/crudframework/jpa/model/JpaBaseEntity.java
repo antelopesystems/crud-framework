@@ -105,19 +105,6 @@ public abstract class JpaBaseEntity extends BaseCrudEntity<Long> {
 		return result;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Transient
-	public <T extends BaseJpaRO> T getRepresentation() {
-		T ro = (T) newRepresentation();
-		ro.setId(getId());
-		ro.setCreationTime(getCreationTime().getTime());
-		return ro;
-	}
-
-	protected <T extends BaseJpaRO> T newRepresentation() {
-		return null;
-	}
-
 	@Override
 	public boolean exists() {
 		return getId() != 0L;
