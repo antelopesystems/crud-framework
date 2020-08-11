@@ -71,5 +71,11 @@
             <artifactId>crud-framework-utils</artifactId>
             <version>0.1.2-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.antelopesystem.crudframework</groupId>
+            <artifactId>crud-framework-fieldmapper</artifactId>
+            <version>0.1.2-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

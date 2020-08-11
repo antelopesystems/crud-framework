@@ -1,14 +1,12 @@
 package com.antelopesystem.crudframework.fieldmapper;
 
-import com.antelopesystem.crudframework.fieldmapper.annotation.DefaultMappingTarget;
-import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField;
-import com.antelopesystem.crudframework.fieldmapper.annotation.ObjectFieldPair;
+import com.antelopesystem.crudframework.fieldmapper.annotation.*;
 import com.antelopesystem.crudframework.fieldmapper.dto.EntityStructureDTO;
 import com.antelopesystem.crudframework.fieldmapper.exception.InvalidConfigurationException;
 import com.antelopesystem.crudframework.fieldmapper.transformer.DefaultTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
-import com.antelopesystem.crudframework.utils.utils.Tuple;
+import kotlin.Pair;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -21,7 +19,7 @@ public class FieldMapper {
 
 	private Map<Class<? extends FieldTransformer>, FieldTransformer> fieldTransformersByType = new HashMap<>();
 
-	private static Map<Tuple<Class<?>, Class<?>>, EntityStructureDTO> entityStructures = new HashMap<>();
+	private static Map<Pair<Class<?>, Class<?>>, EntityStructureDTO> entityStructures = new HashMap<>();
 
 	private static Map<Class<?>, Map<String, Field>> entityFieldMaps = new HashMap<>();
 
@@ -175,7 +173,7 @@ public class FieldMapper {
 	}
 
 	private EntityStructureDTO getEntityStructure(Class<?> fromClass, Class<?> toClass) {
-		EntityStructureDTO entityStructureDTO = entityStructures.get(new Tuple<>(fromClass, toClass));
+		EntityStructureDTO entityStructureDTO = entityStructures.get(new Pair<Class<?>, Class<?>>(fromClass, toClass));
 		if(entityStructureDTO != null) {
 			return entityStructureDTO;
 		}
@@ -221,7 +219,7 @@ public class FieldMapper {
 
 		entityStructureDTO = new EntityStructureDTO(typeAnnotations, annotations);
 
-		entityStructures.put(new Tuple<>(fromClass, toClass), entityStructureDTO);
+		entityStructures.put(new Pair<Class<?>, Class<?>>(fromClass, toClass), entityStructureDTO);
 		return entityStructureDTO;
 	}
 

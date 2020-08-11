@@ -85,6 +85,7 @@
 
 
     <modules>
+        <module>crud-framework-fieldmapper</module>
         <module>crud-framework-utils</module>
         <module>crud-framework-core</module>
         <module>crud-framework-hibernate5-connector</module>
