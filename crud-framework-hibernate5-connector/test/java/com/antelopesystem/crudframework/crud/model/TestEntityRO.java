@@ -4,7 +4,7 @@ import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField;
 import com.antelopesystem.crudframework.fieldmapper.transformer.CurrencyDoubleToLongTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.LongToDateTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.StringListToCommaDelimitedStringTransformer;
-import com.antelopesystem.crudframework.jpa.ro.BaseRO;
+import com.antelopesystem.crudframework.ro.BaseRO;
 
 import java.util.Arrays;
 import java.util.List;

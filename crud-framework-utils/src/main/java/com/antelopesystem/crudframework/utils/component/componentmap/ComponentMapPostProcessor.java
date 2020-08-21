@@ -8,8 +8,10 @@ import org.springframework.aop.TargetClassAware;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.ResolvableType;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.springframework.core.annotation.AnnotationUtils;
 
@@ -40,20 +42,15 @@ public class ComponentMapPostProcessor implements BeanPostProcessor, Application
 
 		for(Field field : fields) {
 			if(field.isAnnotationPresent(ComponentMap.class) && field.getType() == Map.class) {
+
 				ComponentMap mapped = field.getAnnotation(ComponentMap.class);
 				try {
-					Class<?> keyClazz = mapped.key();
-					Class<?> valueClazz = mapped.value();
+					DependencyDescriptor descriptor = new DependencyDescriptor(field, false);
+					ResolvableType resolvableType = descriptor.getResolvableType().asMap();
+					Class<?> keyClazz = resolvableType.resolveGeneric(0);
+					Class<?> valueClazz = resolvableType.resolveGeneric(1);
 
-					if(keyClazz == void.class) {
-						keyClazz = ((Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0]);
-					}
-
-					if(valueClazz == void.class) {
-						valueClazz = ((Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[1]);
-					}
-
-					field.setAccessible(true);
+					ReflectionUtils.makeAccessible(field);
 					field.set(handler, initMap(keyClazz, valueClazz));
 				} catch(Exception e) {
 				}
