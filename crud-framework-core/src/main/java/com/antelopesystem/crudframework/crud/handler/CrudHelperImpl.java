@@ -84,7 +84,7 @@ public class CrudHelperImpl implements CrudHelper {
 						.timeToIdleSeconds(60)
 		);
 
-		cacheManager.addCache(pagingCache);
+		cacheManager.addCacheIfAbsent(pagingCache);
 	}
 
 	@Override
