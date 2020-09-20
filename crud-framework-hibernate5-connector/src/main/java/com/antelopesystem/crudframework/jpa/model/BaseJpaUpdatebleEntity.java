@@ -2,7 +2,6 @@ package com.antelopesystem.crudframework.jpa.model;
 
 import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField;
 import com.antelopesystem.crudframework.fieldmapper.transformer.DateToLongTransformer;
-import com.antelopesystem.crudframework.jpa.ro.BaseJpaRO;
 import com.antelopesystem.crudframework.jpa.ro.BaseUpdatableJpaRO;
 
 import javax.persistence.*;
@@ -12,7 +11,7 @@ import java.util.Date;
  * Base class for Hibernate entities.
  */
 @MappedSuperclass
-public abstract class JpaBaseUpdatebleEntity extends JpaBaseEntity {
+public abstract class BaseJpaUpdatebleEntity extends BaseJpaEntity {
 
 	//------------------------ Constants -----------------------
 	//------------------------ Fields --------------------------

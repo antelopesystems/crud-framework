@@ -1,6 +1,6 @@
 package com.antelopesystem.crudframework.jpa;
 
-import com.antelopesystem.crudframework.jpa.model.JpaBaseEntity;
+import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity;
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGeneratorHelper;
 import org.hibernate.id.IdentityGenerator;
@@ -11,7 +11,7 @@ public class OverrideableGeneratedValueGenerator extends IdentityGenerator {
 
 	@Override
 	public Serializable generate(SharedSessionContractImplementor s, Object entity) {
-		JpaBaseEntity baseEntity = (JpaBaseEntity) entity;
+		BaseJpaEntity baseEntity = (BaseJpaEntity) entity;
 		if(baseEntity.getId() > 0) {
 			// the identifier has been set manually => use it
 			return baseEntity.getId();

@@ -18,7 +18,7 @@ import java.util.Set;
  */
 @MappedSuperclass
 @JpaCrudEntity
-public abstract class JpaBaseEntity extends BaseCrudEntity<Long> {
+public abstract class BaseJpaEntity extends BaseCrudEntity<Long> {
 
 	//------------------------ Constants -----------------------
 	private static final long serialVersionUID = 1L;
@@ -33,20 +33,20 @@ public abstract class JpaBaseEntity extends BaseCrudEntity<Long> {
 
 	//------------------------ Public methods ------------------
 	//------------------------ Constructors --------------------
-	protected JpaBaseEntity() {
+	protected BaseJpaEntity() {
 		this.creationTime = new Date();
 	}
 
 	@Transient
-	protected static <T extends JpaBaseEntity> Set<Long> getIds(Set<T> entities) {
+	protected static <T extends BaseJpaEntity> Set<Long> getIds(Set<T> entities) {
 		return (Set<Long>) fillIds(entities, new HashSet<Long>());
 	}
 
 	//------------------------ Private methods -----------------
-	private static <T extends JpaBaseEntity> Collection<Long> fillIds(Collection<T> entities,
+	private static <T extends BaseJpaEntity> Collection<Long> fillIds(Collection<T> entities,
 			Collection<Long> result) {
 		if(null != entities) {
-			for(JpaBaseEntity entity : entities) {
+			for(BaseJpaEntity entity : entities) {
 				result.add(entity.getId());
 			}
 			return result;
@@ -93,7 +93,7 @@ public abstract class JpaBaseEntity extends BaseCrudEntity<Long> {
 			return true;
 		}
 
-		JpaBaseEntity that = (JpaBaseEntity) o;
+		BaseJpaEntity that = (BaseJpaEntity) o;
 
 		return getId() == that.getId();
 	}

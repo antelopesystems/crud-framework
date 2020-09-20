@@ -1,6 +1,6 @@
 package com.antelopesystem.crudframework.jpa.dao;
 
-import com.antelopesystem.crudframework.jpa.model.JpaBaseEntity;
+import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity;
 
 import java.io.Serializable;
 
@@ -16,7 +16,7 @@ public interface BaseDao {
 	 * @param id UID of entity.
 	 * @return found entity
 	 */
-	<T extends JpaBaseEntity> T findObject(Class<T> clazz, Serializable id);
+	<T extends BaseJpaEntity> T findObject(Class<T> clazz, Serializable id);
 
 	/**
 	 * Persist entity to DB.
