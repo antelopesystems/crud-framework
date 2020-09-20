@@ -2,6 +2,7 @@ package com.antelopesystem.crudframework.jpa.model;
 
 import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField;
 import com.antelopesystem.crudframework.fieldmapper.transformer.DateToLongTransformer;
+import com.antelopesystem.crudframework.jpa.ro.BaseJpaRO;
 import com.antelopesystem.crudframework.jpa.ro.BaseUpdatableJpaRO;
 
 import javax.persistence.*;
@@ -31,5 +32,15 @@ public abstract class BaseJpaUpdatebleEntity extends BaseJpaEntity {
 
 	public void setLastUpdateTime(Date lastUpdateTime) {
 		this.lastUpdateTime = lastUpdateTime;
+	}
+
+	@Transient
+	@Override
+	public <T extends BaseJpaRO> T getRepresentation() {
+		BaseUpdatableJpaRO ro = super.getRepresentation();
+		if(null != getLastUpdateTime()) {
+			ro.setLastUpdateTime(getLastUpdateTime().getTime());
+		}
+		return (T) ro;
 	}
 }

@@ -109,5 +109,17 @@ public abstract class BaseJpaEntity extends BaseCrudEntity<Long> {
 	public boolean exists() {
 		return getId() != 0L;
 	}
+
+	@Transient
+	public <T extends BaseJpaRO> T getRepresentation() {
+		T ro = (T) newRepresentation();
+		ro.setId(getId());
+		ro.setCreationTime(getCreationTime().getTime());
+		return ro;
+	}
+
+	protected <T extends BaseJpaRO> T newRepresentation() {
+		return null;
+	}
 }
 	
