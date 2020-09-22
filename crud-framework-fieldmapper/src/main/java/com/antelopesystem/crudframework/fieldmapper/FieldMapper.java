@@ -27,6 +27,7 @@ public class FieldMapper {
 
 	public void registerTransformer(String ref, FieldTransformer transformer) {
 		fieldTransformersByRef.put(ref, transformer);
+		fieldTransformersByType.put(transformer.getClass(), transformer);
 	}
 
 	public void registerTransformer(Class<? extends FieldTransformer> clazz, FieldTransformer transformer) {
