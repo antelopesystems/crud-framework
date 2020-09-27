@@ -3,8 +3,7 @@ package com.antelopesystem.crudframework.modelfilter;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public final class FilterFields {
 
@@ -407,6 +406,13 @@ public final class FilterFields {
 
 	public static FilterField isNotNull(String fieldName) {
 		return createFilterField(fieldName, FilterFieldOperation.IsNotNull, null, null, null);
+	}
+
+	public static FilterField or(FilterField... filterFields) {
+		FilterField filterField = new FilterField();
+		filterField.setOperation(FilterFieldOperation.Or);
+		filterField.setChildren(Arrays.asList(filterFields));
+		return filterField;
 	}
 
 	private static FilterField createFilterField(String fieldName, FilterFieldOperation operation, FilterFieldDataType dataType, String enumType, Object... values) {
