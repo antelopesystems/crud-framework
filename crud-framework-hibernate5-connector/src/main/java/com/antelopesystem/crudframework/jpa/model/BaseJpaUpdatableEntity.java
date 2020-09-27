@@ -12,7 +12,7 @@ import java.util.Date;
  * Base class for Hibernate entities.
  */
 @MappedSuperclass
-public abstract class BaseJpaUpdatebleEntity extends BaseJpaEntity {
+public abstract class BaseJpaUpdatableEntity extends BaseJpaEntity {
 
 	//------------------------ Constants -----------------------
 	//------------------------ Fields --------------------------
