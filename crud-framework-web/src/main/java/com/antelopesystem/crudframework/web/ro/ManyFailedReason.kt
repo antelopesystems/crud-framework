@@ -1,4 +1,4 @@
-package com.mycompany.crudframework.crud.ro
+package com.antelopesystem.crudframework.web.ro
 
 data class ManyFailedReason<FailedObject>(
         val `object`: FailedObject,

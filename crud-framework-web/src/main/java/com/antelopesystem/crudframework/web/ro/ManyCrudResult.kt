@@ -1,6 +1,4 @@
-package com.mycompany.crudframework.crud.ro
-
-import java.io.Serializable
+package com.antelopesystem.crudframework.web.ro
 
 data class ManyCrudResult<SuccessfulResult, FailedResult>(
         val successful: Set<SuccessfulResult>,

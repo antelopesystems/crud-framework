@@ -8,8 +8,8 @@ import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.BaseRO;
 import com.antelopesystem.crudframework.web.annotation.CRUDActions;
 import com.antelopesystem.crudframework.web.ro.ResultRO;
-import com.mycompany.crudframework.crud.ro.ManyCrudResult;
-import com.mycompany.crudframework.crud.ro.ManyFailedReason;
+import com.antelopesystem.crudframework.web.ro.ManyCrudResult;
+import com.antelopesystem.crudframework.web.ro.ManyFailedReason;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
