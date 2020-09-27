@@ -57,7 +57,7 @@ public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCr
 			preHook.run(entity);
 		}
 
-		entity = crudCreateHandlerProxy.createTransactional(entity, hooks.getOnHooks(), accessorDTO);
+			entity = crudCreateHandlerProxy.createTransactional(entity, hooks.getOnHooks(), accessorDTO);
 		for(CRUDPostCreateHook<ID, Entity> postHook : hooks.getPostHooks()) {
 			postHook.run(entity);
 		}

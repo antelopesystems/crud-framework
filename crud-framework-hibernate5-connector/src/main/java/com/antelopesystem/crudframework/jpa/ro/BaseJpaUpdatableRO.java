@@ -6,7 +6,7 @@ package com.antelopesystem.crudframework.jpa.ro;
  * @author Shani Holdengreber
  * @author thewizkid@gmail.com
  */
-public abstract class BaseUpdatableJpaRO extends BaseJpaRO {
+public abstract class BaseJpaUpdatableRO extends BaseJpaRO {
 	private static final long serialVersionUID = 1L;
 
 	private long lastUpdateTime;
