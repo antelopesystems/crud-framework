@@ -13,7 +13,7 @@ public abstract class BaseModelFilter implements Serializable {
 
 	private String orderBy = "id";
 
-	private Boolean orderDesc;
+	private Boolean orderDesc = true;
 
 	private String returnColumn;
 
