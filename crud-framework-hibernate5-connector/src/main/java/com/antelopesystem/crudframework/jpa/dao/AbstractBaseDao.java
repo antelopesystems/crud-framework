@@ -425,7 +425,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 
 	protected Criteria setOrder(Criteria criteria, BaseModelFilter modelFilter) {
 		if(modelFilter.getOrderBy() != null && !modelFilter.getOrderBy().trim().isEmpty()) {
-			if(modelFilter.getOrderDesc()) {
+			if(modelFilter.getOrderDesc() == null || modelFilter.getOrderDesc()) {
 				criteria.addOrder(Order.desc(modelFilter.getOrderBy()));
 			} else {
 				criteria.addOrder(Order.asc(modelFilter.getOrderBy()));
