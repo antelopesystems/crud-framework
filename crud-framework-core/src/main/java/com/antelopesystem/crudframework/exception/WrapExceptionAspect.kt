@@ -22,24 +22,23 @@ class  WrapExceptionAspect {
     @Around("methodLevel(wrapExceptionAnnotation) || typeLevel(wrapExceptionAnnotation)")
     @Throws(Throwable::class)
     fun invokeExceptionTreeAwareMethod(pjp: ProceedingJoinPoint, wrapExceptionAnnotation: WrapException?): Any? {
-        return pjp.proceed(pjp.args)
-//        val method = (pjp.signature as MethodSignature).method
-//        var actualAnnotation = method.getAnnotation(WrapException::class.java)
-//
-//        if (actualAnnotation == null) {
-//            actualAnnotation = AnnotationUtils.findAnnotation(pjp.signature.declaringType, WrapException::class.java)
-//        }
-//
-//        try {
-//            return pjp.proceed(pjp.args)
-//        } catch (e: Exception) {
-//            val exceptionClazz = actualAnnotation.value
-//            if(exceptionClazz.java.isAssignableFrom(e::class.java)) {
-//                throw e
-//            }
-//
-//            val exceptionInstance = actualAnnotation.value.createInstance().initCause(e)
-//            throw exceptionInstance
-//        }
+        val method = (pjp.signature as MethodSignature).method
+        var actualAnnotation = method.getAnnotation(WrapException::class.java)
+
+        if (actualAnnotation == null) {
+            actualAnnotation = AnnotationUtils.findAnnotation(pjp.signature.declaringType, WrapException::class.java)
+        }
+
+        try {
+            return pjp.proceed(pjp.args)
+        } catch (e: Exception) {
+            val exceptionClazz = actualAnnotation.value
+            if(exceptionClazz.java.isAssignableFrom(e::class.java)) {
+                throw e
+            }
+
+            val exceptionInstance = actualAnnotation.value.createInstance().initCause(e)
+            throw exceptionInstance
+        }
     }
 }
