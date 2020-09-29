@@ -46,24 +46,24 @@ class EntityMetadataDTO {
         simpleName = entityClazz.simpleName
     }
 
-    private fun getFields(entityClazz: Class<out PersistentEntity>, prefix: String? = null) {
+    private fun getFields(entityClazz: Class<out PersistentEntity>, prefix: String? = null, recursionCount: Int = 0) {
         val effectivePrefix: String
         if(prefix.isNullOrBlank()) {
             effectivePrefix = ""
         } else {
             effectivePrefix = prefix.replace(".", "->") + "."
         }
+
         ReflectionUtils.getFields(entityClazz).forEach {
             if(it.name == "copy" && it.type == BaseCrudEntity::class.java) {
                 return
             }
 
-            if(PersistentEntity::class.java.isAssignableFrom(it.type)) {
-                getFields(it.type as Class<out PersistentEntity>, effectivePrefix + it.name)
+            if(PersistentEntity::class.java.isAssignableFrom(it.type) && recursionCount < 15) {
+                getFields(it.type as Class<out PersistentEntity>, effectivePrefix + it.name, recursionCount + 1)
             } else {
                 fields[effectivePrefix + it.name] = it.type
             }
-
         }
     }
 

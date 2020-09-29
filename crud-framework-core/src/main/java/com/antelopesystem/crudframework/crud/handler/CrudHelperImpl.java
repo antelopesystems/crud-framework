@@ -135,9 +135,11 @@ public class CrudHelperImpl implements CrudHelper {
 
 	private void validateAndFillFilterFieldMetadata(List<FilterField> filterFields, EntityMetadataDTO metadataDTO) {
 		for(FilterField filterField : filterFields) {
-			boolean isJunction = filterField.getOperation() == FilterFieldOperation.And || filterField.getOperation() == FilterFieldOperation.Or || filterField.getOperation() == FilterFieldOperation.Not;
-			if(isJunction && filterField.getChildren() != null && !filterField.getChildren().isEmpty()) {
-				validateAndFillFilterFieldMetadata(filterField.getChildren(), metadataDTO);
+			boolean isJunction = filterField.getOperation() == FilterFieldOperation.And || filterField.getOperation() == FilterFieldOperation.Or || filterField.getOperation() == FilterFieldOperation.Not || filterField.getOperation() == FilterFieldOperation.RawJunction;
+			if(isJunction) {
+				if(filterField.getChildren() != null && !filterField.getChildren().isEmpty()) {
+					validateAndFillFilterFieldMetadata(filterField.getChildren(), metadataDTO);
+				}
 			} else {
 				String fieldName = filterField.getFieldName();
 				if(!metadataDTO.getFields().containsKey(fieldName)) {
