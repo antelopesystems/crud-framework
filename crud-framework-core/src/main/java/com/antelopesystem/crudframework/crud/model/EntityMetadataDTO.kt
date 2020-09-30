@@ -46,7 +46,7 @@ class EntityMetadataDTO {
         simpleName = entityClazz.simpleName
     }
 
-    private fun getFields(entityClazz: Class<out PersistentEntity>, prefix: String? = null, recursionCount: Int = 0) {
+    private fun getFields(entityClazz: Class<out PersistentEntity>, prefix: String? = null, currentDepth: Int = 0) {
         val effectivePrefix: String
         if(prefix.isNullOrBlank()) {
             effectivePrefix = ""
@@ -59,8 +59,8 @@ class EntityMetadataDTO {
                 return
             }
 
-            if(PersistentEntity::class.java.isAssignableFrom(it.type) && recursionCount < 15) {
-                getFields(it.type as Class<out PersistentEntity>, effectivePrefix + it.name, recursionCount + 1)
+            if(PersistentEntity::class.java.isAssignableFrom(it.type) && currentDepth < MAX_FILTERFIELD_DEPTH) {
+                getFields(it.type as Class<out PersistentEntity>, effectivePrefix + it.name, currentDepth + 1)
             } else {
                 fields[effectivePrefix + it.name] = it.type
             }
@@ -135,5 +135,9 @@ class EntityMetadataDTO {
 
     enum class DeleteableType {
         None, Soft, Hard
+    }
+
+    companion object {
+        private const val MAX_FILTERFIELD_DEPTH = 15
     }
 }
