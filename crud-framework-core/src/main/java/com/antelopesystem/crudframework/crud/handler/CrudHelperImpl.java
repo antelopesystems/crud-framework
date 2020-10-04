@@ -141,17 +141,19 @@ public class CrudHelperImpl implements CrudHelper {
 					validateAndFillFilterFieldMetadata(filterField.getChildren(), metadataDTO);
 				}
 			} else {
-				String fieldName = filterField.getFieldName();
-				if(!metadataDTO.getFields().containsKey(fieldName)) {
-					throw new RuntimeException("Cannot filter field [ " + fieldName + " ] as it was not found on entity [ " + metadataDTO.getSimpleName() + " ]");
-				}
+				if(filterField.getFieldName() != null) {
+					String fieldName = filterField.getFieldName();
+					if(!metadataDTO.getFields().containsKey(fieldName)) {
+						throw new RuntimeException("Cannot filter field [ " + fieldName + " ] as it was not found on entity [ " + metadataDTO.getSimpleName() + " ]");
+					}
 
-				Class fieldClazz = metadataDTO.getFields().get(fieldName);
+					Class fieldClazz = metadataDTO.getFields().get(fieldName);
 
-				FilterFieldDataType fieldDataType = getDataTypeFromClass(fieldClazz);
-				filterField.setDataType(fieldDataType);
-				if(fieldDataType == FilterFieldDataType.Enum) {
-					filterField.setEnumType(fieldClazz.getName());
+					FilterFieldDataType fieldDataType = getDataTypeFromClass(fieldClazz);
+					filterField.setDataType(fieldDataType);
+					if(fieldDataType == FilterFieldDataType.Enum) {
+						filterField.setEnumType(fieldClazz.getName());
+					}
 				}
 			}
 		}
