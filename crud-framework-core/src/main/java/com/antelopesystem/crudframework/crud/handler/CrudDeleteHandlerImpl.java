@@ -4,7 +4,6 @@ import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.exception.CrudDeleteException;
 import com.antelopesystem.crudframework.crud.hooks.HooksDTO;
 import com.antelopesystem.crudframework.crud.hooks.delete.*;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.DeleteHooks;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
 import com.antelopesystem.crudframework.exception.WrapException;
@@ -15,22 +14,16 @@ import org.springframework.util.ClassUtils;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 
 @WrapException(CrudDeleteException.class)
-public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDeleteHandler {
+public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
 
 	@Autowired
 	private CrudHelper crudHelper;
 
 	@Resource(name = "crudDeleteHandler")
 	private CrudDeleteHandler crudDeleteHandlerProxy;
-
-	@Override
-	protected List<Class<? extends CRUDHooks>> getHookTargetClasses() {
-		return Arrays.asList(DeleteHooks.class);
-	}
 
 	@Override
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Object deleteInternal(ID id, Class<Entity> clazz,
@@ -40,7 +33,7 @@ public class CrudDeleteHandlerImpl extends CrudHookHandlerBase implements CrudDe
 		crudHelper.checkEntityImmutability(clazz);
 		crudHelper.checkEntityDeletability(clazz);
 
-		List<DeleteHooks> deleteHooksList = getHooks(DeleteHooks.class, clazz);
+		List<DeleteHooks> deleteHooksList = crudHelper.getHooks(DeleteHooks.class, clazz);
 
 		if(deleteHooksList != null && !deleteHooksList.isEmpty()) {
 			for(DeleteHooks<ID, Entity> deleteHooks : deleteHooksList) {

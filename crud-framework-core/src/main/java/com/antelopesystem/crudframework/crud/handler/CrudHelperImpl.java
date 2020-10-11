@@ -35,6 +35,7 @@ import javax.validation.*;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CrudHelperImpl implements CrudHelper {
 
@@ -85,6 +86,14 @@ public class CrudHelperImpl implements CrudHelper {
 		);
 
 		cacheManager.addCacheIfAbsent(pagingCache);
+	}
+
+	@Override
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, HooksType extends CRUDHooks> List<HooksType> getHooks(Class<HooksType> crudHooksClazz, Class<Entity> entityClazz) {
+		return applicationContext.getBeansOfType(crudHooksClazz).values()
+				.stream()
+				.filter(c -> c.getType() == entityClazz)
+				.collect(Collectors.toList());
 	}
 
 	@Override

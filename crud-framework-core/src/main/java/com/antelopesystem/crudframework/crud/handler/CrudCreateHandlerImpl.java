@@ -10,7 +10,6 @@ import com.antelopesystem.crudframework.crud.hooks.create.CRUDPreCreateHook;
 import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDOnCreateFromHook;
 import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDPostCreateFromHook;
 import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDPreCreateFromHook;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CreateFromHooks;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CreateHooks;
 import com.antelopesystem.crudframework.exception.WrapException;
@@ -20,12 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @WrapException(CrudCreateException.class)
-public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCreateHandler {
+public class CrudCreateHandlerImpl implements CrudCreateHandler {
 
 	@Autowired
 	private CrudHelper crudHelper;
@@ -34,16 +32,11 @@ public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCr
 	private CrudCreateHandler crudCreateHandlerProxy;
 
 	@Override
-	protected List<Class<? extends CRUDHooks>> getHookTargetClasses() {
-		return Arrays.asList(CreateHooks.class, CreateFromHooks.class);
-	}
-
-	@Override
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity createInternal(Entity entity, HooksDTO<CRUDPreCreateHook<ID, Entity>, CRUDOnCreateHook<ID, Entity>, CRUDPostCreateHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO) {
 		Objects.requireNonNull(entity, "Entity cannot be null");
 
-		List<CreateHooks> createHooksList = getHooks(CreateHooks.class, entity.getClass());
+		List<CreateHooks> createHooksList = crudHelper.getHooks(CreateHooks.class, entity.getClass());
 
 		if(createHooksList != null && !createHooksList.isEmpty()) {
 			for(CreateHooks<ID, Entity> createHooks : createHooksList) {
@@ -91,7 +84,7 @@ public class CrudCreateHandlerImpl extends CrudHookHandlerBase implements CrudCr
 			DataAccessorDTO accessorDTO) {
 		Objects.requireNonNull(object, "Object cannot be null");
 
-		List<CreateFromHooks> createFromHooksList = getHooks(CreateFromHooks.class, clazz);
+		List<CreateFromHooks> createFromHooksList = crudHelper.getHooks(CreateFromHooks.class, clazz);
 
 		if(createFromHooksList != null && !createFromHooksList.isEmpty()) {
 			for(CreateFromHooks<ID, Entity> createFromHooks : createFromHooksList) {

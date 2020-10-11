@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.*;
 
 @WrapException(CrudReadException.class)
-public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudReadHandler {
+public class CrudReadHandlerImpl implements CrudReadHandler {
 
 	@Autowired
 	private CrudHelper crudHelper;
@@ -33,11 +33,6 @@ public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudRead
 	private static Random random = new Random();
 
 	@Override
-	protected List<Class<? extends CRUDHooks>> getHookTargetClasses() {
-		return Arrays.asList(ShowByHooks.class, ShowHooks.class, IndexHooks.class);
-	}
-
-	@Override
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> PagingDTO<Entity> indexInternal(Filter filter, Class<Entity> clazz,
 			HooksDTO<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>> hooks,
 			boolean fromCache, Boolean persistCopy, DataAccessorDTO accessorDTO, boolean count) {
@@ -45,7 +40,7 @@ public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudRead
 			filter = (Filter) new DynamicModelFilter();
 		}
 
-		List<IndexHooks> indexHooksList = getHooks(IndexHooks.class, clazz);
+		List<IndexHooks> indexHooksList = crudHelper.getHooks(IndexHooks.class, clazz);
 
 		if(indexHooksList != null && !indexHooksList.isEmpty()) {
 			for(IndexHooks<ID, Entity> indexHooks : indexHooksList) {
@@ -141,7 +136,7 @@ public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudRead
 			filter = (Filter) new DynamicModelFilter();
 		}
 
-		List<ShowByHooks> showByHooksList = getHooks(ShowByHooks.class, clazz);
+		List<ShowByHooks> showByHooksList = crudHelper.getHooks(ShowByHooks.class, clazz);
 
 		if(showByHooksList != null && !showByHooksList.isEmpty()) {
 			for(ShowByHooks<ID, Entity> showByHooks : showByHooksList) {
@@ -211,7 +206,7 @@ public class CrudReadHandlerImpl extends CrudHookHandlerBase implements CrudRead
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity showInternal(ID id, Class<Entity> clazz,
 			HooksDTO<CRUDPreShowHook<ID, Entity>, CRUDOnShowHook<ID, Entity>, CRUDPostShowHook<ID, Entity>> hooks, boolean fromCache, Boolean persistCopy, DataAccessorDTO accessorDTO) {
 
-		List<ShowHooks> showHooksList = getHooks(ShowHooks.class, clazz);
+		List<ShowHooks> showHooksList = crudHelper.getHooks(ShowHooks.class, clazz);
 
 		if(showHooksList != null && !showHooksList.isEmpty()) {
 			for(ShowHooks<ID, Entity> showHooks : showHooksList) {

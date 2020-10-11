@@ -17,18 +17,13 @@ import java.io.Serializable;
 import java.util.*;
 
 @WrapException(value = CrudUpdateException.class)
-public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUpdateHandler {
+public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 
 	@Autowired
 	private CrudHelper crudHelper;
 
 	@Resource(name = "crudUpdateHandler")
 	private CrudUpdateHandler crudUpdateHandlerProxy;
-
-	@Override
-	protected List<Class<? extends CRUDHooks>> getHookTargetClasses() {
-		return Arrays.asList(UpdateFromHooks.class, UpdateHooks.class);
-	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -60,7 +55,7 @@ public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUp
 		Objects.requireNonNull(entity, "Entity cannot be null");
 		crudHelper.checkEntityImmutability(entity.getClass());
 
-		List<UpdateHooks> updateHooksList = getHooks(UpdateHooks.class, entity.getClass());
+		List<UpdateHooks> updateHooksList = crudHelper.getHooks(UpdateHooks.class, entity.getClass());
 
 		if(updateHooksList != null && !updateHooksList.isEmpty()) {
 			for(UpdateHooks<ID, Entity> updateHooks : updateHooksList) {
@@ -108,7 +103,7 @@ public class CrudUpdateHandlerImpl extends CrudHookHandlerBase implements CrudUp
 			DataAccessorDTO accessorDTO) {
 		crudHelper.checkEntityImmutability(clazz);
 
-		List<UpdateFromHooks> updateFromHooksList = getHooks(UpdateFromHooks.class, clazz);
+		List<UpdateFromHooks> updateFromHooksList = crudHelper.getHooks(UpdateFromHooks.class, clazz);
 
 		if(updateFromHooksList != null && !updateFromHooksList.isEmpty()) {
 			for(UpdateFromHooks<ID, Entity> updateFromHooks : updateFromHooksList) {
