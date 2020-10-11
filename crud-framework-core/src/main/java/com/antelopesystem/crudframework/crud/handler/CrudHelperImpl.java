@@ -69,9 +69,11 @@ public class CrudHelperImpl implements CrudHelper {
 	@Autowired(required = false)
 	private CacheManager cacheManager;
 
+	@Autowired(required = false)
+	private Map<String, FieldTransformer> fieldTransformers = new HashMap<>();
+
 	@PostConstruct
 	private void init() {
-		Map<String, FieldTransformer> fieldTransformers = applicationContext.getBeansOfType(FieldTransformer.class);
 		for(Map.Entry<String, FieldTransformer> entry : fieldTransformers.entrySet()) {
 			fieldMapper.registerTransformer(entry.getKey(), entry.getValue());
 		}
