@@ -284,6 +284,12 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
         }
     }
 
+    fun noop() {
+        filterFields += FilterField().apply {
+            this.operation = FilterFieldOperation.Noop
+        }
+    }
+
     infix fun <T> BetweenBuilder<T>.And(target: T) {
         filterFields += this.build(target)
     }

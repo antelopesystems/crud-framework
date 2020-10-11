@@ -238,7 +238,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 
 		Junction junction = Restrictions.and();
 
-		if(filterField.getOperation() == FilterFieldOperation.RawJunction || filterField.getChildren() != null || isValidSimpleFilterField(filterField)) {
+		if((filterField.getOperation() == FilterFieldOperation.RawJunction || filterField.getOperation() == FilterFieldOperation.Noop) || filterField.getChildren() != null || isValidSimpleFilterField(filterField)) {
 
 			switch(filterField.getOperation()) {
 				case Equal:
@@ -346,6 +346,9 @@ public abstract class AbstractBaseDao implements BaseDao {
 					if(dto != null && dto.getJunction() != null) {
 						junction.add(dto.getJunction());
 					}
+					break;
+				case Noop:
+					junction.add(Restrictions.sqlRestriction("1=0"));
 					break;
 			}
 		}

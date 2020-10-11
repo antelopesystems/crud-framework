@@ -235,6 +235,8 @@ public abstract class AbstractMongoBaseDao {
 						criteria.andOperator(dto.getJunction());
 					}
 					break;
+				case Noop:
+					criteria.andOperator(Criteria.where("id").in());
 			}
 		}
 
