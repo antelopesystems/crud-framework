@@ -164,7 +164,7 @@ public class FilterField implements Serializable {
 					clazz = Class.forName(enumType);
 					return Enum.valueOf(clazz, field.toString());
 				} catch(ClassNotFoundException e) {
-					throw new RuntimeException("Could not find class [ " + enumType);
+					throw new RuntimeException("Could not find class [ " + enumType + " ]");
 				} catch(IllegalArgumentException e) {
 					throw new RuntimeException("Could not find value [ " + field.toString() + " ] in enum [ " + enumType + " ]");
 				}

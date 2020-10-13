@@ -144,7 +144,8 @@ public class CrudHelperImpl implements CrudHelper {
 		validateAndFillFilterFieldMetadata(filter.getFilterFields(), metadataDTO);
 	}
 
-	private void validateAndFillFilterFieldMetadata(List<FilterField> filterFields, EntityMetadataDTO metadataDTO) {
+	@Override
+	public void validateAndFillFilterFieldMetadata(List<FilterField> filterFields, EntityMetadataDTO metadataDTO) {
 		for(FilterField filterField : filterFields) {
 			boolean isJunction = filterField.getOperation() == FilterFieldOperation.And || filterField.getOperation() == FilterFieldOperation.Or || filterField.getOperation() == FilterFieldOperation.Not || filterField.getOperation() == FilterFieldOperation.RawJunction;
 			if(isJunction) {
@@ -154,6 +155,9 @@ public class CrudHelperImpl implements CrudHelper {
 			} else {
 				if(filterField.getFieldName() != null) {
 					String fieldName = filterField.getFieldName();
+					if(fieldName.endsWith(".elements")) {
+						fieldName = fieldName.substring(0, fieldName.lastIndexOf(".elements"));
+					}
 					if(!metadataDTO.getFields().containsKey(fieldName)) {
 						throw new RuntimeException("Cannot filter field [ " + fieldName + " ] as it was not found on entity [ " + metadataDTO.getSimpleName() + " ]");
 					}
