@@ -7,14 +7,14 @@
     <parent>
         <groupId>com.antelopesystem.crudframework</groupId>
         <artifactId>crud-framework</artifactId>
-        <version>0.1.4-SNAPSHOT</version>
+        <version>0.1.4</version>
     </parent>
     <dependencies>
         <!-- Testing -->
         <dependency>
             <groupId>com.antelopesystem.crudframework</groupId>
             <artifactId>crud-framework-utils</artifactId>
-            <version>0.1.4-SNAPSHOT</version>
+            <version>0.1.4</version>
         </dependency>
 
         <dependency>
