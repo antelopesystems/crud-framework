@@ -4,13 +4,13 @@ import com.antelopesystem.crudframework.utils.cluster.lock.ParameterLock
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils
+import org.apache.commons.lang3.ClassUtils
 import org.springframework.aop.TargetClassAware
 import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.beans.factory.config.DependencyDescriptor
 import org.springframework.core.annotation.AnnotationUtils
 import org.springframework.stereotype.Component
-import org.springframework.util.ClassUtils
 import java.lang.reflect.Method
 
 class ComponentMapPostProcessor : BeanPostProcessor {
