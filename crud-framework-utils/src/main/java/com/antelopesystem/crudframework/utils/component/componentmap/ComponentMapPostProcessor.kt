@@ -10,14 +10,13 @@ import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.config.BeanPostProcessor
 import org.springframework.beans.factory.config.DependencyDescriptor
 import org.springframework.core.annotation.AnnotationUtils
-import org.springframework.stereotype.Component
 import java.lang.reflect.Method
 
 class ComponentMapPostProcessor : BeanPostProcessor {
 
     private val componentMaps: MutableMap<Pair<Class<*>, Class<*>>, MutableMap<Any, Any>> = mutableMapOf()
 
-    override fun postProcessBeforeInitialization(bean: Any, beanName: String): Any {
+    override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
         registerComponentMapKeyIfExists(bean)
         fillComponentMapIfExists(bean)
         return bean
