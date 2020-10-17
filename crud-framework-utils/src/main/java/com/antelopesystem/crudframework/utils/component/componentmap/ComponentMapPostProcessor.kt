@@ -16,9 +16,12 @@ class ComponentMapPostProcessor : BeanPostProcessor {
 
     private val componentMaps: MutableMap<Pair<Class<*>, Class<*>>, MutableMap<Any, Any>> = mutableMapOf()
 
-    override fun postProcessAfterInitialization(bean: Any, beanName: String): Any {
-        registerComponentMapKeyIfExists(bean)
-        fillComponentMapIfExists(bean)
+    override fun postProcessAfterInitialization(bean: Any, beanName: String?): Any {
+        try {
+            registerComponentMapKeyIfExists(bean)
+            fillComponentMapIfExists(bean)
+        } catch (e: Exception) {
+        }
         return bean
     }
 
