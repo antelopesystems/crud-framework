@@ -10,19 +10,10 @@
         <version>0.1.8-SNAPSHOT</version>
     </parent>
     <dependencies>
-        <!-- Testing -->
         <dependency>
             <groupId>com.antelopesystem.crudframework</groupId>
             <artifactId>crud-framework-utils</artifactId>
             <version>0.1.8-SNAPSHOT</version>
         </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 </project>
