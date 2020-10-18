@@ -1,6 +1,8 @@
 # CRUD Framework
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.antelopesystem.crudframework/crud-framework/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.antelopesystem.crudframework/crud-framework)
+[![CircleCI](https://circleci.com/gh/antelopesystems/crud-framework.svg?style=shield)](https://circleci.com/gh/antelopesystems/crud-framework)
+
 
 The CRUD Framework is a Spring-powered framework intended to simplify and expand on CRUD operations in Spring, currently
 supporting both MongoDB(Via Spring Data) and JPA.
