@@ -11,7 +11,7 @@
     </parent>
 
     <properties>
-        <hibernate.core.version>5.2.17.Final</hibernate.core.version>
+        <hibernate.core.version>5.4.22.Final</hibernate.core.version>
     </properties>
     <dependencies>
         <!-- Spring Framework -->
