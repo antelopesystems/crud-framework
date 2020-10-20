@@ -1,14 +1,15 @@
 package com.antelopesystem.crudframework.crud.decorator;
 
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Class that handles decorations when converting {@code fromObject} to {@code toObject}. Must be defined as a bean
  *
- * @param <T> the fromObject type
- * @param <E> the toObject type
+ * @param <From> the fromObject type
+ * @param <To> the toObject type
  */
-public interface ObjectDecorator<T, E> {
+public interface ObjectDecorator<From, To> {
 
 	/**
 	 * Gets Object Decorator type.
@@ -24,6 +25,6 @@ public interface ObjectDecorator<T, E> {
 	 * @param fromObject the source object
 	 * @param toObject the target object
 	 */
-	void decorate(T fromObject, E toObject);
+	void decorate(@NotNull From fromObject, @NotNull To toObject);
 
 }
