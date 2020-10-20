@@ -92,10 +92,17 @@ public class CrudHelperImpl implements CrudHelper {
 
 	@Override
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, HooksType extends CRUDHooks> List<HooksType> getHooks(Class<HooksType> crudHooksClazz, Class<Entity> entityClazz) {
-		return applicationContext.getBeansOfType(crudHooksClazz).values()
+		EntityMetadataDTO metadataDTO = getEntityMetadata(entityClazz);
+	 	Set<HooksType> matchingAnnotationHooks = (Set<HooksType>) metadataDTO.getHooksFromAnnotations()
+				.stream()
+				.filter(hook -> crudHooksClazz.isAssignableFrom(hook.getClass()))
+				.collect(Collectors.toSet());
+		List<HooksType> hooks = applicationContext.getBeansOfType(crudHooksClazz).values()
 				.stream()
 				.filter(c -> c.getType() == entityClazz)
 				.collect(Collectors.toList());
+		hooks.addAll(matchingAnnotationHooks);
+		return hooks;
 	}
 
 	@Override
