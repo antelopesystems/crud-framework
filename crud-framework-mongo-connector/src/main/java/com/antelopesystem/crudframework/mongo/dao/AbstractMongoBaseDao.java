@@ -91,10 +91,11 @@ public abstract class AbstractMongoBaseDao {
 
 		if(filter != null) {
 			if(filter.getFilterFields() != null && !filter.getFilterFields().isEmpty()) {
+				Criteria criteria = new Criteria();
 				for(FilterField filterField : filter.getFilterFields()) {
-					query.addCriteria(buildCriterion(filterField));
-
+					buildCriterion(criteria, filterField);
 				}
+				query.addCriteria(criteria);
 			}
 
 		}
@@ -102,81 +103,71 @@ public abstract class AbstractMongoBaseDao {
 	}
 
 
-	private Criteria buildCriterion(FilterField filterField) {
-		Criteria criteria = new Criteria();
-
+	private Criteria buildCriterion(Criteria criteria, FilterField filterField) {
 		if(filterField.getOperation() == FilterFieldOperation.RawJunction || filterField.getChildren() != null || isValidSimpleFilterField(filterField)) {
 
 			switch(filterField.getOperation()) {
 				case Equal:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).is(filterField.getValue1()));
+					criteria.and(filterField.getFieldName()).is(filterField.getValue1());
 					break;
 				case NotEqual:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).ne(filterField.getValue1()));
+					criteria.and(filterField.getFieldName()).ne(filterField.getValue1());
 					break;
 				case In:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).in(filterField.getValues()));
+					criteria.and(filterField.getFieldName()).in(filterField.getValues());
 					break;
 				case NotIn:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).nin(filterField.getValues()));
+					criteria.and(filterField.getFieldName()).nin(filterField.getValues());
 					break;
 				case GreaterEqual:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).gte(filterField.getValue1()));
+					criteria.and(filterField.getFieldName()).gte(filterField.getValue1());
 					break;
 				case GreaterThan:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).gt(filterField.getValue1()));
+					criteria.and(filterField.getFieldName()).gt(filterField.getValue1());
 					break;
 				case LowerEqual:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).lte(filterField.getValue1()));
+					criteria.and(filterField.getFieldName()).lte(filterField.getValue1());
 					break;
 				case LowerThan:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).lt(filterField.getValue1()));
+					criteria.and(filterField.getFieldName()).lt(filterField.getValue1());
 					break;
 				case Between:
-					criteria.andOperator(
-							Criteria
-									.where(filterField.getFieldName())
+					criteria.and(filterField.getFieldName())
 									.gte(filterField.getValue1())
 									.and(filterField.getFieldName())
-									.lte(filterField.getValue2()));
+									.lte(filterField.getValue2());
 					break;
 				case Contains:
 					if(filterField.getValue1() != null && !filterField.getValue1().toString().trim().isEmpty()) {
-						criteria.andOperator(
-								Criteria.where(filterField.getFieldName()).regex(Pattern.compile(filterField.getValue1().toString(), Pattern.LITERAL & Pattern.CASE_INSENSITIVE))
-						);
+						criteria.and(filterField.getFieldName()).regex(Pattern.compile(filterField.getValue1().toString(), Pattern.LITERAL & Pattern.CASE_INSENSITIVE));
 					}
 					break;
 				case StartsWith:
 					if(filterField.getValue1() != null && !filterField.getValue1().toString().trim().isEmpty()) {
 						Pattern pattern = Pattern.compile(filterField.getValue1().toString(), Pattern.LITERAL & Pattern.CASE_INSENSITIVE);
-						criteria.andOperator(
-								Criteria.where(filterField.getFieldName()).regex("^" + pattern.toString())
-						);
+						criteria.and(filterField.getFieldName()).regex("^" + pattern.toString());
 					}
 					break;
 				case EndsWith:
 					if(filterField.getValue1() != null && !filterField.getValue1().toString().trim().isEmpty()) {
 						Pattern pattern = Pattern.compile(filterField.getValue1().toString(), Pattern.LITERAL & Pattern.CASE_INSENSITIVE);
-						criteria.andOperator(
-								Criteria.where(filterField.getFieldName()).regex(pattern.toString() + "$")
-						);
+						criteria.and(filterField.getFieldName()).regex(pattern.toString() + "$");
 					}
 					break;
 				case IsNull:
-					criteria.andOperator(new Criteria().orOperator(
+					criteria.orOperator(
 							Criteria.where(filterField.getFieldName()).exists(false),
 							Criteria.where(filterField.getFieldName()).is(null)
-					));
+					);
 					break;
 				case IsNotNull:
-					criteria.andOperator(Criteria.where(filterField.getFieldName()).ne(null));
+					criteria.and(filterField.getFieldName()).ne(null);
 					break;
 				case And:
 					if(filterField.getChildren() != null && !filterField.getChildren().isEmpty()) {
 						List<Criteria> criterias = new ArrayList<>();
 						for(FilterField child : filterField.getChildren()) {
-							criterias.add(buildCriterion(child));
+							criterias.add(buildCriterion(criteria, child));
 						}
 
 						criteria.andOperator(criterias.toArray(new Criteria[]{}));
@@ -186,7 +177,7 @@ public abstract class AbstractMongoBaseDao {
 					if(filterField.getChildren() != null && !filterField.getChildren().isEmpty()) {
 						List<Criteria> criterias = new ArrayList<>();
 						for(FilterField child : filterField.getChildren()) {
-							criterias.add(buildCriterion(child));
+							criterias.add(buildCriterion(criteria, child));
 						}
 
 						criteria.orOperator(criterias.toArray(new Criteria[]{}));
@@ -195,7 +186,7 @@ public abstract class AbstractMongoBaseDao {
 				case Not:
 					if(filterField.getChildren() != null && !filterField.getChildren().isEmpty()) {
 						FilterField child = filterField.getChildren().get(0);
-						criteria.not().andOperator(buildCriterion(child));
+						criteria.not().andOperator(buildCriterion(criteria, child));
 					}
 					break;
 				case ContainsIn:
@@ -236,7 +227,7 @@ public abstract class AbstractMongoBaseDao {
 					}
 					break;
 				case Noop:
-					criteria.andOperator(Criteria.where("id").in());
+					criteria.and("id").in();
 			}
 		}
 
