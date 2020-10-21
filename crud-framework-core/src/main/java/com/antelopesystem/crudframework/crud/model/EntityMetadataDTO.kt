@@ -51,7 +51,7 @@ class EntityMetadataDTO {
         if(prefix.isNullOrBlank()) {
             effectivePrefix = ""
         } else {
-            effectivePrefix = prefix.replace(".", "->") + "."
+            effectivePrefix = prefix.replace(".", "/") + "."
         }
 
         ReflectionUtils.getFields(entityClazz).forEach {
@@ -138,6 +138,6 @@ class EntityMetadataDTO {
     }
 
     companion object {
-        private const val MAX_FILTERFIELD_DEPTH = 15
+        private const val MAX_FILTERFIELD_DEPTH = 4
     }
 }
