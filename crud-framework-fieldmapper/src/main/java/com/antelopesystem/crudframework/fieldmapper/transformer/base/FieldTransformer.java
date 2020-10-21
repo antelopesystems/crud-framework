@@ -4,5 +4,5 @@ import java.lang.reflect.Field;
 
 public interface FieldTransformer<T, E> {
 
-	E transform(Field fromField, Field toField, T originalValue);
+	E transform(Field fromField, Field toField, T originalValue, Object fromObject, Object toObject);
 }
