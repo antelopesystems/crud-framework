@@ -22,7 +22,7 @@ public abstract class FieldTransformerBase<T, E> implements FieldTransformer<T, 
 	}
 
 	@Override
-	public final E transform(Field fromField, Field toField, T originalValue) {
+	public final E transform(Field fromField, Field toField, T originalValue, Object fromObject, Object toObject) {
 		Class<T> tClazz;
 		Class<E> eClazz;
 		Object fromClazz = ((ParameterizedType) getClass()
@@ -49,10 +49,10 @@ public abstract class FieldTransformerBase<T, E> implements FieldTransformer<T, 
 			throw new IllegalStateException(toField.toString() + " - toField type [ " + toField.getType().getSimpleName() + " ] does not match transformer toType [ " + eClazz.getSimpleName() + " ]");
 		}
 
-		return innerTransform(fromField, toField, originalValue);
+		return innerTransform(fromField, toField, originalValue, fromObject, toObject);
 	}
 
-	protected abstract E innerTransform(Field fromField, Field toField, T originalValue);
+	protected abstract E innerTransform(Field fromField, Field toField, T originalValue, Object fromObject, Object toObject);
 
 	private static Class<?> getActualClass(Class<?> clazz) {
 		if(clazz.isPrimitive()) {

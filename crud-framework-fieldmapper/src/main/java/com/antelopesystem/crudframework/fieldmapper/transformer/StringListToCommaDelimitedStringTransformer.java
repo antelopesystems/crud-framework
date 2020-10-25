@@ -9,7 +9,7 @@ public class StringListToCommaDelimitedStringTransformer extends FieldTransforme
 
 
 	@Override
-	protected String innerTransform(Field fromField, Field toField, List originalValue) {
+	protected String innerTransform(Field fromField, Field toField, List originalValue, Object fromObject, Object toObject) {
 		return originalValue == null ? null : String.join(",", originalValue);
 	}
 }
