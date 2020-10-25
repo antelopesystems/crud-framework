@@ -6,6 +6,7 @@ import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks
 import com.antelopesystem.crudframework.model.BaseCrudEntity
 import com.antelopesystem.crudframework.model.PersistentEntity
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils
+import com.antelopesystem.crudframework.utils.utils.getGenericClass
 import org.springframework.core.annotation.AnnotationUtils
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
@@ -28,7 +29,7 @@ class EntityMetadataDTO {
 
     val hooksFromAnnotations: MutableSet<CRUDHooks<*, *>> = mutableSetOf()
 
-    val fields: MutableMap<String, Class<*>> = mutableMapOf()
+    val fields: MutableMap<String, Field> = mutableMapOf()
 
     val daoClazz: Class<out CrudDao>
 
@@ -59,10 +60,18 @@ class EntityMetadataDTO {
                 return
             }
 
-            if(PersistentEntity::class.java.isAssignableFrom(it.type) && currentDepth < MAX_FILTERFIELD_DEPTH) {
-                getFields(it.type as Class<out PersistentEntity>, effectivePrefix + it.name, currentDepth + 1)
+            var fieldClazz = it.type;
+            if (Collection::class.java.isAssignableFrom(fieldClazz)) {
+                val potentialFieldClazz = it.getGenericClass(0)
+                if (potentialFieldClazz != null && PersistentEntity::class.java.isAssignableFrom(potentialFieldClazz)) {
+                    fieldClazz = potentialFieldClazz
+                }
+            }
+
+            if(PersistentEntity::class.java.isAssignableFrom(fieldClazz) && currentDepth < MAX_FILTERFIELD_DEPTH) {
+                getFields(fieldClazz as Class<out PersistentEntity>, effectivePrefix + it.name, currentDepth + 1)
             } else {
-                fields[effectivePrefix + it.name] = it.type
+                fields[effectivePrefix + it.name] = it
             }
         }
     }
