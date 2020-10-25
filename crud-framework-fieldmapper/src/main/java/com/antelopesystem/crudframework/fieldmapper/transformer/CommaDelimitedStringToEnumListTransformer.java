@@ -10,7 +10,7 @@ import java.util.*;
 public class CommaDelimitedStringToEnumListTransformer extends FieldTransformerBase<String, List> {
 
 	@Override
-	protected List innerTransform(Field fromField, Field toField, String originalValue) {
+	protected List innerTransform(Field fromField, Field toField, String originalValue, Object fromObject, Object toObject) {
 		if(originalValue == null) {
 			return null;
 		}

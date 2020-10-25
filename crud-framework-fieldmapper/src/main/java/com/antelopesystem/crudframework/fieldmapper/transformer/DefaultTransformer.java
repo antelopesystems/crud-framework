@@ -7,7 +7,7 @@ import java.lang.reflect.Field;
 public class DefaultTransformer implements FieldTransformer<Object, Object> {
 
 	@Override
-	public Object transform(Field fromField, Field toField, Object originalValue) {
+	public Object transform(Field fromField, Field toField, Object originalValue, Object fromObject, Object toObject) {
 		return originalValue;
 	}
 }

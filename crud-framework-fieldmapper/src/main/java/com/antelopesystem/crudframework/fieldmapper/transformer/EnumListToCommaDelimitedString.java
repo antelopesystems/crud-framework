@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class EnumListToCommaDelimitedString extends FieldTransformerBase<List, String> {
 
 	@Override
-	protected String innerTransform(Field fromField, Field toField, List originalValue) {
+	protected String innerTransform(Field fromField, Field toField, List originalValue, Object fromObject, Object toObject) {
 		if(originalValue == null) {
 			return null;
 		}

@@ -140,7 +140,7 @@ public class FieldMapper {
 
 		Object value = ReflectionUtils.getField(fromPair.getField(), fromPair.getObject());
 		if(transformer != null) {
-			value = transformer.transform(fromPair.getField(), toPair.getField(), value);
+			value = transformer.transform(fromPair.getField(), toPair.getField(), value, fromPair.getObject(), toPair.getObject());
 		}
 
 		if(value != null) {
