@@ -2,7 +2,7 @@ package com.antelopesystem.crudframework.crud.dataaccess;
 
 import java.lang.reflect.ParameterizedType;
 
-public abstract class DataAccessManagerBase<Accessor, Entity> implements DataAccessManager<Accessor, Entity> {
+public abstract class DataAccessManagerBase<Accessor, AccessorId, Entity> implements DataAccessManager<Accessor, AccessorId, Entity> {
 
 	@Override
 	public String getKey() {
