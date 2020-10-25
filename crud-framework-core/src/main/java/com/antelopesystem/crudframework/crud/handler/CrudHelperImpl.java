@@ -3,16 +3,21 @@ package com.antelopesystem.crudframework.crud.handler;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
-import com.antelopesystem.crudframework.crud.exception.*;
+import com.antelopesystem.crudframework.crud.exception.CrudException;
+import com.antelopesystem.crudframework.crud.exception.CrudInvalidStateException;
+import com.antelopesystem.crudframework.crud.exception.CrudTransformationException;
+import com.antelopesystem.crudframework.crud.exception.CrudValidationException;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
-import com.antelopesystem.crudframework.exception.dto.ErrorField;
 import com.antelopesystem.crudframework.exception.WrapException;
+import com.antelopesystem.crudframework.exception.dto.ErrorField;
 import com.antelopesystem.crudframework.fieldmapper.FieldMapper;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.model.PersistentEntity;
-import com.antelopesystem.crudframework.modelfilter.*;
+import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
+import com.antelopesystem.crudframework.modelfilter.FilterField;
+import com.antelopesystem.crudframework.modelfilter.FilterFields;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
@@ -26,16 +31,16 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.ResolvableType;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.validation.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -187,7 +192,7 @@ public class CrudHelperImpl implements CrudHelper {
 					FilterFieldDataType fieldDataType = getDataTypeFromClass(fieldClazz);
 					filterField.setDataType(fieldDataType);
 					if(fieldDataType == FilterFieldDataType.Enum) {
-						filterField.setEnumType(field.getName());
+						filterField.setEnumType(field.getType().getName());
 					}
 				}
 			}
