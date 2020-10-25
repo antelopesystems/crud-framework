@@ -7,16 +7,15 @@ import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.BaseRO;
 import com.antelopesystem.crudframework.web.annotation.CRUDActions;
-import com.antelopesystem.crudframework.web.ro.ResultRO;
 import com.antelopesystem.crudframework.web.ro.ManyCrudResult;
 import com.antelopesystem.crudframework.web.ro.ManyFailedReason;
+import com.antelopesystem.crudframework.web.ro.ResultRO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -47,10 +46,10 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 
 	@PostConstruct
 	private void init() {
-		Type[] actualTypes = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
-		entityClazz = (Class<Entity>) actualTypes[1];
-		showRoClazz = (Class<ShowReturnRO>) actualTypes[actualTypes.length - 2];
-		indexRoClazz = (Class<IndexReturnRO>) actualTypes[actualTypes.length - 1];
+		Class[] generics = GenericTypeResolver.resolveTypeArguments(getClass(), BaseDifferentRoCRUDController.class);
+		entityClazz = (Class<Entity>) generics[1];
+		showRoClazz = (Class<ShowReturnRO>) generics[4];
+		indexRoClazz = (Class<IndexReturnRO>) generics[5];
 	}
 
 
