@@ -7,45 +7,47 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
-public class CreateTests extends BaseCrudTest {
+public class CreateFromIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Test
-	public void testCreate() {
+	public void testCreateFrom() {
 		TestEntity expectedOutcome = new TestEntity();
-		TestEntity outcome = crudHandler.create(new TestEntity())
+		TestEntity outcome = crudHandler.createFrom(new TestEntityRO(), TestEntity.class)
 				.execute();
 		assertNotNull(outcome);
 		assertEquals(expectedOutcome.getGenericVariable(), outcome.getGenericVariable());
 	}
 
 	@Test
-	public void testCreateWithRO() {
+	public void testCreateFromWithRO() {
 		TestEntityRO expectedOutcome = new TestEntityRO();
-		TestEntityRO outcome = crudHandler.create(new TestEntity(), TestEntityRO.class)
+		TestEntityRO outcome = crudHandler.createFrom(new TestEntityRO(), TestEntity.class, TestEntityRO.class)
 				.execute();
 		assertNotNull(outcome);
 		assertEquals(expectedOutcome.getGenericVariable(), outcome.getGenericVariable());
 	}
 
 	@Test
-	public void testCreateHooks() {
+	public void testCreateFromHooks() {
 		HookTestDTO dto = new HookTestDTO();
 
-		TestEntity mockEntity = new TestEntity();
-		crudHandler.create(new TestEntity())
-				.withPreHook((entity) -> {
-					assertEquals(mockEntity, entity);
+		TestEntityRO mockRO = new TestEntityRO();
+
+		crudHandler.createFrom(new TestEntityRO(), TestEntity.class)
+				.withPreHook((object) -> {
+					assertEquals(mockRO, object);
 					dto.setPreHookCalled(true);
 				})
-				.withOnHook((entity) -> {
+				.withOnHook((entity, object) -> {
 					assertNotNull(entity);
-					assertEquals(mockEntity, entity);
+					assertEquals(mockRO, object);
+					assertEquals(mockRO.getGenericVariable(), entity.getGenericVariable());
 					dto.setOnHookCalled(true);
 				})
 				.withPostHook((entity) -> {
 					assertNotNull(entity);
 					assertTrue(entity.getId() > 0);
-					assertEquals(mockEntity.getGenericVariable(), entity.getGenericVariable());
+					assertEquals(mockRO.getGenericVariable(), entity.getGenericVariable());
 					dto.setPostHookCalled(true);
 				})
 				.execute();

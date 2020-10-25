@@ -12,7 +12,7 @@ import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.Date;
 
-public abstract class BaseCrudTest extends BaseIntegrationTest {
+public abstract class BaseCrudIntegrationTest extends BaseIntegrationTest {
 
 	@PersistenceContext
 	private EntityManager entityManager;

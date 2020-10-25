@@ -5,7 +5,7 @@ import com.antelopesystem.crudframework.fieldmapper.transformer.CommaDelimitedSt
 import com.antelopesystem.crudframework.fieldmapper.transformer.DateToLongTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.LongToCurrencyDoubleTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.ToStringTransformer;
-import com.antelopesystem.crudframework.jpa.model.JpaBaseEntity;
+import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -16,7 +16,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "test_entity")
-public class TestEntity extends JpaBaseEntity {
+public class TestEntity extends BaseJpaEntity {
 
 	@MappedField(target = TestEntityRO.class, transformer = CommaDelimitedStringToListTransformer.class, mapTo = "stringList")
 	private String commaDelimitedString = "val1,val2,val3,val4";

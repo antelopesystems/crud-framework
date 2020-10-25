@@ -9,7 +9,7 @@ import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 
-public class WithHooksTests extends BaseCrudTest {
+public class WithHooksIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Autowired
 	private CrudHelper crudHelper;

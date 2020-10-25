@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
-public class IndexTests extends BaseCrudTest {
+public class IndexIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Test
 	public void testIndexWhenValidFilter() {

@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class UpdateFromTests extends BaseCrudTest {
+public class UpdateFromIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Test
 	public void testUpdateFrom() {
