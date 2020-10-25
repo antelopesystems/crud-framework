@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.Serializable;
 import java.util.List;
 
-public abstract class BaseCRUDController<ID extends Serializable, Entity extends BaseCrudEntity<ID>, ReturnRO extends BaseRO<ID>> extends BaseDifferentRoCRUDController<ID, Entity, ReturnRO , ReturnRO, ReturnRO> {
+public abstract class BaseCRUDController<ID extends Serializable, Entity extends BaseCrudEntity<ID>, ReturnRO extends BaseRO<ID>> extends BaseDifferentRoCRUDController<ID, Entity, ReturnRO , ReturnRO, ReturnRO, ReturnRO> {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
