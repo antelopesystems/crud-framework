@@ -11,11 +11,13 @@ import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.fieldmapper.FieldMapper;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
+import com.antelopesystem.crudframework.model.PersistentEntity;
 import com.antelopesystem.crudframework.modelfilter.*;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
 import com.antelopesystem.crudframework.utils.utils.CacheUtils;
+import com.antelopesystem.crudframework.utils.utils.FieldUtils;
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.CacheConfiguration;
@@ -24,9 +26,11 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.ResolvableType;
 import org.springframework.util.ClassUtils;
 
 import javax.annotation.PostConstruct;
@@ -169,12 +173,21 @@ public class CrudHelperImpl implements CrudHelper {
 						throw new RuntimeException("Cannot filter field [ " + fieldName + " ] as it was not found on entity [ " + metadataDTO.getSimpleName() + " ]");
 					}
 
-					Class fieldClazz = metadataDTO.getFields().get(fieldName);
+					Field field = metadataDTO.getFields().get(fieldName);
+					Class<?> fieldClazz = field.getType();
+
+					if(Collection.class.isAssignableFrom(field.getType())) {
+						Class<?> potentialFieldClazz = FieldUtils.getGenericClass(field, 0);
+
+						if(potentialFieldClazz != null && PersistentEntity.class.isAssignableFrom(potentialFieldClazz)) {
+							fieldClazz = potentialFieldClazz;
+						}
+					}
 
 					FilterFieldDataType fieldDataType = getDataTypeFromClass(fieldClazz);
 					filterField.setDataType(fieldDataType);
 					if(fieldDataType == FilterFieldDataType.Enum) {
-						filterField.setEnumType(fieldClazz.getName());
+						filterField.setEnumType(field.getName());
 					}
 				}
 			}
