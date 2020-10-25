@@ -40,6 +40,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			filter = (Filter) new DynamicModelFilter();
 		}
 
+		crudHelper.validateAndFillFilterFieldMetadata(filter.getFilterFields(), crudHelper.getEntityMetadata(clazz));
 		List<IndexHooks> indexHooksList = crudHelper.getHooks(IndexHooks.class, clazz);
 
 		if(indexHooksList != null && !indexHooksList.isEmpty()) {
@@ -136,6 +137,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			filter = (Filter) new DynamicModelFilter();
 		}
 
+		crudHelper.validateAndFillFilterFieldMetadata(filter.getFilterFields(), crudHelper.getEntityMetadata(clazz));
 		List<ShowByHooks> showByHooksList = crudHelper.getHooks(ShowByHooks.class, clazz);
 
 		if(showByHooksList != null && !showByHooksList.isEmpty()) {
@@ -156,7 +158,6 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 		}
 
 		Filter finalFilter = filter;
-
 		Entity entity = (Entity) CacheUtils.getObjectAndCache(() -> crudReadHandlerProxy.showByTransactional(finalFilter, clazz, hooks.getOnHooks(), persistCopy, mode, accessorDTO), "showBy_" + filter.hashCode(), cache);
 
 		for(CRUDPostShowByHook<ID, Entity> postHook : hooks.getPostHooks()) {

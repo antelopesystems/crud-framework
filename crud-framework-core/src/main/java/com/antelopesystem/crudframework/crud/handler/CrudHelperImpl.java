@@ -163,6 +163,9 @@ public class CrudHelperImpl implements CrudHelper {
 	@Override
 	public void validateAndFillFilterFieldMetadata(List<FilterField> filterFields, EntityMetadataDTO metadataDTO) {
 		for(FilterField filterField : filterFields) {
+			if(filterField.isValidated()) {
+				continue;
+			}
 			boolean isJunction = filterField.getOperation() == FilterFieldOperation.And || filterField.getOperation() == FilterFieldOperation.Or || filterField.getOperation() == FilterFieldOperation.Not || filterField.getOperation() == FilterFieldOperation.RawJunction;
 			if(isJunction) {
 				if(filterField.getChildren() != null && !filterField.getChildren().isEmpty()) {
@@ -196,6 +199,7 @@ public class CrudHelperImpl implements CrudHelper {
 					}
 				}
 			}
+			filterField.setValidated(true);
 		}
 	}
 

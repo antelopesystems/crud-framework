@@ -27,6 +27,8 @@ public class FilterField implements Serializable {
 
 	private List<FilterField> children;
 
+	private boolean validated = false;
+
 	public FilterField() {
 	}
 
@@ -90,6 +92,14 @@ public class FilterField implements Serializable {
 
 	public void setEnumType(String enumType) {
 		this.enumType = enumType;
+	}
+
+	public boolean isValidated() {
+		return validated;
+	}
+
+	public void setValidated(boolean validated) {
+		this.validated = validated;
 	}
 
 	public Object[] getValues() {
