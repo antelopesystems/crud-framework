@@ -143,6 +143,60 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
         filterFields += FilterField(this, FilterFieldOperation.LowerEqual, FilterFieldDataType.Date, target)
     }
 
+    @JvmName("stringRequireIn")
+    infix fun String.RequireIn(target: List<String>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.In(target)
+        }
+    }
+
+    @JvmName("intRequireIn")
+    infix fun String.RequireIn(target: List<Int>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.In(target)
+        }
+    }
+
+    @JvmName("longRequireIn")
+    infix fun String.RequireIn(target: List<Long>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.In(target)
+        }
+    }
+
+    @JvmName("doubleRequireIn")
+    infix fun String.RequireIn(target: List<Double>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.In(target)
+        }
+    }
+
+    @JvmName("dateRequireIn")
+    infix fun String.RequireIn(target: List<Date>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.In(target)
+        }
+    }
+
+    @JvmName("enumRequireIn")
+    infix fun <T : Enum<T>> String.RequireIn(target: List<T>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.In(target)
+        }
+    }
+
     @JvmName("stringIn")
     infix fun String.In(target: List<String>) {
         filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.String, target)
@@ -171,6 +225,60 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     @JvmName("enumIn")
     infix fun <T : Enum<T>> String.In(target: List<T>) {
         filterFields += FilterField(this, FilterFieldOperation.In, target[0]::class.java.canonicalName, target)
+    }
+
+    @JvmName("stringRequireNotIn")
+    infix fun String.RequireNotIn(target: List<String>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.NotIn(target)
+        }
+    }
+
+    @JvmName("intRequireNotIn")
+    infix fun String.RequireNotIn(target: List<Int>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.NotIn(target)
+        }
+    }
+
+    @JvmName("longRequireNotIn")
+    infix fun String.RequireNotIn(target: List<Long>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.NotIn(target)
+        }
+    }
+
+    @JvmName("doubleRequireNotIn")
+    infix fun String.RequireNotIn(target: List<Double>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.NotIn(target)
+        }
+    }
+
+    @JvmName("dateRequireNotIn")
+    infix fun String.RequireNotIn(target: List<Date>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.NotIn(target)
+        }
+    }
+
+    @JvmName("enumRequireNotIn")
+    infix fun <T : Enum<T>> String.RequireNotIn(target: List<T>) {
+        if(target.isEmpty()) {
+            noop()
+        } else {
+            this.NotIn(target)
+        }
     }
 
     @JvmName("stringNotIn")
@@ -288,6 +396,10 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
         filterFields += FilterField().apply {
             this.operation = FilterFieldOperation.Noop
         }
+    }
+
+    fun add(filterField: FilterField) {
+        filterFields += filterField
     }
 
     infix fun <T> BetweenBuilder<T>.And(target: T) {
