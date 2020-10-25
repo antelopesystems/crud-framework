@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ShowTests extends BaseCrudTest {
+public class ShowIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Test
 	public void testShowWhenValidId() {

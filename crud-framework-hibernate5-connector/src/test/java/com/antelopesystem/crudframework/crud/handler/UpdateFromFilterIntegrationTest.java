@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-public class UpdateFromFilterTests extends BaseCrudTest {
+public class UpdateFromFilterIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Test
 	public void testUpdateFrom() {

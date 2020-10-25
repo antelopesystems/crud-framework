@@ -7,7 +7,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
-public class UpdateTests extends BaseCrudTest {
+public class UpdateIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Test
 	public void testUpdate() {

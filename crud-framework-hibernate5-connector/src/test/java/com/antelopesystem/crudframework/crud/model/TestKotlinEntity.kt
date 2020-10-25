@@ -2,8 +2,8 @@ package com.antelopesystem.crudframework.crud.model
 
 import com.antelopesystem.crudframework.crud.annotation.WithHooks
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks
+import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity
 import com.antelopesystem.crudframework.model.BaseCrudEntity
-import com.antelopesystem.crudframework.jpa.model.JpaBaseEntity
 import java.io.Serializable
 import javax.persistence.Entity
 import javax.persistence.Table
@@ -16,4 +16,4 @@ annotation class NestedWithHooks
 @Entity
 @Table(name = "test_kotlin_entity")
 @NestedWithHooks
-class TestKotlinEntity : JpaBaseEntity()
+class TestKotlinEntity : BaseJpaEntity()

@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class ShowByTests extends BaseCrudTest {
+public class ShowByIntegrationTest extends BaseCrudIntegrationTest {
 
 	@Test
 	public void testShowByWhenValidFilter() {
