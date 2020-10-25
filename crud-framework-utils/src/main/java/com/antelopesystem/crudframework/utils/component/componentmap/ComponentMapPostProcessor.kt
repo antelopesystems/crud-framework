@@ -4,11 +4,11 @@ import com.antelopesystem.crudframework.utils.cluster.lock.ParameterLock
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils
+import com.antelopesystem.crudframework.utils.utils.getGenericClass
 import org.apache.commons.lang3.ClassUtils
 import org.springframework.aop.TargetClassAware
 import org.springframework.aop.framework.Advised
 import org.springframework.beans.factory.config.BeanPostProcessor
-import org.springframework.beans.factory.config.DependencyDescriptor
 import org.springframework.core.annotation.AnnotationUtils
 import java.lang.reflect.Method
 
@@ -43,10 +43,8 @@ class ComponentMapPostProcessor : BeanPostProcessor {
 
                 val mapped = field.getAnnotation(ComponentMap::class.java)
                 try {
-                    val descriptor = DependencyDescriptor(field, false)
-                    val resolvableType = descriptor.resolvableType.asMap()
-                    val keyClazz = resolvableType.resolveGeneric(0)
-                    val valueClazz = resolvableType.resolveGeneric(1)
+                    val keyClazz = field.getGenericClass(0)!!
+                    val valueClazz = field.getGenericClass(1)!!
                     ReflectionUtils.makeAccessible(field)
                     field[handler] = getOrCreateComponentMap(keyClazz, valueClazz)
                 } catch (e: java.lang.Exception) {
