@@ -95,7 +95,7 @@ public abstract class BaseJpaEntity extends BaseCrudEntity<Long> {
 
 		BaseJpaEntity that = (BaseJpaEntity) o;
 
-		return getId() == that.getId();
+		return getId().equals(that.getId());
 	}
 
 	@Override
