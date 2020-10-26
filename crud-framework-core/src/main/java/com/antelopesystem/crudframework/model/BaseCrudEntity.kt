@@ -21,7 +21,7 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
                     val internalCopy = javaClass.newInstance()
                     internalCopy.isCopy = true
                     BeanUtils.copyProperties(this, internalCopy)
-                    copy = ImmutableBean.create(internalCopy) as BaseCrudEntity<ID>
+                    copy = internalCopy //ImmutableBean.create(internalCopy) as BaseCrudEntity<ID>
                 } else {
                     return null
                 }
