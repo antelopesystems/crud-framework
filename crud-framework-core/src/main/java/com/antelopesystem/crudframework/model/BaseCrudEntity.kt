@@ -11,7 +11,10 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
 
     abstract var creationTime: Date
 
+    @Transient
     private var copy: BaseCrudEntity<ID>? = null
+
+    @Transient
     private var isCopy: Boolean = false
 
     fun saveOrGetCopy(): BaseCrudEntity<ID>? {
