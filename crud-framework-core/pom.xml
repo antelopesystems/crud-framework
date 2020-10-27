@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.antelopesystem.crudframework</groupId>
         <artifactId>crud-framework</artifactId>
-        <version>0.2.0-RC2</version>
+        <version>0.2.0-RC3-SNAPSHOT</version>
     </parent>
     <dependencies>
 
@@ -52,13 +52,13 @@
         <dependency>
             <groupId>com.antelopesystem.crudframework</groupId>
             <artifactId>crud-framework-utils</artifactId>
-            <version>0.2.0-RC2</version>
+            <version>0.2.0-RC3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.antelopesystem.crudframework</groupId>
             <artifactId>crud-framework-fieldmapper</artifactId>
-            <version>0.2.0-RC2</version>
+            <version>0.2.0-RC3-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
