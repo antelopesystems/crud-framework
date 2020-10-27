@@ -2,7 +2,7 @@ package com.antelopesystem.crudframework.fieldmapper.transformer.base;
 
 import java.lang.reflect.Field;
 
-public interface FieldTransformer<T, E> {
+public interface FieldTransformer<FromType, ToType> {
 
-	E transform(Field fromField, Field toField, T originalValue, Object fromObject, Object toObject);
+	ToType transform(Field fromField, Field toField, FromType originalValue, Object fromObject, Object toObject);
 }
