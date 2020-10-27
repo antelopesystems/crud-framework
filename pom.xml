@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.antelopesystem.crudframework</groupId>
     <artifactId>crud-framework</artifactId>
-    <version>0.2.0-RC3-SNAPSHOT</version>
+    <version>0.2.0-RC3</version>
     <name>crud-framework</name>
     <description>Spring-powered Crud Framework</description>
     <packaging>pom</packaging>
