@@ -145,6 +145,8 @@ public class FilterField implements Serializable {
 				return Integer.parseInt(field.toString());
 			case Long:
 				return Long.parseLong(field.toString());
+			case Double:
+				return Double.parseDouble(field.toString());
 			case Date:
 				if(field instanceof Date) {
 					return field;

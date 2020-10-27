@@ -184,7 +184,7 @@ public class CrudHelperImpl implements CrudHelper {
 					if(Collection.class.isAssignableFrom(field.getType())) {
 						Class<?> potentialFieldClazz = FieldUtils.getGenericClass(field, 0);
 
-						if(potentialFieldClazz != null && PersistentEntity.class.isAssignableFrom(potentialFieldClazz)) {
+						if(potentialFieldClazz != null) {
 							fieldClazz = potentialFieldClazz;
 						}
 					}
