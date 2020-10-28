@@ -30,6 +30,7 @@ class LazyInitializerPersistentHooks : ShowHooks<Long, BaseJpaEntity>,
     }
 
     override fun onIndex(filter: DynamicModelFilter, result: PagingDTO<BaseJpaEntity>) {
+        result.data ?: return
         for (entity in result.data) {
             initializeLazyFields(entity) { it.index }
         }
