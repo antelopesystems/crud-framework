@@ -192,7 +192,7 @@ public class CrudHelperImpl implements CrudHelper {
 					FilterFieldDataType fieldDataType = getDataTypeFromClass(fieldClazz);
 					filterField.setDataType(fieldDataType);
 					if(fieldDataType == FilterFieldDataType.Enum) {
-						filterField.setEnumType(field.getType().getName());
+						filterField.setEnumType(fieldClazz.getName());
 					}
 				}
 			}
