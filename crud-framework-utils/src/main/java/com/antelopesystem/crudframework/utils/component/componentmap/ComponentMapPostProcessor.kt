@@ -26,7 +26,6 @@ class ComponentMapPostProcessor : BeanPostProcessor {
     }
 
     private fun fillComponentMapIfExists(bean: Any) {
-        val fields = ReflectionUtils.getFields(bean.javaClass)
         var handler = bean
         if (handler is TargetClassAware) {
             try {
@@ -34,6 +33,7 @@ class ComponentMapPostProcessor : BeanPostProcessor {
             } catch (e: java.lang.Exception) {
             }
         }
+        val fields = ReflectionUtils.getFields(handler.javaClass)
 
         for (field in fields) {
             if (field.isAnnotationPresent(ComponentMap::class.java)) {
