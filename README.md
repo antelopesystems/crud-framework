@@ -27,14 +27,14 @@ Maven:
 <dependency>
     <groupId>com.antelopesystem.crudframework</groupId>
     <artifactId>crud-framework-hibernate5-connector</artifactId>
-    <version>0.1.7</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("com.antelopesystem.crudframework:crud-framework-hibernate5-connector:0.1.7")
+implementation("com.antelopesystem.crudframework:crud-framework-hibernate5-connector:0.2.0")
 ```
 
 ### MongoDB Connector
@@ -44,14 +44,14 @@ implementation("com.antelopesystem.crudframework:crud-framework-hibernate5-conne
 <dependency>
     <groupId>com.antelopesystem.crudframework</groupId>
     <artifactId>crud-framework-mongo-connector</artifactId>
-    <version>0.1.7</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("com.antelopesystem.crudframework:crud-framework-mongo-connector:0.1.7")
+implementation("com.antelopesystem.crudframework:crud-framework-mongo-connector:0.2.0")
 ```
 
 
@@ -64,14 +64,14 @@ Contains useful utilities and classes for web operations
 <dependency>
     <groupId>com.antelopesystem.crudframework</groupId>
     <artifactId>crud-framework-web</artifactId>
-    <version>0.1.7</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("com.antelopesystem.crudframework:crud-framework-web:0.1.7")
+implementation("com.antelopesystem.crudframework:crud-framework-web:0.2.0")
 ```
 
 ### Operation
