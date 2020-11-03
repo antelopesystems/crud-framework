@@ -1,62 +1,49 @@
 package com.antelopesystem.crudframework.fieldmapper.transformer.base;
 
+import org.springframework.core.GenericTypeResolver;
+
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class FieldTransformerBase<T, E> implements FieldTransformer<T, E> {
+public abstract class FieldTransformerBase<FromType, ToType> implements FieldTransformer<FromType, ToType> {
 
-	private static Map<Class<?>, Class<?>> primitiveMap;
+	private static final Map<Class<?>, Class<?>> PRIMITIVES;
 
-	{
-		primitiveMap = new HashMap<>();
-		primitiveMap.put(boolean.class, Boolean.class);
-		primitiveMap.put(byte.class, Byte.class);
-		primitiveMap.put(short.class, Short.class);
-		primitiveMap.put(char.class, Character.class);
-		primitiveMap.put(int.class, Integer.class);
-		primitiveMap.put(long.class, Long.class);
-		primitiveMap.put(float.class, Float.class);
-		primitiveMap.put(double.class, Double.class);
+	static {
+		PRIMITIVES = new HashMap<>();
+		PRIMITIVES.put(boolean.class, Boolean.class);
+		PRIMITIVES.put(byte.class, Byte.class);
+		PRIMITIVES.put(short.class, Short.class);
+		PRIMITIVES.put(char.class, Character.class);
+		PRIMITIVES.put(int.class, Integer.class);
+		PRIMITIVES.put(long.class, Long.class);
+		PRIMITIVES.put(float.class, Float.class);
+		PRIMITIVES.put(double.class, Double.class);
 	}
 
 	@Override
-	public final E transform(Field fromField, Field toField, T originalValue) {
-		Class<T> tClazz;
-		Class<E> eClazz;
-		Object fromClazz = ((ParameterizedType) getClass()
-				.getGenericSuperclass()).getActualTypeArguments()[0];
-		if(fromClazz instanceof ParameterizedType) {
-			tClazz = (Class<T>) ((ParameterizedType) fromClazz).getRawType();
-		} else {
-			tClazz = (Class<T>) fromClazz;
-		}
+	public final ToType transform(Field fromField, Field toField, FromType originalValue, Object fromObject, Object toObject) {
+		Class<?>[] generics = GenericTypeResolver.resolveTypeArguments(getClass(), FieldTransformerBase.class);
+		Class<FromType> fromClazz = (Class<FromType>) getActualClass(generics[0]);
+		Class<ToType> eClazz = (Class<ToType>) getActualClass(generics[1]);
 
-		Object toClazz = ((ParameterizedType) getClass()
-				.getGenericSuperclass()).getActualTypeArguments()[1];
-		if(toClazz instanceof ParameterizedType) {
-			eClazz = (Class<E>) ((ParameterizedType) toClazz).getRawType();
-		} else {
-			eClazz = (Class<E>) toClazz;
-		}
-
-		if(!tClazz.isAssignableFrom(getActualClass(fromField.getType()))) {
-			throw new IllegalStateException(fromField.toString() + " - fromField type [ " + fromField.getType().getSimpleName() + " ] does not match transformer fromType [ " + tClazz.getSimpleName() + " ]");
+		if(!fromClazz.isAssignableFrom(getActualClass(fromField.getType()))) {
+			throw new IllegalStateException(fromField.toString() + " - fromField type [ " + fromField.getType().getSimpleName() + " ] does not match transformer fromType [ " + fromClazz.getSimpleName() + " ]");
 		}
 
 		if(!eClazz.isAssignableFrom(getActualClass(toField.getType()))) {
 			throw new IllegalStateException(toField.toString() + " - toField type [ " + toField.getType().getSimpleName() + " ] does not match transformer toType [ " + eClazz.getSimpleName() + " ]");
 		}
 
-		return innerTransform(fromField, toField, originalValue);
+		return innerTransform(fromField, toField, originalValue, fromObject, toObject);
 	}
 
-	protected abstract E innerTransform(Field fromField, Field toField, T originalValue);
+	protected abstract ToType innerTransform(Field fromField, Field toField, FromType originalValue, Object fromObject, Object toObject);
 
 	private static Class<?> getActualClass(Class<?> clazz) {
 		if(clazz.isPrimitive()) {
-			return primitiveMap.get(clazz);
+			return PRIMITIVES.get(clazz);
 		}
 
 		return clazz;

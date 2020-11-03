@@ -8,7 +8,7 @@ import java.util.Locale;
 public class CountryIsoToNameTransformer extends FieldTransformerBase<String, String> {
 
 	@Override
-	protected String innerTransform(Field fromField, Field toField, String originalValue) {
+	protected String innerTransform(Field fromField, Field toField, String originalValue, Object fromObject, Object toObject) {
 		if(originalValue == null) {
 			return null;
 		}

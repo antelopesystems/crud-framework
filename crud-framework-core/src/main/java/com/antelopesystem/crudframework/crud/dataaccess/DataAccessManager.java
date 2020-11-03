@@ -5,18 +5,18 @@ import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 
 import java.io.Serializable;
 
-public interface DataAccessManager<Accessor, Entity> {
+public interface DataAccessManager<Accessor, AccessorId, Entity> {
 
 	@ComponentMapKey
 	String getKey();
 
-	default void decorateViewOperation(DynamicModelFilter filter, Serializable accessorId, Class<Accessor> accessorClazz) {
+	default void decorateViewOperation(DynamicModelFilter filter, AccessorId accessorId, Class<Accessor> accessorClazz) {
 	}
 
-	default void decorateUpdateOperation(DynamicModelFilter filter, Serializable accessorId, Class<Accessor> accessorClazz) {
+	default void decorateUpdateOperation(DynamicModelFilter filter, AccessorId accessorId, Class<Accessor> accessorClazz) {
 	}
 
-	default void decorateCreateOperation(Entity entity, Serializable accessorId, Class<Accessor> accessorClazz) {
+	default void decorateCreateOperation(Entity entity, AccessorId accessorId, Class<Accessor> accessorClazz) {
 	}
 
 }

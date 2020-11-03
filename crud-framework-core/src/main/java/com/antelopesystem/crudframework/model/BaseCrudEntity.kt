@@ -11,7 +11,10 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
 
     abstract var creationTime: Date
 
+    @Transient
     private var copy: BaseCrudEntity<ID>? = null
+
+    @Transient
     private var isCopy: Boolean = false
 
     fun saveOrGetCopy(): BaseCrudEntity<ID>? {
@@ -21,7 +24,7 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
                     val internalCopy = javaClass.newInstance()
                     internalCopy.isCopy = true
                     BeanUtils.copyProperties(this, internalCopy)
-                    copy = ImmutableBean.create(internalCopy) as BaseCrudEntity<ID>
+                    copy = internalCopy //ImmutableBean.create(internalCopy) as BaseCrudEntity<ID>
                 } else {
                     return null
                 }

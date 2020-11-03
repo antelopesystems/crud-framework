@@ -8,7 +8,7 @@ import java.util.Date;
 public class LongToDateTransformer extends FieldTransformerBase<Long, Date> {
 
 	@Override
-	protected Date innerTransform(Field fromField, Field toField, Long originalValue) {
+	protected Date innerTransform(Field fromField, Field toField, Long originalValue, Object fromObject, Object toObject) {
 		return originalValue == null ? null : new Date(originalValue);
 	}
 }

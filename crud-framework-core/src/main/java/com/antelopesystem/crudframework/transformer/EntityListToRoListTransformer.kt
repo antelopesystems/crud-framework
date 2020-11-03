@@ -8,7 +8,7 @@ import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl
 import java.lang.reflect.Field
 
 class EntityListToRoListTransformer(private val crudHandler: CrudHandler) : FieldTransformerBase<List<BaseCrudEntity<*>>?, List<BaseRO<*>?>>() {
-    override fun innerTransform(fromField: Field, toField: Field, originalValue: List<BaseCrudEntity<*>>?): List<BaseRO<*>>? {
+    override fun innerTransform(fromField: Field, toField: Field, originalValue: List<BaseCrudEntity<*>>?, fromObject: Any, toObject: Any): List<BaseRO<*>>? {
         if (originalValue == null) {
             return null
         }

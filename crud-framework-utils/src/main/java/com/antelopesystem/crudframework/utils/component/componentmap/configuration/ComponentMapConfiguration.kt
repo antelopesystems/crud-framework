@@ -2,7 +2,6 @@ package com.antelopesystem.crudframework.utils.component.componentmap.configurat
 
 import com.antelopesystem.crudframework.utils.component.componentmap.ComponentMapPostProcessor
 import com.antelopesystem.crudframework.utils.component.componentmap.LegacyComponentMapHandler
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -7,29 +7,30 @@ import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.BaseRO;
 import com.antelopesystem.crudframework.web.annotation.CRUDActions;
-import com.antelopesystem.crudframework.web.ro.ResultRO;
 import com.antelopesystem.crudframework.web.ro.ManyCrudResult;
 import com.antelopesystem.crudframework.web.ro.ManyFailedReason;
+import com.antelopesystem.crudframework.web.ro.ResultRO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.GenericTypeResolver;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Entity extends BaseCrudEntity<ID>, CreateRO extends BaseRO<ID>, UpdateRO extends BaseRO<ID>, ReturnRO extends BaseRO<ID>> extends BaseController {
+public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Entity extends BaseCrudEntity<ID>, CreateRO extends BaseRO<ID>, UpdateRO extends BaseRO<ID>, ShowReturnRO extends BaseRO<ID>, IndexReturnRO extends BaseRO<ID>> extends BaseController {
 
 	@Autowired
 	private CrudHandler crudHandler;
 
 	protected Class<Entity> entityClazz;
 
-	protected Class<ReturnRO> roClazz;
+	protected Class<ShowReturnRO> showRoClazz;
+
+	protected Class<IndexReturnRO> indexRoClazz;
 
 	protected Class<?> getAccessorType() {
 		return null;
@@ -45,9 +46,10 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 
 	@PostConstruct
 	private void init() {
-		Type[] actualTypes = ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments();
-		entityClazz = (Class<Entity>) actualTypes[1];
-		roClazz = (Class<ReturnRO>) actualTypes[actualTypes.length - 1];
+		Class[] generics = GenericTypeResolver.resolveTypeArguments(getClass(), BaseDifferentRoCRUDController.class);
+		entityClazz = (Class<Entity>) generics[1];
+		showRoClazz = (Class<ShowReturnRO>) generics[4];
+		indexRoClazz = (Class<IndexReturnRO>) generics[5];
 	}
 
 
@@ -56,7 +58,7 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO show(@PathVariable ID id) {
 		verifyOperation(CRUDActionType.Show);
 		return wrapResult(() -> {
-			CRUDRequestBuilder builder = crudHandler.show(id, entityClazz, roClazz);
+			CRUDRequestBuilder builder = crudHandler.show(id, entityClazz, showRoClazz);
 			if(shouldEnforce()) {
 				builder.enforceAccess(getAccessorType(), getAccessorId());
 			}
@@ -72,7 +74,7 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO index(DynamicModelFilter filter) {
 		verifyOperation(CRUDActionType.Index);
 		return wrapResult(() -> {
-			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz, roClazz);
+			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz, indexRoClazz);
 			if(shouldEnforce()) {
 				builder.enforceAccess(getAccessorType(), getAccessorId());
 			}
@@ -86,7 +88,7 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO indexCount(DynamicModelFilter filter) {
 		verifyOperation(CRUDActionType.Index);
 		return wrapResult(() -> {
-			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz, roClazz);
+			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz);
 			if(shouldEnforce()) {
 				builder.enforceAccess(getAccessorType(), getAccessorId());
 			}
@@ -100,7 +102,7 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO search(@RequestBody DynamicModelFilter filter) {
 		verifyOperation(CRUDActionType.Index);
 		return wrapResult(() -> {
-			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz, roClazz);
+			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz, indexRoClazz);
 			if(shouldEnforce()) {
 				builder.enforceAccess(getAccessorType(), getAccessorId());
 			}
@@ -114,7 +116,7 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO searchCount(@RequestBody DynamicModelFilter filter) {
 		verifyOperation(CRUDActionType.Index);
 		return wrapResult(() -> {
-			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz, roClazz);
+			ReadCRUDRequestBuilder builder = crudHandler.index(filter, entityClazz);
 			if(shouldEnforce()) {
 				builder.enforceAccess(getAccessorType(), getAccessorId());
 			}
@@ -128,7 +130,7 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO create(@RequestBody CreateRO ro) {
 		verifyOperation(CRUDActionType.Create);
 		return wrapResult(() -> {
-			CRUDRequestBuilder builder = crudHandler.createFrom(ro, entityClazz, roClazz);
+			CRUDRequestBuilder builder = crudHandler.createFrom(ro, entityClazz, showRoClazz);
 			if(shouldEnforce()) {
 				builder.enforceAccess(getAccessorType(), getAccessorId());
 			}
@@ -142,16 +144,16 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO createMany(@RequestBody List<CreateRO> ros) {
 		verifyOperation(CRUDActionType.Create);
 		return wrapResult(() -> {
-			Set<ReturnRO> successful = new HashSet<>();
+			Set<ShowReturnRO> successful = new HashSet<>();
 			List<ManyFailedReason<CreateRO>> failed = new ArrayList();
 			for(CreateRO ro : ros) {
-				CRUDRequestBuilder builder = crudHandler.createFrom(ro, entityClazz, roClazz);
+				CRUDRequestBuilder builder = crudHandler.createFrom(ro, entityClazz, showRoClazz);
 				if(shouldEnforce()) {
 					builder.enforceAccess(getAccessorType(), getAccessorId());
 				}
 
 				try {
-					successful.add((ReturnRO) builder.execute());
+					successful.add((ShowReturnRO) builder.execute());
 				} catch(Exception e) {
 					failed.add(new ManyFailedReason(ro, e.getMessage()));
 				}
@@ -166,7 +168,7 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO update(@PathVariable ID id, @RequestBody UpdateRO ro) {
 		verifyOperation(CRUDActionType.Update);
 		return wrapResult(() -> {
-			CRUDRequestBuilder builder = crudHandler.updateFrom(id, ro, entityClazz, roClazz);
+			CRUDRequestBuilder builder = crudHandler.updateFrom(id, ro, entityClazz, showRoClazz);
 			if(shouldEnforce()) {
 				builder.enforceAccess(getAccessorType(), getAccessorId());
 			}
@@ -180,16 +182,16 @@ public abstract class BaseDifferentRoCRUDController<ID extends Serializable, Ent
 	public ResultRO updateMany(@RequestBody List<UpdateRO> ros) {
 		verifyOperation(CRUDActionType.Update);
 		return wrapResult(() -> {
-			Set<ReturnRO> successful = new HashSet<>();
+			Set<ShowReturnRO> successful = new HashSet<>();
 			List<ManyFailedReason<UpdateRO>> failed = new ArrayList();
 			for(UpdateRO ro : ros) {
-				CRUDRequestBuilder builder = crudHandler.updateFrom(ro.getId(), ro, entityClazz, roClazz);
+				CRUDRequestBuilder builder = crudHandler.updateFrom(ro.getId(), ro, entityClazz, showRoClazz);
 				if(shouldEnforce()) {
 					builder.enforceAccess(getAccessorType(), getAccessorId());
 				}
 
 				try {
-					successful.add((ReturnRO) builder.execute());
+					successful.add((ShowReturnRO) builder.execute());
 				} catch(Exception e) {
 					failed.add(new ManyFailedReason(ro, e.getMessage()));
 				}
