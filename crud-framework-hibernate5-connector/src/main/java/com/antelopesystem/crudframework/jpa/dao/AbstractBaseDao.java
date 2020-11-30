@@ -2,10 +2,7 @@ package com.antelopesystem.crudframework.jpa.dao;
 
 import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity;
 import com.antelopesystem.crudframework.model.PersistentEntity;
-import com.antelopesystem.crudframework.modelfilter.BaseModelFilter;
-import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
-import com.antelopesystem.crudframework.modelfilter.FilterField;
-import com.antelopesystem.crudframework.modelfilter.JpaRawJunctionDTO;
+import com.antelopesystem.crudframework.modelfilter.*;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -427,13 +424,20 @@ public abstract class AbstractBaseDao implements BaseDao {
 	}
 
 	protected Criteria setOrder(Criteria criteria, BaseModelFilter modelFilter) {
-		if(modelFilter.getOrderBy() != null && !modelFilter.getOrderBy().trim().isEmpty()) {
-			if(modelFilter.getOrderDesc() == null || modelFilter.getOrderDesc()) {
-				criteria.addOrder(Order.desc(modelFilter.getOrderBy()));
+		Set<OrderDTO> orders = modelFilter.getOrders();
+		boolean appliedOrder = false;
+		for (OrderDTO order : orders) {
+			if(order.getBy() == null || order.getBy().trim().isEmpty()) {
+				continue;
+			}
+			if(order.getDescending()) {
+				criteria.addOrder(Order.desc(order.getBy()));
 			} else {
 				criteria.addOrder(Order.asc(modelFilter.getOrderBy()));
 			}
-		} else {
+			appliedOrder = true;
+		}
+		if(!appliedOrder) {
 			criteria.addOrder(Order.desc("id"));
 		}
 

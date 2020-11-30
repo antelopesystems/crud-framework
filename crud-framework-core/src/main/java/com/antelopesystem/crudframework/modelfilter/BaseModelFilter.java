@@ -1,7 +1,11 @@
 package com.antelopesystem.crudframework.modelfilter;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class BaseModelFilter implements Serializable {
 
@@ -15,7 +19,10 @@ public abstract class BaseModelFilter implements Serializable {
 
 	private Boolean orderDesc = true;
 
+	private final Set<OrderDTO> orders = new HashSet<>();
+
 	private String returnColumn;
+
 
 	public Integer getStart() {
 		return start;
@@ -54,6 +61,34 @@ public abstract class BaseModelFilter implements Serializable {
 	@SuppressWarnings("unchecked")
 	public <T extends BaseModelFilter> T setOrderDesc(Boolean orderDesc) {
 		this.orderDesc = orderDesc;
+		return (T) this;
+	}
+
+	public Set<OrderDTO> getOrders() {
+		if(this.orders.isEmpty()) {
+			return Stream.of(new OrderDTO(orderBy, orderDesc)).collect(Collectors.toSet());
+		}
+		return this.orders;
+	}
+
+	public <T extends BaseModelFilter> T setOrders(Set<OrderDTO> orders) {
+		this.orders.clear();
+		this.orders.addAll(orders);
+		return (T) this;
+	}
+
+	public <T extends BaseModelFilter> T addOrders(Set<OrderDTO> orders) {
+		this.orders.addAll(orders);
+		return (T) this;
+	}
+
+	public <T extends BaseModelFilter> T addOrder(String by, boolean descending) {
+		this.orders.add(new OrderDTO(by, descending));
+		return (T) this;
+	}
+
+	public <T extends BaseModelFilter> T removeOrder(String by, boolean descending) {
+		this.orders.remove(new OrderDTO(by, descending));
 		return (T) this;
 	}
 

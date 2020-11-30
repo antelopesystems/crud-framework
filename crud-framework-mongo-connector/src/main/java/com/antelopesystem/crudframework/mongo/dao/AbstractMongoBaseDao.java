@@ -248,15 +248,18 @@ public abstract class AbstractMongoBaseDao {
 		}
 	}
 
-	protected void setOrder(Query query, String orderBy, boolean orderDesc) {
-		if(orderBy != null && !orderBy.trim().isEmpty()) {
-			query.with(Sort.by(
-					orderDesc ? Sort.Direction.DESC : Sort.Direction.ASC,
-					orderBy
-			));
+	protected void setOrder(Query query, Set<OrderDTO> orders) {
+		List<Sort.Order> sortOrders = new ArrayList<>();
+		for (OrderDTO order : orders) {
+			if(order.getBy() != null && !order.getBy().trim().isEmpty()) {
+				sortOrders.add(new Sort.Order(order.getDescending() ? Sort.Direction.DESC : Sort.Direction.ASC, order.getBy()));
+			}
+		}
+		if(!sortOrders.isEmpty()) {
+			query.with(Sort.by(sortOrders));
 		} else {
 			query.with(Sort.by(
-					orderDesc ? Sort.Direction.DESC : Sort.Direction.ASC,
+					Sort.Direction.DESC,
 					"id"
 			));
 		}

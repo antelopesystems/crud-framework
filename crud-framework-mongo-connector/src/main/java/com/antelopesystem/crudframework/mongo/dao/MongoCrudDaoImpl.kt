@@ -10,7 +10,7 @@ import java.io.Serializable
 class MongoCrudDaoImpl : CrudDao, AbstractMongoBaseDao() {
     override fun <ID : Serializable?, Entity : BaseCrudEntity<ID>?, Filter : DynamicModelFilter> index(filter: Filter, clazz: Class<Entity>?): MutableList<Entity> {
         val query = buildQuery(filter)
-        setOrder(query, filter.orderBy, filter.orderDesc)
+        setOrder(query, filter.orders)
         setBoundaries(query, filter.start, filter.limit)
         return mongoTemplate.find(query, clazz)
     }
