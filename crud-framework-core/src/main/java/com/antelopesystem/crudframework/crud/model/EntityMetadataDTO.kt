@@ -7,9 +7,11 @@ import com.antelopesystem.crudframework.model.BaseCrudEntity
 import com.antelopesystem.crudframework.model.PersistentEntity
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils
 import com.antelopesystem.crudframework.utils.utils.getGenericClass
+import org.springframework.core.annotation.AnnotatedElementUtils
 import org.springframework.core.annotation.AnnotationUtils
 import java.lang.reflect.Field
 import kotlin.reflect.KClass
+import kotlin.reflect.full.allSuperclasses
 
 class EntityMetadataDTO {
 
@@ -78,20 +80,24 @@ class EntityMetadataDTO {
 
     private fun collectHookAnnotations(entityClazz: Class<out BaseCrudEntity<*>>) {
         val hookAnnotations = mutableSetOf<WithHooks>()
+        val annotations = entityClazz.declaredAnnotations + entityClazz.kotlin.allSuperclasses
+                .flatMap { it.java.declaredAnnotations.toList() }
 
         // The first search targets the WithHooks.List annotation, which is the repeatable container for WithHooks
-        val hookAnnotationsRepeatable = AnnotationUtils.findAnnotation(entityClazz, WithHooks.List::class.java)
-        if (hookAnnotationsRepeatable != null) {
-            if (hookAnnotationsRepeatable.value.isNotEmpty()) {
-                hookAnnotations.addAll(hookAnnotations)
-            }
-        } else {
-            // We run this second search because a nested, single WithHooks annotation in a Kotlin file does not register as WithHooks.List
-            val hookAnnotation = AnnotationUtils.findAnnotation(entityClazz, WithHooks::class.java)
-            if (hookAnnotation != null) {
-                hookAnnotations.add(hookAnnotation)
-            }
-        }
+        annotations
+                .mapNotNull {
+                    AnnotationUtils.findAnnotation(AnnotatedElementUtils.forAnnotations(it), WithHooks.List::class.java)
+                }
+                .filter {
+                    it.value.isNotEmpty()
+                }
+                .flatMapTo(hookAnnotations) { it.value.toList() }
+
+        // We run this second search because a nested, single WithHooks annotation in a Kotlin file does not register as WithHooks.List
+        annotations
+                .mapNotNullTo(hookAnnotations) { AnnotationUtils.findAnnotation(AnnotatedElementUtils.forAnnotations(it), WithHooks::class.java) }
+
+
 
         if (hookAnnotations.isNotEmpty()) {
             for (hookAnnotation in hookAnnotations) {
@@ -104,7 +110,8 @@ class EntityMetadataDTO {
     }
 
     private fun getEntityDao(clazz: Class<out BaseCrudEntity<*>>): Class<out CrudDao> {
-        return AnnotationUtils.findAnnotation(clazz, CrudEntity::class.java).dao.java
+        val crudEntity = AnnotationUtils.findAnnotation(clazz, CrudEntity::class.java) ?: error("@CrudEntity not found on entity ${clazz.name}")
+        return crudEntity.dao.java
     }
 
     private fun getEntityCacheName(clazz: Class<out BaseCrudEntity<*>>): String? {
