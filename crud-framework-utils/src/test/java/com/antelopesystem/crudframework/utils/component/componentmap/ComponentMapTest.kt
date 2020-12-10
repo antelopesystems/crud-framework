@@ -3,6 +3,7 @@ package com.antelopesystem.crudframework.utils.component.componentmap
 import ComponentMapTestConfig
 import TestImpl1
 import TestImpl2
+import TestImpl2Duplicate
 import TestMapUser
 import com.antelopesystem.crudframework.utils.component.componentmap.configuration.ComponentMapConfiguration
 import org.junit.Test
@@ -24,6 +25,9 @@ class ComponentMapTest {
     private lateinit var testImpl2: TestImpl2
 
     @Autowired
+    private lateinit var testImpl2Duplicate: TestImpl2Duplicate
+
+    @Autowired
     private lateinit var testMapUser: TestMapUser
 
     @Test
@@ -37,5 +41,14 @@ class ComponentMapTest {
                 testImpl2.type to testImpl2
         )
         assertEquals(expected, testMapUser.map)
+    }
+
+    @Test
+    fun `test component map of list populates correctly`() {
+        val expected = mapOf(
+                testImpl1.type to listOf(testImpl1),
+                testImpl2.type to listOf(testImpl2, testImpl2Duplicate)
+        )
+        assertEquals(expected, testMapUser.multiMap)
     }
 }

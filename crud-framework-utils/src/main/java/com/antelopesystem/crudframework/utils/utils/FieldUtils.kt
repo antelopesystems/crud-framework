@@ -11,8 +11,37 @@ fun Field.getGenericClass(index: Int) : Class<*>? {
         val genericType = this.genericType as ParameterizedTypeImpl
         val typeArgument = genericType.actualTypeArguments[index]
         if(typeArgument is WildcardTypeImpl) {
-            return typeArgument.upperBounds[0] as Class<*>
+            val upperBound = typeArgument.upperBounds[0]
+            return if(upperBound is ParameterizedTypeImpl) {
+                upperBound.rawType
+            } else {
+                upperBound as Class<*>
+            }
         }
         return typeArgument as Class<*>
     } catch(e: ArrayIndexOutOfBoundsException) { null }
+}
+
+/**
+ * Resolve a sublevel generic type (For example Map<*, List<Child>>)
+ */
+fun Field.resolveNestedGeneric(parentIndex: Int, childIndex: Int = 0): Class<*> {
+    val genericType = this.genericType
+    if(genericType !is ParameterizedTypeImpl) {
+        error("${this.type} is not a parameterized type")
+    }
+    var childType = genericType.actualTypeArguments[parentIndex]
+    while(childType is WildcardTypeImpl) {
+        childType = childType.upperBounds[0]
+    }
+
+    if(childType is ParameterizedTypeImpl) {
+        var returnValue = childType.actualTypeArguments[childIndex]
+        while(returnValue is WildcardTypeImpl) {
+            returnValue = returnValue.upperBounds[0]
+        }
+        return returnValue as Class<*>
+    }
+
+    return childType as Class<*>
 }

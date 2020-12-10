@@ -3,8 +3,10 @@ package com.antelopesystem.crudframework.utils.component.componentmap
 import com.antelopesystem.crudframework.utils.cluster.lock.ParameterLock
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey
+import com.antelopesystem.crudframework.utils.component.componentmap.model.SingletonComponentMap
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils
 import com.antelopesystem.crudframework.utils.utils.getGenericClass
+import com.antelopesystem.crudframework.utils.utils.resolveNestedGeneric
 import org.apache.commons.lang3.ClassUtils
 import org.springframework.aop.TargetClassAware
 import org.springframework.aop.framework.Advised
@@ -14,7 +16,7 @@ import java.lang.reflect.Method
 
 class ComponentMapPostProcessor : BeanPostProcessor {
 
-    private val componentMaps: MutableMap<Pair<Class<*>, Class<*>>, MutableMap<Any, Any>> = mutableMapOf()
+    private val componentMaps: MutableMap<ComponentMapIdentifier, MutableMap<Any, MutableList<Any>>> = mutableMapOf()
 
     override fun postProcessAfterInitialization(bean: Any, beanName: String?): Any {
         try {
@@ -44,31 +46,42 @@ class ComponentMapPostProcessor : BeanPostProcessor {
                 val mapped = field.getAnnotation(ComponentMap::class.java)
                 try {
                     val keyClazz = field.getGenericClass(0)!!
-                    val valueClazz = field.getGenericClass(1)!!
+                    var valueClazz = field.getGenericClass(1)!!
+                    var isList = false
+                    if(Collection::class.java.isAssignableFrom(valueClazz)) {
+                        isList = true
+                        valueClazz = field.resolveNestedGeneric(1)
+                    }
+
                     ReflectionUtils.makeAccessible(field)
-                    field[handler] = getOrCreateComponentMap(keyClazz, valueClazz)
+                    val map = getOrCreateComponentMap(keyClazz, valueClazz)
+                    if(isList) {
+                        field[handler] = map
+                    } else {
+                        field[handler] = SingletonComponentMap(map)
+                    }
                 } catch (e: java.lang.Exception) {
                 }
             }
         }
     }
 
-    private fun getOrCreateComponentMap(initialKeyType: Class<*>, initialValueType: Class<*>) : MutableMap<Any, Any> {
-        val pair = initialKeyType to initialValueType
-        var map = componentMaps[pair]
+    private fun getOrCreateComponentMap(initialKeyType: Class<*>, initialValueType: Class<*>) : MutableMap<Any, MutableList<Any>> {
+        val identifier = ComponentMapIdentifier(initialKeyType, initialValueType)
+        var map = componentMaps[identifier]
         if(map != null) {
             return map
         }
         val lock = ParameterLock.getCanonicalParameterLock("${initialKeyType.canonicalName}_${initialValueType.canonicalName}")
         lock.lock()
         try {
-            map = componentMaps[pair]
+            map = componentMaps[identifier]
             if(map != null) {
                 return map
             }
 
-            componentMaps[pair] = mutableMapOf()
-            return componentMaps[pair]!!
+            componentMaps[identifier] = mutableMapOf()
+            return componentMaps[identifier]!!
         } finally {
             lock.unlock()
         }
@@ -85,7 +98,8 @@ class ComponentMapPostProcessor : BeanPostProcessor {
                     val keyClass = key::class.java
                     val valueClass = getMethodDeclarer(method)
                     val map = getOrCreateComponentMap(keyClass, valueClass)
-                    map[key] = bean
+                    val list = map.computeIfAbsent(key) { mutableListOf() }
+                    list += bean
                 } catch (e: Exception) {
                 }
             }
@@ -94,6 +108,8 @@ class ComponentMapPostProcessor : BeanPostProcessor {
 
 
 }
+
+private data class ComponentMapIdentifier(val keyClazz: Class<*>, val valueClazz: Class<*>)
 
 fun getMethodDeclarer(method: Method): Class<*> {
     var declaringClass: Class<*> = method.declaringClass
@@ -116,3 +132,4 @@ fun getMethodDeclarer(method: Method): Class<*> {
 
     error("Could not find method declarer for ${method.declaringClass.canonicalName}::${method.name}")
 }
+
