@@ -27,7 +27,7 @@ public class FilterField implements Serializable {
 
 	private List<FilterField> children;
 
-	private boolean validated = false;
+	private transient boolean validated = false;
 
 	public FilterField() {
 	}
@@ -98,10 +98,6 @@ public class FilterField implements Serializable {
 		return validated;
 	}
 
-	public void setValidated(boolean validated) {
-		this.validated = validated;
-	}
-
 	public Object[] getValues() {
 		if(values != null) {
 			return Arrays.stream(values).map(x -> castToType(x)).collect(Collectors.toList()).toArray();
@@ -136,6 +132,10 @@ public class FilterField implements Serializable {
 
 	public void setChildren(List<FilterField> children) {
 		this.children = children;
+	}
+
+	public void validate() {
+		this.validated = true;
 	}
 
 	@Override

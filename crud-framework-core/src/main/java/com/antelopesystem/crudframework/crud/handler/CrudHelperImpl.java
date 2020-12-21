@@ -166,6 +166,10 @@ public class CrudHelperImpl implements CrudHelper {
 			if(filterField.isValidated()) {
 				continue;
 			}
+			if(filterField.getOperation() == null) {
+				throw new IllegalStateException("A FilterField must have an operation");
+			}
+
 			boolean isJunction = filterField.getOperation() == FilterFieldOperation.And || filterField.getOperation() == FilterFieldOperation.Or || filterField.getOperation() == FilterFieldOperation.Not || filterField.getOperation() == FilterFieldOperation.RawJunction;
 			if(isJunction) {
 				if(filterField.getChildren() != null && !filterField.getChildren().isEmpty()) {
@@ -199,7 +203,7 @@ public class CrudHelperImpl implements CrudHelper {
 					}
 				}
 			}
-			filterField.setValidated(true);
+			filterField.validate();
 		}
 	}
 
