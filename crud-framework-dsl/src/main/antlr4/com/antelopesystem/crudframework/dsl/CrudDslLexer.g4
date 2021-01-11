@@ -1,6 +1,6 @@
 lexer grammar CrudDslLexer;
 
-fragment ID_LETTER : [a-z] | [A-Z] | '_' ;
+fragment ID_LETTER : [a-z] | [A-Z] | '_' | DOT | FORWARD_SLASH;
 fragment DIGIT : [0-9] ;
 
 O_CURLY: '{';
@@ -10,6 +10,8 @@ C_SQUARE: ']';
 O_ROUND: '(';
 C_ROUND: ')';
 COMMA: ',';
+FORWARD_SLASH: '/';
+DOT: '.';
 
 QUERY: 'query';
 WHERE: 'where';
@@ -45,4 +47,4 @@ PLUS: '+';
 
 LINE_COMMENT: '#' ~( '\r' | '\n' )* -> channel(HIDDEN);
 WS: [ \n\t\r]+ -> skip;
-ID: ID_LETTER (ID_LETTER | DIGIT)*;
+ID: (ID_LETTER (ID_LETTER | DIGIT)*);
