@@ -7,7 +7,9 @@ import org.springframework.http.HttpOutputMessage
 import org.springframework.http.MediaType
 import org.springframework.http.converter.AbstractHttpMessageConverter
 
-class CrudDslMessageConverter : AbstractHttpMessageConverter<DynamicModelFilter>(MediaType("application", "cql")) {
+class CrudDslMessageConverter(
+    private val crudDsl: CrudDsl
+) : AbstractHttpMessageConverter<DynamicModelFilter>(MediaType("application", "cql")) {
     override fun supports(clazz: Class<*>): Boolean {
             return DynamicModelFilter::class.java.isAssignableFrom(clazz)
     }
@@ -16,7 +18,6 @@ class CrudDslMessageConverter : AbstractHttpMessageConverter<DynamicModelFilter>
     }
 
     override fun readInternal(clazz: Class<out DynamicModelFilter>, inputMessage: HttpInputMessage): DynamicModelFilter {
-        val crudDsl = CrudDsl()
         return crudDsl.parseInput(inputMessage.body);
     }
 }
