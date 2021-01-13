@@ -28,7 +28,7 @@ class MongoDistributedLock(private val lockKey: String, private val mongoTemplat
                 if(result) {
                     break
                 }
-                delay(10000)
+                delay(1000)
             }
         }
     }
