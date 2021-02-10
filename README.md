@@ -64,14 +64,14 @@ Contains useful utilities and classes for web operations
 <dependency>
     <groupId>com.antelopesystem.crudframework</groupId>
     <artifactId>crud-framework-web</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.3</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("com.antelopesystem.crudframework:crud-framework-web:0.3.1")
+implementation("com.antelopesystem.crudframework:crud-framework-web:0.3.3")
 ```
 
 ### Operation
