@@ -1,5 +1,6 @@
 package com.antelopesystem.crudframework.jpa.dao;
 
+import com.antelopesystem.crudframework.jpa.annotation.CrudJoinType;
 import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity;
 import com.antelopesystem.crudframework.model.PersistentEntity;
 import com.antelopesystem.crudframework.modelfilter.*;
@@ -360,13 +361,14 @@ public abstract class AbstractBaseDao implements BaseDao {
 
 	private void createAliases(Class clazz, Criteria criteria, List<String> aliases, String existingAlias, Set<String> flatFilterFieldNames) {
 		for(Field field : clazz.getDeclaredFields()) {
-
 			Class type = field.getType();
 			boolean isCollection = false;
 			if(Collection.class.isAssignableFrom(type)) {
 				type = (Class<?>) (((ParameterizedTypeImpl) field.getGenericType()).getActualTypeArguments())[0];
 				isCollection = true;
 			}
+
+			CrudJoinType crudJoinType = field.getDeclaredAnnotation(CrudJoinType.class);
 
 			String aliasPath;
 			if(existingAlias != null) {
@@ -389,7 +391,11 @@ public abstract class AbstractBaseDao implements BaseDao {
 				String newAlias = aliasPath.replace(".", "/");
 
 				if(flatFilterFieldNames.stream().anyMatch(name -> name.startsWith(newAlias + ".") || name.startsWith(newAlias + "/"))) {
-					criteria.createAlias(aliasPath, newAlias);
+					if(crudJoinType != null) {
+						criteria.createAlias(aliasPath, newAlias, crudJoinType.joinType());
+					} else {
+						criteria.createAlias(aliasPath, newAlias);
+					}
 					aliases.add(aliasPath.replace(".", "/"));
 					createAliases(type, criteria, aliases, aliasPath, flatFilterFieldNames);
 				}
