@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.antelopesystem.crudframework</groupId>
         <artifactId>crud-framework</artifactId>
-        <version>0.3.4</version>
+        <version>0.3.5-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>com.antelopesystem.crudframework</groupId>
             <artifactId>crud-framework-core</artifactId>
-            <version>0.3.4</version>
+            <version>0.3.5-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
