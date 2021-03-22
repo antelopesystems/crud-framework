@@ -8,4 +8,5 @@ annotation class Deleteable(
         /**
          * Denotes whether the entity is soft deleteable or hard deleteable
          */
-        val softDelete: Boolean) 
+        val softDelete: Boolean
+)
