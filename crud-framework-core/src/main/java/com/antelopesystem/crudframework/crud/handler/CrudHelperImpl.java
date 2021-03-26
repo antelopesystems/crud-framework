@@ -3,10 +3,7 @@ package com.antelopesystem.crudframework.crud.handler;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
-import com.antelopesystem.crudframework.crud.exception.CrudException;
-import com.antelopesystem.crudframework.crud.exception.CrudInvalidStateException;
-import com.antelopesystem.crudframework.crud.exception.CrudTransformationException;
-import com.antelopesystem.crudframework.crud.exception.CrudValidationException;
+import com.antelopesystem.crudframework.crud.exception.*;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
 import com.antelopesystem.crudframework.exception.WrapException;
@@ -300,6 +297,16 @@ public class CrudHelperImpl implements CrudHelper {
 		EntityMetadataDTO metadataDTO = getEntityMetadata(clazz);
 		if(metadataDTO.getDeleteableType() == EntityMetadataDTO.DeleteableType.None) {
 			throw new CrudInvalidStateException("Entity of type [ " + clazz.getSimpleName() + " ] can not be deleted");
+		}
+
+		if(metadataDTO.getDeleteableType() == EntityMetadataDTO.DeleteableType.Soft) {
+			if(metadataDTO.getDeleteField() == null) {
+				throw new CrudInvalidStateException("Entity of type [ " + clazz.getSimpleName() + " ] is set for soft delete but is missing @DeleteColumn");
+			}
+
+			if(!ClassUtils.isAssignable(boolean.class, metadataDTO.getDeleteField().getType())) {
+				throw new CrudInvalidStateException("Entity of type [ " + clazz.getSimpleName() + " ] has an invalid @DeleteColumn - column must be of type boolean");
+			}
 		}
 	}
 

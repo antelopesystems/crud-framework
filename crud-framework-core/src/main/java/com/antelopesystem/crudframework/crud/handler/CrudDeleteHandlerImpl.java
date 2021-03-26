@@ -54,13 +54,6 @@ public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
 		if(metadataDTO.getDeleteableType() == EntityMetadataDTO.DeleteableType.Hard) {
 			entity = crudDeleteHandlerProxy.deleteHardTransactional(id, clazz, hooks.getOnHooks(), accessorDTO);
 		} else {
-			if(metadataDTO.getDeleteField() == null) {
-				throw new CrudDeleteException("No deleteColumn specified");
-			}
-
-			if(!ClassUtils.isAssignable(boolean.class, metadataDTO.getDeleteField().getType())) {
-				throw new CrudDeleteException("deleteColumn must be a boolean");
-			}
 
 			entity = crudDeleteHandlerProxy.deleteSoftTransactional(id, metadataDTO.getDeleteField().getName(), clazz, hooks.getOnHooks(), accessorDTO);
 		}
