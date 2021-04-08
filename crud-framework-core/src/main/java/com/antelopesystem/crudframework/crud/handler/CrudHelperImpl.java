@@ -1,9 +1,16 @@
 package com.antelopesystem.crudframework.crud.handler;
 
+import com.antelopesystem.crudframework.crud.cache.CacheManagerAdapter;
+import com.antelopesystem.crudframework.crud.cache.CacheUtils;
+import com.antelopesystem.crudframework.crud.cache.CrudCache;
+import com.antelopesystem.crudframework.crud.cache.CrudCacheOptions;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
-import com.antelopesystem.crudframework.crud.exception.*;
+import com.antelopesystem.crudframework.crud.exception.CrudException;
+import com.antelopesystem.crudframework.crud.exception.CrudInvalidStateException;
+import com.antelopesystem.crudframework.crud.exception.CrudTransformationException;
+import com.antelopesystem.crudframework.crud.exception.CrudValidationException;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
 import com.antelopesystem.crudframework.exception.WrapException;
@@ -11,25 +18,19 @@ import com.antelopesystem.crudframework.exception.dto.ErrorField;
 import com.antelopesystem.crudframework.fieldmapper.FieldMapper;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
-import com.antelopesystem.crudframework.model.PersistentEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.modelfilter.FilterField;
 import com.antelopesystem.crudframework.modelfilter.FilterFields;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
-import com.antelopesystem.crudframework.utils.utils.CacheUtils;
+import com.antelopesystem.crudframework.utils.component.startup.annotation.PostStartUp;
 import com.antelopesystem.crudframework.utils.utils.FieldUtils;
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.CacheConfiguration;
-import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.ClassUtils;
 
@@ -50,7 +51,7 @@ public class CrudHelperImpl implements CrudHelper {
 	@ComponentMap
 	private Map<String, ObjectDecorator> objectDecoratorMap;
 
-	private Map<String, Cache> cacheMap = new HashMap<>();
+	private Map<String, CrudCache> cacheMap = new HashMap<>();
 
 	@ComponentMap
 	private Map<String, DataAccessManager> dataAccessManagers;
@@ -70,10 +71,10 @@ public class CrudHelperImpl implements CrudHelper {
 
 	private Map<Class<? extends BaseCrudEntity<?>>, EntityMetadataDTO> entityMetadataDTOs = new HashMap<>();
 
-	private net.sf.ehcache.Cache pagingCache;
+	private CrudCache pagingCache;
 
-	@Autowired(required = false)
-	private CacheManager cacheManager;
+	@Autowired
+	private CacheManagerAdapter cacheManagerAdapter;
 
 	@Autowired(required = false)
 	private Map<String, FieldTransformer> fieldTransformers = new HashMap<>();
@@ -83,17 +84,12 @@ public class CrudHelperImpl implements CrudHelper {
 		for(Map.Entry<String, FieldTransformer> entry : fieldTransformers.entrySet()) {
 			fieldMapper.registerTransformer(entry.getKey(), entry.getValue());
 		}
-
-		net.sf.ehcache.CacheManager cacheManager = net.sf.ehcache.CacheManager.create();
-		pagingCache = new net.sf.ehcache.Cache(
-				new CacheConfiguration("pagingCache", 12000)
-						.memoryStoreEvictionPolicy(MemoryStoreEvictionPolicy.FIFO)
-						.eternal(false)
-						.timeToLiveSeconds(60)
-						.timeToIdleSeconds(60)
-		);
-
-		cacheManager.addCacheIfAbsent(pagingCache);
+		pagingCache = cacheManagerAdapter.createCache("pagingCache",
+				new CrudCacheOptions(
+						60L,
+						60L,
+						null
+				));
 	}
 
 	@Override
@@ -330,7 +326,7 @@ public class CrudHelperImpl implements CrudHelper {
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void evictEntityFromCache(Entity entity) {
 		Objects.requireNonNull(entity, "entity cannot be null");
 
-		Cache cache = crudHelperProxy.getEntityCache(entity.getClass());
+		CrudCache cache = crudHelperProxy.getEntityCache(entity.getClass());
 
 		if(cache == null) {
 			return;
@@ -346,11 +342,7 @@ public class CrudHelperImpl implements CrudHelper {
 
 	@Override
 	@WrapException(CrudException.class)
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Cache getEntityCache(Class<Entity> clazz) {
-		if(cacheManager == null) {
-			return null;
-		}
-
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> CrudCache getEntityCache(Class<Entity> clazz) {
 		if(cacheMap.containsKey(clazz.getName())) {
 			return cacheMap.get(clazz.getName());
 		}
@@ -361,7 +353,7 @@ public class CrudHelperImpl implements CrudHelper {
 			return null;
 		}
 
-		Cache cache = cacheManager.getCache(dto.getCacheName());
+		CrudCache cache = cacheManagerAdapter.getCache(dto.getCacheName());
 		if(cache == null) {
 			throw new CrudException("Cache for entity [ " + clazz.getSimpleName() + " ] with name [ " + dto.getCacheName() + " ] not found");
 		}
@@ -443,18 +435,13 @@ public class CrudHelperImpl implements CrudHelper {
 	@Override
 	public <Entity> void setTotalToPagingCache(Class<Entity> entityClazz, DynamicModelFilter filter, long total) {
 		String cacheKey = entityClazz.getName() + "_" + filter.getFilterFields().hashCode();
-		pagingCache.put(new Element(cacheKey, total));
+		pagingCache.put(cacheKey, total);
 	}
 
 	@Override
 	public <Entity> Long getTotalFromPagingCache(Class<Entity> entityClazz, DynamicModelFilter filter) {
 		String cacheKey = entityClazz.getName() + "_" + filter.getFilterFields().hashCode();
-		Element element = pagingCache.get(cacheKey);
-		if(element != null) {
-			return (Long) element.getObjectValue();
-		}
-
-		return null;
+		return (Long) pagingCache.get(cacheKey);
 	}
 
 	@Override

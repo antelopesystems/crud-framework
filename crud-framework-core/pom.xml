@@ -23,6 +23,7 @@
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <artifactId>slf4j-api</artifactId>

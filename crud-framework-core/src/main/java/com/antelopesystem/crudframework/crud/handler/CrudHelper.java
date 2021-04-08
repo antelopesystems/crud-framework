@@ -1,5 +1,6 @@
 package com.antelopesystem.crudframework.crud.handler;
 
+import com.antelopesystem.crudframework.crud.cache.CrudCache;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
@@ -46,7 +47,7 @@ public interface CrudHelper {
 
 	<Entity, E> ObjectDecorator<Entity, E> getObjectDecorator(Class<Entity> fromClass, Class<E> toClass);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> org.springframework.cache.Cache getEntityCache(Class<Entity> clazz);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> CrudCache getEntityCache(Class<Entity> clazz);
 
 	void validate(Object target);
 

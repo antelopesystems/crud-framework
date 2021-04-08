@@ -1,5 +1,6 @@
 package com.antelopesystem.crudframework.crud.handler;
 
+import com.antelopesystem.crudframework.crud.cache.CrudCache;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.enums.ShowByMode;
 import com.antelopesystem.crudframework.crud.exception.CrudReadException;
@@ -13,7 +14,7 @@ import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.PagingDTO;
 import com.antelopesystem.crudframework.ro.PagingRO;
-import com.antelopesystem.crudframework.utils.utils.CacheUtils;
+import com.antelopesystem.crudframework.crud.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,7 +52,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			}
 		}
 
-		org.springframework.cache.Cache cache = null;
+		CrudCache cache = null;
 
 		if(fromCache) {
 			cache = crudHelper.getEntityCache(clazz);
@@ -152,7 +153,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			preHook.run(filter);
 		}
 
-		org.springframework.cache.Cache cache = null;
+		CrudCache cache = null;
 		if(fromCache) {
 			cache = crudHelper.getEntityCache(clazz);
 		}
@@ -221,7 +222,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			preHook.run(id);
 		}
 
-		org.springframework.cache.Cache cache = null;
+		CrudCache cache = null;
 		if(fromCache) {
 			cache = crudHelper.getEntityCache(clazz);
 		}
