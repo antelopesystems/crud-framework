@@ -12,6 +12,7 @@ import com.antelopesystem.crudframework.crud.exception.CrudInvalidStateException
 import com.antelopesystem.crudframework.crud.exception.CrudTransformationException;
 import com.antelopesystem.crudframework.crud.exception.CrudValidationException;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
+import com.antelopesystem.crudframework.crud.model.EntityCacheMetadata;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
 import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.exception.dto.ErrorField;
@@ -348,16 +349,21 @@ public class CrudHelperImpl implements CrudHelper {
 		}
 
 		EntityMetadataDTO dto = getEntityMetadata(clazz);
-		if(dto.getCacheName() == null) {
+		EntityCacheMetadata cacheMetadata = dto.getCacheMetadata();
+		if(cacheMetadata == null) {
 			cacheMap.put(clazz.getName(), null);
 			return null;
 		}
 
-		CrudCache cache = cacheManagerAdapter.getCache(dto.getCacheName());
+		CrudCache cache = cacheManagerAdapter.getCache(cacheMetadata.getName());
 		if(cache == null) {
-			throw new CrudException("Cache for entity [ " + clazz.getSimpleName() + " ] with name [ " + dto.getCacheName() + " ] not found");
-		}
+			if(cacheMetadata.getCreateIfMissing()) {
+				cache = cacheManagerAdapter.createCache(cacheMetadata.getName(), cacheMetadata.getOptions());
+			} else {
+				throw new CrudException("Cache for entity [ " + clazz.getSimpleName() + " ] with name [ " + dto.getCacheMetadata().getName() + " ] not found");
+			}
 
+		}
 		cacheMap.put(clazz.getName(), cache);
 
 		return cache;

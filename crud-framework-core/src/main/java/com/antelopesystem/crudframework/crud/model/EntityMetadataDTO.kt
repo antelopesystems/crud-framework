@@ -1,6 +1,7 @@
 package com.antelopesystem.crudframework.crud.model
 
 import com.antelopesystem.crudframework.crud.annotation.*
+import com.antelopesystem.crudframework.crud.cache.CrudCacheOptions
 import com.antelopesystem.crudframework.crud.handler.CrudDao
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks
 import com.antelopesystem.crudframework.model.BaseCrudEntity
@@ -15,13 +16,13 @@ import kotlin.reflect.full.allSuperclasses
 
 class EntityMetadataDTO {
 
-    val simpleName: String;
+    val simpleName: String
 
     val deleteField: Field?
 
     val deleteableType: DeleteableType
 
-    val cacheName: String?
+    val cacheMetadata: EntityCacheMetadata?
 
     val immutable: Boolean
 
@@ -40,7 +41,7 @@ class EntityMetadataDTO {
     constructor(entityClazz: Class<out BaseCrudEntity<*>>) {
         deleteField = getEntityDeleteField(entityClazz)
         deleteableType = getEntityDeleteableType(entityClazz)
-        cacheName = getEntityCacheName(entityClazz)
+        cacheMetadata = getEntityCacheMetadata(entityClazz)
         immutable = isEntityImmutable(entityClazz)
         alwaysPersistCopy = shouldAlwaysPersistCopy(entityClazz)
         collectHookAnnotations(entityClazz)
@@ -114,9 +115,23 @@ class EntityMetadataDTO {
         return crudEntity.dao.java
     }
 
-    private fun getEntityCacheName(clazz: Class<out BaseCrudEntity<*>>): String? {
-        val cachedBy = clazz.getDeclaredAnnotation(CachedBy::class.java)
-        return cachedBy?.value
+    private fun getEntityCacheMetadata(clazz: Class<out BaseCrudEntity<*>>): EntityCacheMetadata? {
+        val cachedBy = clazz.getDeclaredAnnotation(CachedBy::class.java) ?: return null
+        fun Long.nullIfMinusOne(): Long? = if(this == -1L) {
+            null
+        } else {
+            this
+        }
+
+        return EntityCacheMetadata(
+                cachedBy.value,
+                cachedBy.createIfMissing,
+                CrudCacheOptions(
+                        cachedBy.timeToLiveSeconds.nullIfMinusOne(),
+                        cachedBy.timeToIdleSeconds.nullIfMinusOne(),
+                        cachedBy.maxEntries.nullIfMinusOne()
+                )
+        )
     }
 
     private fun getEntityDeleteableType(clazz: Class<out BaseCrudEntity<*>>): DeleteableType {
@@ -157,3 +172,9 @@ class EntityMetadataDTO {
         private const val MAX_FILTERFIELD_DEPTH = 4
     }
 }
+
+data class EntityCacheMetadata(
+        val name: String,
+        val createIfMissing: Boolean,
+        val options: CrudCacheOptions
+)
