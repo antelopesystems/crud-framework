@@ -144,13 +144,13 @@ public class CrudHandlerImpl implements CrudHandler {
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<Entity>> updateFrom(
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<Entity>> updateByFilter(
 			DynamicModelFilter filter, Class<Entity> entityClazz) {
 		return new MassUpdateCRUDRequestBuilder<>((hooks, persistCopy, accessorDTO) -> crudUpdateHandler.updateByFilterTransactional(filter, entityClazz, hooks, persistCopy, accessorDTO));
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<RO>> updateFrom(
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<RO>> updateByFilter(
 			DynamicModelFilter filter, Class<Entity> entityClazz, Class<RO> toClazz) {
 		return new MassUpdateCRUDRequestBuilder<>((hooks, persistCopy, accessorDTO) -> {
 			List<Entity> result = crudUpdateHandler.updateByFilterTransactional(filter, entityClazz, hooks, persistCopy, accessorDTO);
