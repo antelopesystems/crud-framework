@@ -6,7 +6,7 @@ import net.sf.ehcache.Element
 
 class CrudEhCacheImpl(private val vendorCache: Ehcache) : CrudCache {
     override fun get(key: Any): Any? {
-        return vendorCache.get(key)
+        return vendorCache.get(key)?.objectValue
     }
 
     override fun put(key: Any, value: Any?) {
