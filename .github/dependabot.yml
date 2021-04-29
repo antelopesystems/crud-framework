@@ -1,0 +1,63 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: mysql:mysql-connector-java
+    versions:
+    - "> 5.1.18"
+  - dependency-name: org.apache.commons:commons-lang3
+    versions:
+    - ">= 3.11.a, < 3.12"
+  - dependency-name: org.aspectj:aspectjweaver
+    versions:
+    - "> 1.8.13"
+  - dependency-name: org.hibernate:hibernate-core
+    versions:
+    - "> 5.2.17.Final"
+  - dependency-name: org.hibernate.validator:hibernate-validator
+    versions:
+    - "> 6.1.0.Final"
+  - dependency-name: org.jetbrains.dokka:dokka-maven-plugin
+    versions:
+    - "> 1.4.20, < 1.5"
+  - dependency-name: org.jetbrains.kotlin:kotlin-maven-allopen
+    versions:
+    - "> 1.3.20"
+  - dependency-name: org.jetbrains.kotlin:kotlin-maven-noarg
+    versions:
+    - "> 1.3.20"
+  - dependency-name: org.jetbrains.kotlin:kotlin-maven-plugin
+    versions:
+    - "> 1.3.20"
+  - dependency-name: org.jetbrains.kotlin:kotlin-reflect
+    versions:
+    - "> 1.3.20"
+  - dependency-name: org.jetbrains.kotlin:kotlin-stdlib-jdk8
+    versions:
+    - "> 1.3.20"
+  - dependency-name: org.springframework.boot:spring-boot-starter-parent
+    versions:
+    - "> 2.0.8.RELEASE"
+  - dependency-name: org.testcontainers:mysql
+    versions:
+    - "> 1.10.6"
+  - dependency-name: org.antlr:antlr4-runtime
+    versions:
+    - 4.9.2
+  - dependency-name: org.jetbrains.kotlinx:kotlinx-coroutines-core
+    versions:
+    - 1.4.2-native-mt
+    - 1.4.3-native-mt
+  - dependency-name: org.jetbrains.dokka:dokka-maven-plugin
+    versions:
+    - 1.4.20-dev-65
+  - dependency-name: org.apache.commons:commons-lang3
+    versions:
+    - "3.10"
+  - dependency-name: net.sf.ehcache:ehcache
+    versions:
+    - 2.10.6
