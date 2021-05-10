@@ -7,6 +7,8 @@ import com.antelopesystem.crudframework.fieldmapper.transformer.DefaultTransform
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
 import kotlin.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -15,9 +17,13 @@ import java.util.stream.Stream;
 
 public class FieldMapper {
 
+	private Logger log = LoggerFactory.getLogger(getClass());
+
 	private Map<String, FieldTransformer> fieldTransformersByRef = new HashMap<>();
 
 	private Map<Class<? extends FieldTransformer>, FieldTransformer> fieldTransformersByType = new HashMap<>();
+
+	private Map<Pair<Class<?>, Class<?>>, FieldTransformer> defaultTransformers = new HashMap();
 
 	private static Map<Pair<Class<?>, Class<?>>, EntityStructureDTO> entityStructures = new HashMap<>();
 
@@ -28,10 +34,16 @@ public class FieldMapper {
 	public void registerTransformer(String ref, FieldTransformer transformer) {
 		fieldTransformersByRef.put(ref, transformer);
 		fieldTransformersByType.put(transformer.getClass(), transformer);
+		if(transformer.isDefault()) {
+			registerDefaultTransformer(transformer);
+		}
 	}
 
 	public void registerTransformer(Class<? extends FieldTransformer> clazz, FieldTransformer transformer) {
 		fieldTransformersByType.put(clazz, transformer);
+		if(transformer.isDefault()) {
+			registerDefaultTransformer(transformer);
+		}
 	}
 
 	public <T> T processMappedFields(Object object, Class<T> toClazz) {
@@ -94,7 +106,7 @@ public class FieldMapper {
 		toPath = toPath.isEmpty() ? fromPair.getField().getName() : toPath;
 		ObjectFieldPair toPair = getFieldByPath(toPath, toObject, SourceType.TO);
 
-		FieldTransformer transformer = getTransformer(annotation);
+		FieldTransformer transformer = getTransformer(annotation, fromPair, toPair);
 		mapField(fromPair, toPair, transformer);
 	}
 
@@ -147,19 +159,36 @@ public class FieldMapper {
 			try {
 				ReflectionUtils.setField(toPair.getField(), toPair.getObject(), value);
 			} catch(Exception e) {
-				throw new RuntimeException("Could not map value " + fromPair.getField().getName() + " of class " + fromPair.getObject().getClass().getSimpleName() + " to " + toPair.getField().getName() + " of class" + toPair.getObject().getClass().getSimpleName());
+				IllegalStateException newException = new IllegalStateException("Could not map value " + fromPair.getField().getName() + " of class " + fromPair.getObject().getClass().getSimpleName() + " to " + toPair.getField().getName() + " of class" + toPair.getObject().getClass().getSimpleName());
+				newException.initCause(e);
+				throw newException;
 			}
 		}
 	}
 
-	private FieldTransformer getTransformer(MappedField annotation) {
+	private FieldTransformer getTransformer(MappedField annotation, ObjectFieldPair fromPair, ObjectFieldPair toPair) {
+		Pair transformationPair = new Pair(fromPair.getField().getType(), toPair.getField().getType());
+		log.trace("Attempting to find transformer for transformation pair [ " + transformationPair + " ]");
 		FieldTransformer transformer = null;
+		log.trace("Checking transformerRef field");
 		if(!annotation.transformerRef().isEmpty()) {
+			log.trace("transformerRef is not empty with value [ " + annotation.transformerRef() + " ]");
 			transformer = fieldTransformersByRef.get(annotation.transformerRef());
+			log.trace("Found transformer of type [ " + transformer.getClass().getName() + " ]");
 		}
 
 		if(transformer == null) {
+			log.trace("Checking transformer field");
 			if(annotation.transformer() == DefaultTransformer.class) {
+				log.trace("Transformer is DefaultTransformer, attempting to find a default transformer");
+				Pair key = new Pair(fromPair.getField().getType(), toPair.getField().getType());
+
+				FieldTransformer defaultTransformer = defaultTransformers.get(key);
+				if(defaultTransformer != null) {
+					log.trace("Found a default transformer of type [ " + defaultTransformer.getClass().getName() + " ]");
+					return defaultTransformer;
+				}
+
 				return null;
 			}
 
@@ -258,6 +287,18 @@ public class FieldMapper {
 		}
 
 		return fromClass.isAssignableFrom(toClass);
+	}
+
+	private void registerDefaultTransformer(FieldTransformer transformer) {
+		if(transformer.isDefault()) {
+			Pair key = new Pair<>(transformer.fromType(), transformer.toType());
+			FieldTransformer existing = defaultTransformers.get(key);
+			if(existing != null) {
+				throw new IllegalStateException("Cannot register default transformer for pair [ " + key + " ] - already registered by [ " + existing.getClass().getName() + " ]");
+			}
+
+			defaultTransformers.put(key, transformer);
+		}
 	}
 
 	private enum SourceType {
