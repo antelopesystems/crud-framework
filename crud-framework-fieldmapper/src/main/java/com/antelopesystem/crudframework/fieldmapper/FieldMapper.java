@@ -46,6 +46,18 @@ public class FieldMapper {
 		}
 	}
 
+	public void registerDefaultTransformer(FieldTransformer transformer) {
+		if(transformer.isDefault()) {
+			Pair key = new Pair<>(transformer.fromType(), transformer.toType());
+			FieldTransformer existing = defaultTransformers.get(key);
+			if(existing != null) {
+				throw new IllegalStateException("Cannot register default transformer for pair [ " + key + " ] - already registered by [ " + existing.getClass().getName() + " ]");
+			}
+
+			defaultTransformers.put(key, transformer);
+		}
+	}
+
 	public <T> T processMappedFields(Object object, Class<T> toClazz) {
 		T toObject = ReflectionUtils.instantiateClass(toClazz);
 		processMappedFields(object, toObject);
@@ -287,18 +299,6 @@ public class FieldMapper {
 		}
 
 		return fromClass.isAssignableFrom(toClass);
-	}
-
-	private void registerDefaultTransformer(FieldTransformer transformer) {
-		if(transformer.isDefault()) {
-			Pair key = new Pair<>(transformer.fromType(), transformer.toType());
-			FieldTransformer existing = defaultTransformers.get(key);
-			if(existing != null) {
-				throw new IllegalStateException("Cannot register default transformer for pair [ " + key + " ] - already registered by [ " + existing.getClass().getName() + " ]");
-			}
-
-			defaultTransformers.put(key, transformer);
-		}
 	}
 
 	private enum SourceType {
