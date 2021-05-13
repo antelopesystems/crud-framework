@@ -439,7 +439,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 			if(order.getDescending()) {
 				criteria.addOrder(Order.desc(order.getBy()));
 			} else {
-				criteria.addOrder(Order.asc(modelFilter.getOrderBy()));
+				criteria.addOrder(Order.asc(order.getBy()));
 			}
 			appliedOrder = true;
 		}
