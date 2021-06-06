@@ -4,6 +4,8 @@ import com.antelopesystem.crudframework.crud.cache.CacheManagerAdapter;
 import com.antelopesystem.crudframework.crud.cache.CacheUtils;
 import com.antelopesystem.crudframework.crud.cache.CrudCache;
 import com.antelopesystem.crudframework.crud.cache.CrudCacheOptions;
+import com.antelopesystem.crudframework.crud.configuration.CrudFrameworkConfiguration;
+import com.antelopesystem.crudframework.crud.configuration.properties.CrudFrameworkProperties;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
@@ -17,6 +19,8 @@ import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
 import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.exception.dto.ErrorField;
 import com.antelopesystem.crudframework.fieldmapper.FieldMapper;
+import com.antelopesystem.crudframework.fieldmapper.transformer.DateToLongTransformer;
+import com.antelopesystem.crudframework.fieldmapper.transformer.LongToDateTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
@@ -25,7 +29,6 @@ import com.antelopesystem.crudframework.modelfilter.FilterFields;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap;
-import com.antelopesystem.crudframework.utils.component.startup.annotation.PostStartUp;
 import com.antelopesystem.crudframework.utils.utils.FieldUtils;
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils;
 import org.springframework.aop.framework.Advised;
@@ -80,11 +83,12 @@ public class CrudHelperImpl implements CrudHelper {
 	@Autowired(required = false)
 	private Map<String, FieldTransformer> fieldTransformers = new HashMap<>();
 
+	@Autowired
+	private CrudFrameworkProperties properties;
+
 	@PostConstruct
 	private void init() {
-		for(Map.Entry<String, FieldTransformer> entry : fieldTransformers.entrySet()) {
-			fieldMapper.registerTransformer(entry.getKey(), entry.getValue());
-		}
+		initFieldMapper();
 		pagingCache = cacheManagerAdapter.createCache("pagingCache",
 				new CrudCacheOptions(
 						60L,
@@ -461,6 +465,17 @@ public class CrudHelperImpl implements CrudHelper {
 			}
 			return null;
 		});
+	}
+
+	private void initFieldMapper() {
+		for(Map.Entry<String, FieldTransformer> entry : fieldTransformers.entrySet()) {
+			fieldMapper.registerTransformer(entry.getKey(), entry.getValue());
+		}
+
+		if(properties.getDefaultTransformersEnabled()) {
+			fieldMapper.registerDefaultTransformer(new DateToLongTransformer());
+			fieldMapper.registerDefaultTransformer(new LongToDateTransformer());
+		}
 	}
 
 	private <T> Class<T> getTrueProxyClass(T proxy) {

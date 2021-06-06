@@ -47,8 +47,12 @@ public class FieldMapper {
 	}
 
 	public void registerDefaultTransformer(FieldTransformer transformer) {
+		registerDefaultTransformer(transformer, transformer.fromType(), transformer.toType());
+	}
+
+	public void registerDefaultTransformer(FieldTransformer transformer, Class<?> fromType, Class<?> toType) {
 		if(transformer.isDefault()) {
-			Pair key = new Pair<>(transformer.fromType(), transformer.toType());
+			Pair key = new Pair<>(fromType, toType);
 			FieldTransformer existing = defaultTransformers.get(key);
 			if(existing != null) {
 				throw new IllegalStateException("Cannot register default transformer for pair [ " + key + " ] - already registered by [ " + existing.getClass().getName() + " ]");

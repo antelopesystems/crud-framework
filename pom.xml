@@ -95,7 +95,11 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
 
@@ -219,6 +223,24 @@
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/java</sourceDir>
                             </sourceDirs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>kapt</id>
+                        <goals>
+                            <goal>kapt</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/java</sourceDir>
+                            </sourceDirs>
+                            <annotationProcessorPaths>
+                                <annotationProcessorPath>
+                                    <groupId>org.springframework.boot</groupId>
+                                    <artifactId>spring-boot-configuration-processor</artifactId>
+                                    <version>${spring.boot.version}</version>
+                                </annotationProcessorPath>
+                            </annotationProcessorPaths>
                         </configuration>
                     </execution>
                 </executions>
