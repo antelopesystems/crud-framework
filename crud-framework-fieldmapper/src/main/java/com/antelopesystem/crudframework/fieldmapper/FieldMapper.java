@@ -25,6 +25,8 @@ public class FieldMapper {
 
 	private Map<Pair<Class<?>, Class<?>>, FieldTransformer> defaultTransformers = new HashMap();
 
+	private Map<Pair<Class<?>, Class<?>>, FieldTransformer> defaultTransformersCache = new HashMap();
+
 	private static Map<Pair<Class<?>, Class<?>>, EntityStructureDTO> entityStructures = new HashMap<>();
 
 	private static Map<Class<?>, Map<String, Field>> entityFieldMaps = new HashMap<>();
@@ -197,9 +199,16 @@ public class FieldMapper {
 			log.trace("Checking transformer field");
 			if(annotation.transformer() == DefaultTransformer.class) {
 				log.trace("Transformer is DefaultTransformer, attempting to find a default transformer");
-				Pair key = new Pair(fromPair.getField().getType(), toPair.getField().getType());
+				Pair<Class<?>, Class<?>> key = new Pair(fromPair.getField().getType(), toPair.getField().getType());
 
-				FieldTransformer defaultTransformer = defaultTransformers.get(key);
+				FieldTransformer defaultTransformer;
+				if(!defaultTransformersCache.containsKey(key)) {
+					defaultTransformer = getDefaultTransformer(key);
+					defaultTransformersCache.put(key, defaultTransformer);
+				} else {
+					defaultTransformer = defaultTransformersCache.get(key);
+				}
+
 				if(defaultTransformer != null) {
 					log.trace("Found a default transformer of type [ " + defaultTransformer.getClass().getName() + " ]");
 					return defaultTransformer;
@@ -216,6 +225,24 @@ public class FieldMapper {
 		}
 
 		return transformer;
+	}
+
+	private FieldTransformer getDefaultTransformer(Pair<Class<?>, Class<?>> key) {
+		FieldTransformer defaultTransformer = defaultTransformers.get(key);
+		if(defaultTransformer == null) {
+			defaultTransformer = defaultTransformers.entrySet()
+					.stream()
+					.filter((entry) -> {
+						Pair<Class<?>, Class<?>> pair = entry.getKey();
+						Class first = pair.getFirst();
+						Class second = pair.getSecond();
+						return first.isAssignableFrom(key.getFirst()) && second.isAssignableFrom(key.getSecond());
+					})
+					.map(entry -> entry.getValue())
+					.findFirst()
+					.orElse(null);
+		}
+		return defaultTransformer;
 	}
 
 	private EntityStructureDTO getEntityStructure(Class<?> fromClass, Class<?> toClass) {
