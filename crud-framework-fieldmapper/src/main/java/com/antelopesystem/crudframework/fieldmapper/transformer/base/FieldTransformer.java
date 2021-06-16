@@ -1,5 +1,7 @@
 package com.antelopesystem.crudframework.fieldmapper.transformer.base;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.GenericTypeResolver;
 
 import java.lang.reflect.Field;
@@ -21,5 +23,5 @@ public interface FieldTransformer<FromType, ToType> {
 		return (java.lang.Class<ToType>) GenericTypeResolver.resolveTypeArguments(getClass(), FieldTransformer.class)[1];
 	}
 
-	ToType transform(Field fromField, Field toField, FromType originalValue, Object fromObject, Object toObject);
+	ToType transform(@NotNull Field fromField, @NotNull Field toField, @Nullable FromType originalValue, @NotNull Object fromObject, @NotNull Object toObject);
 }

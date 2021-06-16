@@ -1,5 +1,7 @@
 package com.antelopesystem.crudframework.fieldmapper.transformer.base;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.GenericTypeResolver;
 
 import java.lang.reflect.Field;
@@ -23,7 +25,7 @@ public abstract class FieldTransformerBase<FromType, ToType> implements FieldTra
 	}
 
 	@Override
-	public final ToType transform(Field fromField, Field toField, FromType originalValue, Object fromObject, Object toObject) {
+	public ToType transform(@NotNull Field fromField, @NotNull Field toField, @Nullable FromType originalValue, @NotNull Object fromObject, @NotNull Object toObject) {
 		Class<?>[] generics = GenericTypeResolver.resolveTypeArguments(getClass(), FieldTransformerBase.class);
 		Class<FromType> fromClazz = (Class<FromType>) getActualClass(generics[0]);
 		Class<ToType> eClazz = (Class<ToType>) getActualClass(generics[1]);
@@ -39,7 +41,7 @@ public abstract class FieldTransformerBase<FromType, ToType> implements FieldTra
 		return innerTransform(fromField, toField, originalValue, fromObject, toObject);
 	}
 
-	protected abstract ToType innerTransform(Field fromField, Field toField, FromType originalValue, Object fromObject, Object toObject);
+	protected abstract ToType innerTransform(@NotNull Field fromField, @NotNull Field toField, @Nullable FromType originalValue, @NotNull Object fromObject, @NotNull Object toObject);
 
 	private static Class<?> getActualClass(Class<?> clazz) {
 		if(clazz.isPrimitive()) {
