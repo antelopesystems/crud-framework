@@ -93,7 +93,7 @@ public class CrudHelperImpl implements CrudHelper {
 				new CrudCacheOptions(
 						60L,
 						60L,
-						null
+						10000L
 				));
 	}
 
