@@ -10,9 +10,6 @@ abstract class AbstractTestEntity : BaseCrudEntity<Long>() {
     override var id: Long
         get() = 0L
         set(value) {}
-    override var creationTime: Date
-        get() = Date()
-        set(value) {}
 
     override fun exists(): Boolean {
         return false
