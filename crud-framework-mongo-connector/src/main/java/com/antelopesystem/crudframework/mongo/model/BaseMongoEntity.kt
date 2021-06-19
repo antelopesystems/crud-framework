@@ -18,7 +18,7 @@ abstract class BaseMongoEntity : BaseCrudEntity<String>() {
     override lateinit var id: String
 
     @MappedField(target = BaseMongoRO::class, transformer = DateToLongTransformer::class)
-    override var creationTime: Date = Date()
+    var creationTime: Date = Date()
 
     override fun exists(): Boolean = this::id.isInitialized
 }
