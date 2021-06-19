@@ -72,12 +72,10 @@ public abstract class BaseJpaEntity extends BaseCrudEntity<Long> {
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "creation_time", nullable = false, updatable = false)
-	@Override
 	public Date getCreationTime() {
 		return creationTime;
 	}
 
-	@Override
 	public void setCreationTime(Date creationTime) {
 		this.creationTime = creationTime;
 	}

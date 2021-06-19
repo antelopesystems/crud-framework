@@ -9,8 +9,6 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
 
     abstract var id: ID
 
-    abstract var creationTime: Date
-
     @Transient
     private var copy: BaseCrudEntity<ID>? = null
 
@@ -42,7 +40,7 @@ abstract class BaseCrudEntity<ID : Serializable> : PersistentEntity, Serializabl
     abstract fun exists(): Boolean
 
     companion object {
-        public fun getCacheKey(clazz: Class<*>, id: Serializable?): String? {
+        fun getCacheKey(clazz: Class<*>, id: Serializable?): String? {
             return "CacheKey_" + clazz.simpleName + "_" + id
         }
     }
