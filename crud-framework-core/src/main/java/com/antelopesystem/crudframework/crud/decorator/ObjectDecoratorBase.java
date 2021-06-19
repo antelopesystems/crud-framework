@@ -1,9 +1,6 @@
 package com.antelopesystem.crudframework.crud.decorator;
 
-import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformerBase;
 import org.springframework.core.GenericTypeResolver;
-
-import java.lang.reflect.ParameterizedType;
 
 public abstract class ObjectDecoratorBase<From, To> implements ObjectDecorator<From, To> {
 

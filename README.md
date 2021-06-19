@@ -27,14 +27,14 @@ Maven:
 <dependency>
     <groupId>com.antelopesystem.crudframework</groupId>
     <artifactId>crud-framework-hibernate5-connector</artifactId>
-    <version>0.3.1</version>
+    <version>0.4.1</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("com.antelopesystem.crudframework:crud-framework-hibernate5-connector:0.3.1")
+implementation("com.antelopesystem.crudframework:crud-framework-hibernate5-connector:0.4.1")
 ```
 
 ### MongoDB Connector
@@ -44,14 +44,14 @@ implementation("com.antelopesystem.crudframework:crud-framework-hibernate5-conne
 <dependency>
     <groupId>com.antelopesystem.crudframework</groupId>
     <artifactId>crud-framework-mongo-connector</artifactId>
-    <version>0.3.1</version>
+    <version>0.4.1</version>
 </dependency>
 ```
 
 Gradle:
 
 ```kotlin
-implementation("com.antelopesystem.crudframework:crud-framework-mongo-connector:0.3.1")
+implementation("com.antelopesystem.crudframework:crud-framework-mongo-connector:0.4.1")
 ```
 
 

@@ -31,10 +31,6 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 			HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks, Boolean persistCopy, DataAccessorDTO accessorDTO) {
 		List<Entity> finalEntityList = new ArrayList<>();
 		for(Entity entity : entities) {
-			if(persistCopy != null && persistCopy) {
-				entity.saveOrGetCopy();
-			}
-
 			finalEntityList.add(crudUpdateHandlerProxy.updateInternal(entity, hooks, accessorDTO));
 		}
 
@@ -45,7 +41,7 @@ public class CrudUpdateHandlerImpl implements CrudUpdateHandler {
 	@Transactional(readOnly = false)
 	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> List<Entity> updateByFilterTransactional(DynamicModelFilter filter, Class<Entity> entityClazz,
 			HooksDTO<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>> hooks, Boolean persistCopy, DataAccessorDTO accessorDTO) {
-		List<Entity> entities = crudHelper.getEntities(filter, entityClazz, accessorDTO, false, true);
+		List<Entity> entities = crudHelper.getEntities(filter, entityClazz, accessorDTO, persistCopy, true);
 		return crudUpdateHandlerProxy.updateManyTransactional(entities, hooks, persistCopy, accessorDTO);
 	}
 
