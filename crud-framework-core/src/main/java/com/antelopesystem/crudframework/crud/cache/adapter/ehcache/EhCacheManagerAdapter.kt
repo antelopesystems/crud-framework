@@ -29,7 +29,7 @@ class EhCacheManagerAdapter(
         }
 
         if(maxEntries != null) {
-            configuration.maxEntriesInCache = maxEntries
+            configuration.maxEntriesLocalHeap = maxEntries
         }
 
         val vendorCache = cacheManager.addCacheIfAbsent(Cache(configuration))
