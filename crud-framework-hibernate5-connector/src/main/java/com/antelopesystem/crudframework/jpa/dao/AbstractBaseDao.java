@@ -1,7 +1,7 @@
 package com.antelopesystem.crudframework.jpa.dao;
 
 import com.antelopesystem.crudframework.jpa.annotation.CrudJoinType;
-import com.antelopesystem.crudframework.jpa.model.BaseJpaEntity;
+import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.model.PersistentEntity;
 import com.antelopesystem.crudframework.modelfilter.*;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
@@ -65,7 +65,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 	 * @param id unique identificator
 	 * @return entity with given class and UUID.
 	 */
-	public <T extends BaseJpaEntity> T findObject(Class<T> clazz, Serializable id) {
+	public <T extends BaseCrudEntity<?>> T findObject(Class<T> clazz, Serializable id) {
 		return (T) getCurrentSession().get(clazz, id);
 	}
 
@@ -76,7 +76,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 	 * @param ids a list of UUIDs
 	 * @return a list of entities with given class and matching UUID
 	 */
-	public <T extends BaseJpaEntity> List<T> findObjectByIds(Class<T> clazz, Serializable ids[]) {
+	public <T extends BaseCrudEntity<?>> List<T> findObjectByIds(Class<T> clazz, Serializable ids[]) {
 		return (List<T>) getCurrentSession().createCriteria(clazz).add(Restrictions.in("id", ids)).list();
 	}
 
