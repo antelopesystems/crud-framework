@@ -222,6 +222,21 @@ class FilterFieldDslTest {
     }
 
     @Test
+    fun `test Contains#String`() {
+        val filterField = and {
+            "test" Contains "value"
+        }.children.first()
+
+        filterField.runAssertions(
+            "test",
+            FilterFieldOperation.Contains,
+            FilterFieldDataType.String,
+            1,
+            arrayOf("value")
+        )
+    }
+
+    @Test
     fun `test StartsWith#String`() {
         val filterField = and {
             "test" StartsWith "value"
@@ -372,6 +387,21 @@ class FilterFieldDslTest {
     }
 
     @Test
+    fun `test LowerThan#Int`() {
+        val filterField = and {
+            "test" LowerThan 1
+        }.children.first()
+
+        filterField.runAssertions(
+            "test",
+            FilterFieldOperation.LowerThan,
+            FilterFieldDataType.Integer,
+            1,
+            arrayOf(1)
+        )
+    }
+
+    @Test
     fun `test LowerThan#Long`() {
         val filterField = and {
             "test" LowerThan 1L
@@ -413,6 +443,21 @@ class FilterFieldDslTest {
             FilterFieldDataType.Date,
             1,
             arrayOf(Date(0))
+        )
+    }
+
+    @Test
+    fun `test LowerOrEqual#Int`() {
+        val filterField = and {
+            "test" LowerOrEqual  1
+        }.children.first()
+
+        filterField.runAssertions(
+            "test",
+            FilterFieldOperation.LowerEqual,
+            FilterFieldDataType.Integer,
+            1,
+            arrayOf(1)
         )
     }
 
