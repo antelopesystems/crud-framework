@@ -18,7 +18,7 @@ class ModelFilterBuilder(
     fun where(setup: FilterFieldsBuilder.() -> Unit) {
         val filterFieldsBuilder = FilterFieldsBuilder()
         filterFieldsBuilder.setup()
-        this.filterFields += filterFieldsBuilder.build()
+        this.filterFields.addAll(filterFieldsBuilder.build())
     }
 
     fun order(setup: OrderBuilder.() -> Unit) {
