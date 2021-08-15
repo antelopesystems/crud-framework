@@ -3,7 +3,6 @@ package com.antelopesystem.crudframework.crud.configuration
 import com.antelopesystem.crudframework.crud.configuration.properties.CrudFrameworkProperties
 import com.antelopesystem.crudframework.crud.handler.*
 import com.antelopesystem.crudframework.exception.WrapExceptionAspect
-import com.antelopesystem.crudframework.transformer.EntityListToRoListTransformer
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -32,7 +31,4 @@ class CrudFrameworkConfiguration {
 
     @Bean
     fun wrapExceptionAspect(): WrapExceptionAspect = WrapExceptionAspect()
-
-    @Bean
-    fun entityListToRoListTransformer() = EntityListToRoListTransformer(crudHandler())
 }
