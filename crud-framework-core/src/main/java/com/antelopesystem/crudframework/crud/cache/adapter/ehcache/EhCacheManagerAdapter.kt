@@ -3,7 +3,6 @@ package com.antelopesystem.crudframework.crud.cache.adapter.ehcache
 import com.antelopesystem.crudframework.crud.cache.CacheManagerAdapter
 import com.antelopesystem.crudframework.crud.cache.CrudCache
 import com.antelopesystem.crudframework.crud.cache.CrudCacheOptions
-import com.antelopesystem.crudframework.crud.cache.adapter.inmemory.InMemoryCacheManagerAdapter
 import net.sf.ehcache.Cache
 import net.sf.ehcache.CacheManager
 import net.sf.ehcache.config.CacheConfiguration
@@ -13,7 +12,8 @@ class EhCacheManagerAdapter(
         private val cacheManager: CacheManager
 ) : CacheManagerAdapter {
     override fun getCache(name: String) : CrudCache? {
-        return CrudEhCacheImpl(cacheManager.getCache(name))
+        val vendorCache = cacheManager.getCache(name) ?: return null
+        return CrudEhCacheImpl(vendorCache)
     }
 
     override fun createCache(name: String, options: CrudCacheOptions): CrudCache {
