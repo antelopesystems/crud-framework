@@ -1,9 +1,9 @@
 package com.antelopesystem.crudframework.utils.component.componentmap
 
-import com.antelopesystem.crudframework.utils.cluster.lock.ParameterLock
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMap
 import com.antelopesystem.crudframework.utils.component.componentmap.annotation.ComponentMapKey
 import com.antelopesystem.crudframework.utils.component.componentmap.model.SingletonComponentMap
+import com.antelopesystem.crudframework.utils.utils.ParameterLock
 import com.antelopesystem.crudframework.utils.utils.ReflectionUtils
 import com.antelopesystem.crudframework.utils.utils.getGenericClass
 import com.antelopesystem.crudframework.utils.utils.resolveNestedGeneric
@@ -72,6 +72,7 @@ class ComponentMapPostProcessor : BeanPostProcessor {
         if(map != null) {
             return map
         }
+
         val lock = ParameterLock.getCanonicalParameterLock("${initialKeyType.canonicalName}_${initialValueType.canonicalName}")
         lock.lock()
         try {
