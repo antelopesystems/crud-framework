@@ -9,7 +9,7 @@ import java.util.*
 
 
 @FilterFieldDsl
-class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf()) {
+class FilterFieldsBuilder(private val filterFields: MutableList<FilterField> = mutableListOf()) {
 
     infix fun String.Equal(target: String) {
         filterFields += FilterField(this, FilterFieldOperation.Equal, FilterFieldDataType.String, target)
@@ -144,7 +144,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("stringRequireIn")
-    infix fun String.RequireIn(target: List<String>) {
+    infix fun String.RequireIn(target: Collection<String>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -153,7 +153,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("intRequireIn")
-    infix fun String.RequireIn(target: List<Int>) {
+    infix fun String.RequireIn(target: Collection<Int>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -162,7 +162,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("longRequireIn")
-    infix fun String.RequireIn(target: List<Long>) {
+    infix fun String.RequireIn(target: Collection<Long>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -171,7 +171,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("doubleRequireIn")
-    infix fun String.RequireIn(target: List<Double>) {
+    infix fun String.RequireIn(target: Collection<Double>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -180,7 +180,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("dateRequireIn")
-    infix fun String.RequireIn(target: List<Date>) {
+    infix fun String.RequireIn(target: Collection<Date>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -189,7 +189,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("enumRequireIn")
-    infix fun <T : Enum<T>> String.RequireIn(target: List<T>) {
+    infix fun <T : Enum<T>> String.RequireIn(target: Collection<T>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -198,37 +198,37 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("stringIn")
-    infix fun String.In(target: List<String>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.String, target)
+    infix fun String.In(target: Collection<String>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.String, *target.toTypedArray())
     }
 
     @JvmName("intIn")
-    infix fun String.In(target: List<Int>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Integer, target)
+    infix fun String.In(target: Collection<Int>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Integer, *target.toTypedArray())
     }
 
     @JvmName("longIn")
-    infix fun String.In(target: List<Long>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Long, target)
+    infix fun String.In(target: Collection<Long>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Long, *target.toTypedArray())
     }
 
     @JvmName("doubleIn")
-    infix fun String.In(target: List<Double>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Double, target)
+    infix fun String.In(target: Collection<Double>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Double, *target.toTypedArray())
     }
 
     @JvmName("dateIn")
-    infix fun String.In(target: List<Date>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Date, target)
+    infix fun String.In(target: Collection<Date>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Date, *target.toTypedArray())
     }
 
     @JvmName("enumIn")
-    infix fun <T : Enum<T>> String.In(target: List<T>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, target[0]::class.java.canonicalName, target)
+    infix fun <T : Enum<T>> String.In(target: Collection<T>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, target.first()::class.java.canonicalName, *(target as Collection<*>).toTypedArray())
     }
 
     @JvmName("stringRequireNotIn")
-    infix fun String.RequireNotIn(target: List<String>) {
+    infix fun String.RequireNotIn(target: Collection<String>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -237,7 +237,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("intRequireNotIn")
-    infix fun String.RequireNotIn(target: List<Int>) {
+    infix fun String.RequireNotIn(target: Collection<Int>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -246,7 +246,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("longRequireNotIn")
-    infix fun String.RequireNotIn(target: List<Long>) {
+    infix fun String.RequireNotIn(target: Collection<Long>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -255,7 +255,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("doubleRequireNotIn")
-    infix fun String.RequireNotIn(target: List<Double>) {
+    infix fun String.RequireNotIn(target: Collection<Double>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -264,7 +264,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("dateRequireNotIn")
-    infix fun String.RequireNotIn(target: List<Date>) {
+    infix fun String.RequireNotIn(target: Collection<Date>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -273,7 +273,7 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("enumRequireNotIn")
-    infix fun <T : Enum<T>> String.RequireNotIn(target: List<T>) {
+    infix fun <T : Enum<T>> String.RequireNotIn(target: Collection<T>) {
         if(target.isEmpty()) {
             noop()
         } else {
@@ -282,42 +282,42 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
     }
 
     @JvmName("stringNotIn")
-    infix fun String.NotIn(target: List<String>) {
-        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.String, target)
+    infix fun String.NotIn(target: Collection<String>) {
+        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.String, *target.toTypedArray())
     }
 
     @JvmName("intNotIn")
-    infix fun String.NotIn(target: List<Int>) {
-        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Integer, target)
+    infix fun String.NotIn(target: Collection<Int>) {
+        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Integer, *target.toTypedArray())
     }
 
     @JvmName("longNotIn")
-    infix fun String.NotIn(target: List<Long>) {
-        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Long, target)
+    infix fun String.NotIn(target: Collection<Long>) {
+        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Long, *target.toTypedArray())
     }
 
     @JvmName("doubleNotIn")
-    infix fun String.NotIn(target: List<Double>) {
-        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Double, target)
+    infix fun String.NotIn(target: Collection<Double>) {
+        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Double, *target.toTypedArray())
     }
 
     @JvmName("dateNotIn")
-    infix fun String.NotIn(target: List<Date>) {
-        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Date, target)
+    infix fun String.NotIn(target: Collection<Date>) {
+        filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.Date, *target.toTypedArray())
     }
 
     @JvmName("enumNotIn")
-    infix fun <T : Enum<T>> String.NotIn(target: List<T>) {
-        filterFields += FilterField(this, FilterFieldOperation.NotIn, target[0]::class.java.canonicalName, target)
+    infix fun <T : Enum<T>> String.NotIn(target: Collection<T>) {
+        filterFields += FilterField(this, FilterFieldOperation.NotIn, target.first()::class.java.canonicalName, *(target as Collection<*>).toTypedArray())
     }
 
     @JvmName("stringContainsIn")
-    infix fun String.ContainsIn(target: List<String>) {
+    infix fun String.ContainsIn(target: Collection<String>) {
         filterFields += FilterField(this, FilterFieldOperation.ContainsIn, FilterFieldDataType.String, target)
     }
 
     @JvmName("stringNotContainsIn")
-    infix fun String.NotContainsIn(target: List<String>) {
+    infix fun String.NotContainsIn(target: Collection<String>) {
         filterFields += FilterField(this, FilterFieldOperation.NotContainsIn, FilterFieldDataType.String, target)
     }
 
@@ -406,5 +406,5 @@ class FilterFieldsBuilder(var filterFields: List<FilterField> = mutableListOf())
         filterFields += this.build(target)
     }
 
-    fun build() = filterFields
+    fun build() = filterFields.toList()
 }
