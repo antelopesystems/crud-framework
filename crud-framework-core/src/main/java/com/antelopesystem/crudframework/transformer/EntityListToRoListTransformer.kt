@@ -15,7 +15,7 @@ class EntityListToRoListTransformer(private val crudHandler: CrudHandler) : Fiel
         val roList = mutableListOf<BaseRO<*>>()
         for (entity in originalValue) {
             val type = (toField.genericType as ParameterizedTypeImpl).actualTypeArguments[0]
-            roList += crudHandler.getRO(entity, type as Class<*>) as BaseRO<*>
+            roList += crudHandler.fill(entity, type as Class<*>) as BaseRO<*>
         }
         return roList.toList()
     }

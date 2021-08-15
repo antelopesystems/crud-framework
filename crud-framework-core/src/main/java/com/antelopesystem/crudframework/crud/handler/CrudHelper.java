@@ -51,13 +51,12 @@ public interface CrudHelper {
 
 	void validate(Object target);
 
-	<Entity, RO> RO getRO(Entity fromObject, Class<RO> toClazz);
 
-	<Entity, RO> List<RO> getROs(List<Entity> fromObjects, Class<RO> toClazz);
+	<From, To> To fill(From fromObject, Class<To> toClazz);
 
-	<Entity, RO> RO fill(Entity fromObject, Class<RO> toClazz);
+	<From, To> void fill(From fromObject, To toObject);
 
-	<Entity, RO> void fill(Entity fromObject, RO toObject);
+	<From, To> List<To> fillMany(List<From> fromObjects, Class<To> toClazz);
 
 	<Entity> void setTotalToPagingCache(Class<Entity> entityClazz, DynamicModelFilter filter, long total);
 

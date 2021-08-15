@@ -53,7 +53,7 @@ public class CrudHandlerImpl implements CrudHandler {
 		return new ReadCRUDRequestBuilder<>(
 				(hooks, fromCache, persistCopy, accessorDTO) -> {
 					PagingDTO<Entity> resultDTO = crudReadHandler.indexInternal(filter, clazz, hooks, fromCache, persistCopy, accessorDTO, false);
-					List<RO> mappedResults = crudHelper.getROs(resultDTO.getData(), toClazz);
+					List<RO> mappedResults = crudHelper.fillMany(resultDTO.getData(), toClazz);
 					return new PagingDTO<>(resultDTO.getPagingRO(), mappedResults);
 				}, (hooks, fromCache, persistCopy, accessorDTO) -> crudReadHandler.indexInternal(filter, clazz, hooks, fromCache, persistCopy, accessorDTO, true).getPagingRO().getTotal());
 	}
@@ -78,7 +78,7 @@ public class CrudHandlerImpl implements CrudHandler {
 			Object object, Class<Entity> clazz, Class<RO> toClazz) {
 		return new UpdateCRUDRequestBuilder<>((hooks, accessorDTO) -> {
 			Entity result = crudCreateHandler.createFromInternal(object, clazz, hooks, accessorDTO);
-			return crudHelper.getRO(result, toClazz);
+			return crudHelper.fill(result, toClazz);
 		});
 	}
 
@@ -93,7 +93,7 @@ public class CrudHandlerImpl implements CrudHandler {
 			Class<RO> toClazz) {
 		return new UpdateCRUDRequestBuilder<>((hooks, accessorDTO) -> {
 			Entity result = crudCreateHandler.createInternal(entity, hooks, accessorDTO);
-			return crudHelper.getRO(result, toClazz);
+			return crudHelper.fill(result, toClazz);
 		});
 	}
 
@@ -109,7 +109,7 @@ public class CrudHandlerImpl implements CrudHandler {
 			ID id, Object object, Class<Entity> clazz, Class<RO> toClazz) {
 		return new UpdateCRUDRequestBuilder<>((hooks, accessorDTO) -> {
 			Entity result = crudUpdateHandler.updateFromInternal(id, object, clazz, hooks, accessorDTO);
-			return crudHelper.getRO(result, toClazz);
+			return crudHelper.fill(result, toClazz);
 		});
 	}
 
@@ -124,7 +124,7 @@ public class CrudHandlerImpl implements CrudHandler {
 			Class<RO> toClazz) {
 		return new UpdateCRUDRequestBuilder<>((hooks, accessorDTO) -> {
 			Entity result = crudUpdateHandler.updateInternal(entity, hooks, accessorDTO);
-			return crudHelper.getRO(result, toClazz);
+			return crudHelper.fill(result, toClazz);
 		});
 	}
 
@@ -139,7 +139,7 @@ public class CrudHandlerImpl implements CrudHandler {
 			List<Entity> entities, Class<RO> toClazz) {
 		return new MassUpdateCRUDRequestBuilder<>((hooks, persistCopy, accessorDTO) -> {
 			List<Entity> result = crudUpdateHandler.updateManyTransactional(entities, hooks, persistCopy, accessorDTO);
-			return crudHelper.getROs(result, toClazz);
+			return crudHelper.fillMany(result, toClazz);
 		});
 	}
 
@@ -154,7 +154,7 @@ public class CrudHandlerImpl implements CrudHandler {
 			DynamicModelFilter filter, Class<Entity> entityClazz, Class<RO> toClazz) {
 		return new MassUpdateCRUDRequestBuilder<>((hooks, persistCopy, accessorDTO) -> {
 			List<Entity> result = crudUpdateHandler.updateByFilterTransactional(filter, entityClazz, hooks, persistCopy, accessorDTO);
-			return crudHelper.getROs(result, toClazz);
+			return crudHelper.fillMany(result, toClazz);
 		});
 	}
 
@@ -189,7 +189,7 @@ public class CrudHandlerImpl implements CrudHandler {
 						return null;
 					}
 
-					return crudHelper.getRO(result, toClazz);
+					return crudHelper.fill(result, toClazz);
 				}, (hooks, fromCache, persistCopy, accessorDTO) -> crudReadHandler.showByInternal(filter, clazz, hooks, fromCache, persistCopy, mode, accessorDTO) != null ? 1L : 0L
 		);
 	}
@@ -212,19 +212,9 @@ public class CrudHandlerImpl implements CrudHandler {
 				return null;
 			}
 
-			return crudHelper.getRO(result, toClazz);
+			return crudHelper.fill(result, toClazz);
 		}, (hooks, fromCache, persistCopy, accessorDTO) -> crudReadHandler.showInternal(id, clazz, hooks, fromCache, persistCopy, accessorDTO) != null ? 1L : 0L
 		);
-	}
-
-	@Override
-	public <Entity, RO> RO getRO(Entity fromObject, Class<RO> toClazz) {
-		return crudHelper.getRO(fromObject, toClazz);
-	}
-
-	@Override
-	public <Entity, RO> List<RO> getROs(List<Entity> fromObjects, Class<RO> toClazz) {
-		return crudHelper.getROs(fromObjects, toClazz);
 	}
 
 	@Override
@@ -235,6 +225,11 @@ public class CrudHandlerImpl implements CrudHandler {
 	@Override
 	public <Entity, RO> void fill(Entity fromObject, RO toObject) {
 		crudHelper.fill(fromObject, toObject);
+	}
+
+	@Override
+	public <From, To> List<To> fillMany(List<From> fromObjects, Class<To> toClazz) {
+		return crudHelper.fillMany(fromObjects, toClazz);
 	}
 
 	@Override

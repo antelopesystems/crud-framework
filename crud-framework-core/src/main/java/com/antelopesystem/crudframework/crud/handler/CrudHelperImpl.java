@@ -4,7 +4,6 @@ import com.antelopesystem.crudframework.crud.cache.CacheManagerAdapter;
 import com.antelopesystem.crudframework.crud.cache.CacheUtils;
 import com.antelopesystem.crudframework.crud.cache.CrudCache;
 import com.antelopesystem.crudframework.crud.cache.CrudCacheOptions;
-import com.antelopesystem.crudframework.crud.configuration.CrudFrameworkConfiguration;
 import com.antelopesystem.crudframework.crud.configuration.properties.CrudFrameworkProperties;
 import com.antelopesystem.crudframework.crud.dataaccess.DataAccessManager;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
@@ -390,37 +389,11 @@ public class CrudHelperImpl implements CrudHelper {
 
 	@Override
 	@WrapException(CrudTransformationException.class)
-	public <Entity, RO> RO getRO(Entity fromObject, Class<RO> toClazz) {
+	public <From, To> To fill(From fromObject, Class<To> toClazz) {
 		Objects.requireNonNull(fromObject, "fromObject cannot be null");
 		Objects.requireNonNull(toClazz, "toClazz cannot be null");
 
-		RO toObject = fieldMapper.processMappedFields(fromObject, toClazz);
-		ObjectDecorator objectDecorator = getObjectDecorator(fromObject.getClass(), toClazz);
-		if(objectDecorator != null) {
-			objectDecorator.decorate(fromObject, toObject);
-		}
-
-		return toObject;
-	}
-
-	@Override
-	@WrapException(CrudTransformationException.class)
-	public <Entity, RO> List<RO> getROs(List<Entity> fromObjects, Class<RO> toClazz) {
-		List<RO> toObjects = new ArrayList<RO>();
-		for(Entity fromObject : fromObjects) {
-			toObjects.add(crudHelperProxy.getRO(fromObject, toClazz));
-		}
-
-		return toObjects;
-	}
-
-	@Override
-	@WrapException(CrudTransformationException.class)
-	public <Entity, RO> RO fill(Entity fromObject, Class<RO> toClazz) {
-		Objects.requireNonNull(fromObject, "fromObject cannot be null");
-		Objects.requireNonNull(toClazz, "toClazz cannot be null");
-
-		RO toObject = fieldMapper.processMappedFields(fromObject, toClazz);
+		To toObject = fieldMapper.processMappedFields(fromObject, toClazz);
 		ObjectDecorator objectDecorator = getObjectDecorator(fromObject.getClass(), toObject.getClass());
 		if(objectDecorator != null) {
 			objectDecorator.decorate(fromObject, toObject);
@@ -431,7 +404,7 @@ public class CrudHelperImpl implements CrudHelper {
 
 	@Override
 	@WrapException(CrudTransformationException.class)
-	public <Entity, RO> void fill(Entity fromObject, RO toObject) {
+	public <From, To> void fill(From fromObject, To toObject) {
 		Objects.requireNonNull(fromObject, "fromObject cannot be null");
 		Objects.requireNonNull(toObject, "toObject cannot be null");
 
@@ -440,6 +413,17 @@ public class CrudHelperImpl implements CrudHelper {
 		if(objectDecorator != null) {
 			objectDecorator.decorate(fromObject, toObject);
 		}
+	}
+
+	@Override
+	@WrapException(CrudTransformationException.class)
+	public <From, To> List<To> fillMany(List<From> fromObjects, Class<To> toClazz) {
+		List<To> toObjects = new ArrayList<To>();
+		for(From fromObject : fromObjects) {
+			toObjects.add(crudHelperProxy.fill(fromObject, toClazz));
+		}
+
+		return toObjects;
 	}
 
 	@Override

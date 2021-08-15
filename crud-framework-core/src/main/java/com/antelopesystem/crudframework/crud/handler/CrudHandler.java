@@ -241,47 +241,36 @@ public interface CrudHandler {
 			Class<RO> toClazz);
 
 	/**
-	 * Builds an RO of the given entity to the {@code roClass} and runs the relevant {@link ObjectDecorator} if present.
-	 *
-	 * @param <Entity> {@link BaseCrudEntity} type
-	 * @param <RO> the type parameter
-	 * @param object the object from which the entity is filled
-	 * @param roClass the ro class
-	 * @return the ro
-	 */
-	<Entity, RO> RO getRO(Entity object, Class<RO> roClass);
-
-	/**
-	 * Builds a list of ROs of the given entity to the {@code roClass} and runs the relevant {@link ObjectDecorator} if present.
-	 *
-	 * @param <Entity> the from type parameter
-	 * @param <RO> the to type parameter
-	 * @param fromObjects the from objects
-	 * @param toClazz the return object class
-	 * @return the r os
-	 */
-	<Entity, RO> List<RO> getROs(List<Entity> fromObjects, Class<RO> toClazz);
-
-	/**
 	 * Instantiates {@code toClass} and fills it with fields which are not null from {@code fromObject} and runs the relevant {@link ObjectDecorator} if present.
 	 *
-	 * @param <Entity> the from type parameter
-	 * @param <RO> the to type parameter
+	 * @param <From> the from type parameter
+	 * @param <To> the to type parameter
 	 * @param fromObject the from object
 	 * @param toClazz the return object class
 	 * @return the e
 	 */
-	<Entity, RO> RO fill(Entity fromObject, Class<RO> toClazz);
+	<From, To> To fill(From fromObject, Class<To> toClazz);
 
 	/**
 	 * Fills {@code toObject} with fields which are not null from {@code fromObject} and runs the relevant {@link ObjectDecorator} if present.
 	 *
-	 * @param <Entity> the from type parameter
-	 * @param <RO> the to type parameter
+	 * @param <From> the from type parameter
+	 * @param <To> the to type parameter
 	 * @param fromObject the object from which the entity is filled
 	 * @param toObject the to object
 	 */
-	<Entity, RO> void fill(Entity fromObject, RO toObject);
+	<From, To> void fill(From fromObject, To toObject);
+
+	/**
+	 * Builds a list of ROs of the given entity to the {@code toClazz} and runs the relevant {@link ObjectDecorator} if present.
+	 *
+	 * @param <From> the from type parameter
+	 * @param <To> the to type parameter
+	 * @param fromObjects the from objects
+	 * @param toClazz the return object class
+	 * @return the r os
+	 */
+	<From, To> List<To> fillMany(List<From> fromObjects, Class<To> toClazz);
 
 
 	/**
