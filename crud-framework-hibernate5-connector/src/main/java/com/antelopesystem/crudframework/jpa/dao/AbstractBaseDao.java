@@ -9,7 +9,6 @@ import com.antelopesystem.crudframework.modelfilter.JpaRawJunctionDTO;
 import com.antelopesystem.crudframework.modelfilter.OrderDTO;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
@@ -25,40 +24,30 @@ public abstract class AbstractBaseDao implements BaseDao {
 	@PersistenceContext
 	protected EntityManager entityManager;
 
-	private static final Set<Class<?>> primitiveAndBoxedTypes = new HashSet<>();
+	private static final Set<Class<?>> PRIMITIVE_AND_BOXED_TYPES = new HashSet<>();
 
 	static {
-		primitiveAndBoxedTypes.add(boolean.class);
-		primitiveAndBoxedTypes.add(byte.class);
-		primitiveAndBoxedTypes.add(short.class);
-		primitiveAndBoxedTypes.add(char.class);
-		primitiveAndBoxedTypes.add(int.class);
-		primitiveAndBoxedTypes.add(long.class);
-		primitiveAndBoxedTypes.add(float.class);
-		primitiveAndBoxedTypes.add(double.class);
-		primitiveAndBoxedTypes.add(Boolean.class);
-		primitiveAndBoxedTypes.add(Character.class);
-		primitiveAndBoxedTypes.add(Byte.class);
-		primitiveAndBoxedTypes.add(Short.class);
-		primitiveAndBoxedTypes.add(String.class);
-		primitiveAndBoxedTypes.add(Integer.class);
-		primitiveAndBoxedTypes.add(Long.class);
-		primitiveAndBoxedTypes.add(Float.class);
-		primitiveAndBoxedTypes.add(Double.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(boolean.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(byte.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(short.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(char.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(int.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(long.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(float.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(double.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Boolean.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Character.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Byte.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Short.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(String.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Integer.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Long.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Float.class);
+		PRIMITIVE_AND_BOXED_TYPES.add(Double.class);
 	}
 
 	protected Session getCurrentSession() {
 		return entityManager.unwrap(Session.class);
-	}
-
-	/**
-	 * Find all entities of given class.
-	 *
-	 * @param clazz required class
-	 * @return list of all entitites
-	 */
-	public <T> List<T> findAll(Class<T> clazz) {
-		return getCurrentSession().createCriteria(clazz).list();
 	}
 
 	/**
@@ -70,17 +59,6 @@ public abstract class AbstractBaseDao implements BaseDao {
 	 */
 	public <T extends BaseCrudEntity<?>> T findObject(Class<T> clazz, Serializable id) {
 		return (T) getCurrentSession().get(clazz, id);
-	}
-
-	/**
-	 * Return entity list by given class and a list of UUIDs.
-	 *
-	 * @param clazz required class
-	 * @param ids a list of UUIDs
-	 * @return a list of entities with given class and matching UUID
-	 */
-	public <T extends BaseCrudEntity<?>> List<T> findObjectByIds(Class<T> clazz, Serializable ids[]) {
-		return (List<T>) getCurrentSession().createCriteria(clazz).add(Restrictions.in("id", ids)).list();
 	}
 
 	/**
@@ -156,41 +134,6 @@ public abstract class AbstractBaseDao implements BaseDao {
 		if(null != limit) {
 			criteria.setMaxResults(limit);
 		}
-	}
-
-	/**
-	 * Set start and limit to query if it is given
-	 *
-	 * @param query target query
-	 * @param start first result starting from 0
-	 * @param limit maximum of selected items
-	 */
-	protected void setBoundaries(Query query, Integer start, Integer limit) {
-		if(null != start) {
-			query.setFirstResult(start);
-		}
-
-		if(null != limit) {
-			query.setMaxResults(limit);
-		}
-	}
-
-	/**
-	 * Add order by entity create date (from newest to oldest) to criteria
-	 *
-	 * @param criteria target criteria
-	 */
-	protected void setOrderByCreationTime(Criteria criteria) {
-		criteria.addOrder(Order.desc("creationTime"));
-	}
-
-	/**
-	 * Add order by entity last update date date (from most updated to least updated) to criteria
-	 *
-	 * @param criteria target criteria
-	 */
-	protected void setOrderByLastUpdateTime(Criteria criteria) {
-		criteria.addOrder(Order.desc("lastUpdateTime"));
 	}
 
 	protected AliasAwareCriteriaDTO buildCriteria(DynamicModelFilter dynamicModelFilter, Class clazz) {
@@ -377,7 +320,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 			}
 
 			// Is the field we're dealing with an element collection?
-			if(isCollection && (primitiveAndBoxedTypes.contains(type) || Enum.class.isAssignableFrom(type))) {
+			if(isCollection && (PRIMITIVE_AND_BOXED_TYPES.contains(type) || Enum.class.isAssignableFrom(type))) {
 				if(flatFilterFieldNames.stream().anyMatch(flatName -> flatName.equals(aliasPath + ".elements"))) {
 					criteria.createAlias(aliasPath, aliasPath);
 					aliases.add(aliasPath.replace(".", "/"));
@@ -418,14 +361,6 @@ public abstract class AbstractBaseDao implements BaseDao {
 		Object count = criteria.setProjection(Projections.rowCount()).uniqueResult();
 
 		return count == null ? 0L : (long) count;
-	}
-
-	protected List<Object> getCriteriaColumn(Criteria criteria, String column) {
-		if(criteria == null || column == null || column.trim().isEmpty()) {
-			return new ArrayList<>();
-		}
-
-		return criteria.setProjection(Projections.property(column)).list();
 	}
 
 	protected Criteria setOrder(Criteria criteria, DynamicModelFilter modelFilter) {
