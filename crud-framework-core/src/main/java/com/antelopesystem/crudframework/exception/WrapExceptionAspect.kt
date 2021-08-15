@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Pointcut
 import org.aspectj.lang.reflect.MethodSignature
 import org.springframework.core.annotation.AnnotationUtils
-import kotlin.reflect.full.createInstance
+import kotlin.reflect.full.primaryConstructor
 
 @Aspect
 class  WrapExceptionAspect {
@@ -37,7 +37,17 @@ class  WrapExceptionAspect {
                 throw e
             }
 
-            val exceptionInstance = actualAnnotation.value.createInstance().initCause(e)
+            val exceptionInstance = if(e.message == null) {
+                val message = if(e is NullPointerException) {
+                    "Null pointer"
+                } else {
+                    "No message"
+                }
+                exceptionClazz.primaryConstructor?.call(message)?.initCause(e)
+
+            } else {
+                exceptionClazz.primaryConstructor?.call(e.message)?.initCause(e)
+            } ?: e
             throw exceptionInstance
         }
     }
