@@ -179,26 +179,6 @@ public interface CrudHandler {
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<RO>> update(
 			List<Entity> entities, Class<RO> toClazz);
 
-	/**
-	 * @deprecated name changed, see below for new method
-	 * @see {@link CrudHandler#updateByFilter(DynamicModelFilter, Class)}
-	 */
-	@Deprecated
-	default <ID extends Serializable, Entity extends BaseCrudEntity<ID>> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<Entity>> updateFrom(
-			DynamicModelFilter filter, Class<Entity> entityClazz) {
-		return updateByFilter(filter, entityClazz);
-	}
-
-	/**
-	 * @deprecated name changed, see below for new method
-	 * @see {@link CrudHandler#updateByFilter(DynamicModelFilter, Class, Class)}
-	 */
-	@Deprecated
-	default <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<RO>> updateFrom(
-			DynamicModelFilter filter, Class<Entity> entityClazz, Class<RO> toClazz) {
-		return updateByFilter(filter, entityClazz, toClazz);
-	}
-
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<Entity>> updateByFilter(
 			DynamicModelFilter filter, Class<Entity> entityClazz);
 

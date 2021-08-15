@@ -59,11 +59,11 @@ public abstract class BaseCrudIntegrationTest extends BaseIntegrationTest {
 			entityManager.persist(readOnlyEntity1);
 			entityManager.persist(readOnlyEntity2);
 
-			readOnlyEntityRO1.setId(readOnlyEntity1.getId());
-			readOnlyEntityRO1.setCreationTime(readOnlyEntity1.getCreationTime().getTime());
-
-			readOnlyEntityRO2.setId(readOnlyEntity2.getId());
-			readOnlyEntityRO2.setCreationTime(readOnlyEntity2.getCreationTime().getTime());
+//			readOnlyEntityRO1.setId(readOnlyEntity1.getId());
+//			readOnlyEntityRO1.setCreationTime(readOnlyEntity1.getCreationTime().getTime());
+//
+//			readOnlyEntityRO2.setId(readOnlyEntity2.getId());
+//			readOnlyEntityRO2.setCreationTime(readOnlyEntity2.getCreationTime().getTime());
 			entityManager.flush();
 		}
 	}

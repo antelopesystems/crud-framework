@@ -6,14 +6,14 @@ import com.antelopesystem.crudframework.fieldmapper.transformer.CommaDelimitedSt
 import com.antelopesystem.crudframework.fieldmapper.transformer.DateToLongTransformer
 import com.antelopesystem.crudframework.fieldmapper.transformer.LongToCurrencyDoubleTransformer
 import com.antelopesystem.crudframework.fieldmapper.transformer.ToStringTransformer
-import com.antelopesystem.crudframework.jpa.model.AbstractJpaCrudEntity
+import com.antelopesystem.crudframework.jpa.model.AbstractJpaUpdatableCrudEntity
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.Table
 
 @Entity
 @Table(name = "test_entity")
-class TestEntity : AbstractJpaCrudEntity {
+class TestEntity : AbstractJpaUpdatableCrudEntity {
     @MappedField(target = TestEntityRO::class, transformer = CommaDelimitedStringToListTransformer::class, mapTo = "stringList")
     var commaDelimitedString = "val1,val2,val3,val4"
 

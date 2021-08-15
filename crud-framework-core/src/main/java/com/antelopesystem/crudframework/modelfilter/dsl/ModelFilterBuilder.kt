@@ -8,8 +8,6 @@ import com.antelopesystem.crudframework.modelfilter.dsl.annotation.FilterFieldDs
 
 @FilterFieldDsl
 class ModelFilterBuilder(
-        @Deprecated("set order within the order {} block instead") var orderBy: String = "",
-        @Deprecated("set order within the order {} block instead") var orderDesc: Boolean = true,
         var orders: MutableSet<OrderDTO> = mutableSetOf(),
         var start: Int = 0,
         var limit: Int = 10000,

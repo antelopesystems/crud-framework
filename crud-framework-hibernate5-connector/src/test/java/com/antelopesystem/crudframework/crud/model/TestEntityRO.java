@@ -4,13 +4,13 @@ import com.antelopesystem.crudframework.fieldmapper.annotation.MappedField;
 import com.antelopesystem.crudframework.fieldmapper.transformer.CurrencyDoubleToLongTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.LongToDateTransformer;
 import com.antelopesystem.crudframework.fieldmapper.transformer.StringListToCommaDelimitedStringTransformer;
-import com.antelopesystem.crudframework.ro.BaseRO;
+import com.antelopesystem.crudframework.jpa.ro.AbstractJpaUpdatableCrudRO;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class TestEntityRO extends BaseRO {
+public class TestEntityRO extends AbstractJpaUpdatableCrudRO {
 
 	@MappedField(target = TestEntity.class, transformer = StringListToCommaDelimitedStringTransformer.class, mapTo = "commaDelimitedString")
 	private List<String> stringList = Arrays.asList("val1", "val2", "val3", "val4");

@@ -13,7 +13,7 @@ public class UpdateFromIntegrationTest extends BaseCrudIntegrationTest {
 		TestEntity testEntity = persistNewTestEntity();
 
 		TestEntityRO testEntityRO = new TestEntityRO();
-		testEntityRO.setId(testEntity.getId());
+//		testEntityRO.setId(testEntity.getId());
 		testEntityRO.setGenericVariable(1999L);
 
 		TestEntity expectedOutcome = new TestEntity();
@@ -30,7 +30,7 @@ public class UpdateFromIntegrationTest extends BaseCrudIntegrationTest {
 		TestEntity testEntity = persistNewTestEntity();
 
 		TestEntityRO testEntityRO = new TestEntityRO();
-		testEntityRO.setId(testEntity.getId());
+//		testEntityRO.setId(testEntity.getId());
 		testEntityRO.setGenericVariable(1999L);
 
 		TestEntity expectedOutcome = new TestEntity();
@@ -48,7 +48,7 @@ public class UpdateFromIntegrationTest extends BaseCrudIntegrationTest {
 		TestEntity testEntity = persistNewTestEntity();
 
 		TestEntityRO testEntityRO = new TestEntityRO();
-		testEntityRO.setId(testEntity.getId());
+//		testEntityRO.setId(testEntity.getId());
 		testEntityRO.setGenericVariable(1999L);
 
 		TestEntity expectedOutcome = new TestEntity();

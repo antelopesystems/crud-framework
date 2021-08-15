@@ -21,7 +21,7 @@ public class UpdateFromFilterIntegrationTest extends BaseCrudIntegrationTest {
 		TestEntity expectedOutcome = new TestEntity();
 		expectedOutcome.setGenericVariable(1999L);
 
-		List<TestEntity> outcome = crudHandler.updateFrom(new DynamicModelFilter().add(FilterFields.inLong("id", Arrays.asList(testEntity.getId(), testEntity2.getId()))), TestEntity.class)
+		List<TestEntity> outcome = crudHandler.updateByFilter(new DynamicModelFilter().add(FilterFields.inLong("id", Arrays.asList(testEntity.getId(), testEntity2.getId()))), TestEntity.class)
 				.withOnHook((e) -> e.setGenericVariable(1999L))
 				.execute();
 		assertEquals(outcome.size(), 2);
@@ -38,7 +38,7 @@ public class UpdateFromFilterIntegrationTest extends BaseCrudIntegrationTest {
 		expectedOutcome.setGenericVariable(1999L);
 
 
-		List<TestEntityRO> outcome = crudHandler.updateFrom(new DynamicModelFilter().add(FilterFields.inLong("id", Arrays.asList(testEntity.getId(), testEntity2.getId()))), TestEntity.class, TestEntityRO.class)
+		List<TestEntityRO> outcome = crudHandler.updateByFilter(new DynamicModelFilter().add(FilterFields.inLong("id", Arrays.asList(testEntity.getId(), testEntity2.getId()))), TestEntity.class, TestEntityRO.class)
 				.withOnHook((e) -> e.setGenericVariable(1999L))
 				.execute();
 
