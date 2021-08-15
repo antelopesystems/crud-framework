@@ -1,63 +1,51 @@
-package com.antelopesystem.crudframework.modelfilter;
+package com.antelopesystem.crudframework.modelfilter
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
-/**
- * Created by Shani on 22/02/2018.
- */
-public class DynamicModelFilter extends BaseModelFilter {
-
-	protected List<FilterField> filterFields = new ArrayList<>();
-
-	public DynamicModelFilter() {
-	}
-
-	public DynamicModelFilter(List<FilterField> filterFields) {
-		this.filterFields = filterFields;
-	}
-
-	public List<FilterField> getFilterFields() {
-		return filterFields;
-	}
-
-	public void setFilterFields(List<FilterField> filterFields) {
-		this.filterFields = filterFields;
-	}
+class DynamicModelFilter(
+    var start: Int? = null,
+    var limit: Int? = null,
+    var orders: MutableSet<OrderDTO> = mutableSetOf(),
+    val filterFields: MutableList<FilterField> = mutableListOf()
+) {
+    val cacheKey: String get() = "CacheKey_" + this.javaClass.simpleName + "_" + this.hashCode()
 
 
-	public DynamicModelFilter add(FilterField filterField) {
-		filterFields.add(filterField);
-		return this;
-	}
+    constructor() : this(null, null, mutableSetOf(), mutableListOf())
 
+    constructor(filterFields: MutableList<FilterField>) : this(null, null, mutableSetOf(), filterFields)
 
-	@Override
-	public String toString() {
-		return "DynamicModelFilter [" + super.toString() +
-				", filterFields=" + filterFields +
-				']';
-	}
+    fun add(filterField: FilterField): DynamicModelFilter {
+        filterFields.add(filterField)
+        return this
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if(this == o) {
-			return true;
-		}
-		if(o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		if(!super.equals(o)) {
-			return false;
-		}
-		DynamicModelFilter that = (DynamicModelFilter) o;
-		return Objects.equals(filterFields, that.filterFields);
-	}
+    fun addOrder(orderDTO: OrderDTO): DynamicModelFilter {
+        orders.add(orderDTO)
+        return this
+    }
 
-	@Override
-	public int hashCode() {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
 
-		return Objects.hash(super.hashCode(), filterFields);
-	}
+        other as DynamicModelFilter
+
+        if (start != other.start) return false
+        if (limit != other.limit) return false
+        if (orders != other.orders) return false
+        if (filterFields != other.filterFields) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = start ?: 0
+        result = 31 * result + (limit ?: 0)
+        result = 31 * result + orders.hashCode()
+        result = 31 * result + filterFields.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "DynamicModelFilter(start=$start, limit=$limit, orders=$orders, cacheKey='$cacheKey', filterFields=$filterFields)"
+    }
 }

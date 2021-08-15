@@ -3,7 +3,10 @@ package com.antelopesystem.crudframework.jpa.dao;
 import com.antelopesystem.crudframework.jpa.annotation.CrudJoinType;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.model.PersistentEntity;
-import com.antelopesystem.crudframework.modelfilter.*;
+import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
+import com.antelopesystem.crudframework.modelfilter.FilterField;
+import com.antelopesystem.crudframework.modelfilter.JpaRawJunctionDTO;
+import com.antelopesystem.crudframework.modelfilter.OrderDTO;
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -197,10 +200,6 @@ public abstract class AbstractBaseDao implements BaseDao {
 
 		if(dynamicModelFilter != null) {
 			Set<String> flatFilterFieldNames = new HashSet<>();
-
-			if(dynamicModelFilter.getOrderBy() != null && !dynamicModelFilter.getOrderBy().isEmpty()) {
-				flatFilterFieldNames.add(dynamicModelFilter.getOrderBy());
-			}
 
 			if(dynamicModelFilter.getFilterFields() != null && !dynamicModelFilter.getFilterFields().isEmpty()) {
 				flattenFilterFieldNames(flatFilterFieldNames, dynamicModelFilter.getFilterFields());
@@ -429,7 +428,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 		return criteria.setProjection(Projections.property(column)).list();
 	}
 
-	protected Criteria setOrder(Criteria criteria, BaseModelFilter modelFilter) {
+	protected Criteria setOrder(Criteria criteria, DynamicModelFilter modelFilter) {
 		Set<OrderDTO> orders = modelFilter.getOrders();
 		boolean appliedOrder = false;
 		for (OrderDTO order : orders) {

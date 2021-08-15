@@ -13,7 +13,7 @@ class ModelFilterBuilder(
         var orders: MutableSet<OrderDTO> = mutableSetOf(),
         var start: Int = 0,
         var limit: Int = 10000,
-        var filterFields: List<FilterField> = mutableListOf()
+        var filterFields: MutableList<FilterField> = mutableListOf()
 ) {
 
 
@@ -31,21 +31,11 @@ class ModelFilterBuilder(
     }
 
     fun build(): DynamicModelFilter {
-        val filter = DynamicModelFilter()
-        appendLegacyOrder()
-        filter
-                .addOrders<DynamicModelFilter>(orders)
-                .setStart<DynamicModelFilter>(start)
-                .setLimit<DynamicModelFilter>(limit)
-                .filterFields = filterFields
-        return filter
+        return DynamicModelFilter(
+            start,
+            limit,
+            orders,
+            filterFields
+        )
     }
-
-    @SuppressWarnings("deprecation")
-    fun appendLegacyOrder() {
-        if(!orderBy.isBlank()) {
-            orders.add(OrderDTO(orderBy, orderDesc))
-        }
-    }
-
 }

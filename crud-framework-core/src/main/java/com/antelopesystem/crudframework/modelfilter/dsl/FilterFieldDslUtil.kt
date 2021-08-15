@@ -14,13 +14,13 @@ fun filter(setup: ModelFilterBuilder.() -> Unit): DynamicModelFilter {
 fun where(setup: FilterFieldsBuilder.() -> Unit): DynamicModelFilter {
     val filterFieldsBuilder = FilterFieldsBuilder()
     setup(filterFieldsBuilder)
-    return DynamicModelFilter(filterFieldsBuilder.build())
+    return DynamicModelFilter(filterFieldsBuilder.build().toMutableList())
 }
 
 fun and(setup: FilterFieldsBuilder.() -> Unit): FilterField {
     val filterFieldsBuilder = FilterFieldsBuilder()
     setup(filterFieldsBuilder)
-    val filter = DynamicModelFilter(filterFieldsBuilder.build())
+    val filter = DynamicModelFilter(filterFieldsBuilder.build().toMutableList())
 
     return FilterField().apply {
         operation = FilterFieldOperation.And
@@ -31,7 +31,7 @@ fun and(setup: FilterFieldsBuilder.() -> Unit): FilterField {
 fun or(setup: FilterFieldsBuilder.() -> Unit): FilterField {
     val filterFieldsBuilder = FilterFieldsBuilder()
     setup(filterFieldsBuilder)
-    val filter = DynamicModelFilter(filterFieldsBuilder.build())
+    val filter = DynamicModelFilter(filterFieldsBuilder.build().toMutableList())
 
     return FilterField().apply {
         operation = FilterFieldOperation.Or
@@ -42,7 +42,7 @@ fun or(setup: FilterFieldsBuilder.() -> Unit): FilterField {
 fun not(setup: FilterFieldsBuilder.() -> Unit): FilterField {
     val filterFieldsBuilder = FilterFieldsBuilder()
     setup(filterFieldsBuilder)
-    val filter = DynamicModelFilter(filterFieldsBuilder.build())
+    val filter = DynamicModelFilter(filterFieldsBuilder.build().toMutableList())
 
     return FilterField().apply {
         operation = FilterFieldOperation.Not

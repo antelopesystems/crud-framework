@@ -4,6 +4,7 @@ import com.antelopesystem.crudframework.crud.model.TestEntity;
 import com.antelopesystem.crudframework.crud.model.TestEntityRO;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.modelfilter.FilterFields;
+import com.antelopesystem.crudframework.modelfilter.OrderDTO;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,7 +29,9 @@ public abstract class BaseCrudIntegrationTest extends BaseIntegrationTest {
 
 	protected static TestEntityRO readOnlyEntityRO2;
 
-	protected static DynamicModelFilter entity1and2AscendingFilter = new DynamicModelFilter().add(FilterFields.inLong("genericVariable", Arrays.asList(10L, 20L))).setOrderBy("id").setOrderDesc(false);
+	protected static DynamicModelFilter entity1and2AscendingFilter = new DynamicModelFilter()
+			.add(FilterFields.inLong("genericVariable", Arrays.asList(10L, 20L)))
+			.addOrder(new OrderDTO("id", false));
 
 	protected static DynamicModelFilter entity1filter = new DynamicModelFilter().add(FilterFields.eq("genericVariable", 10L));
 
