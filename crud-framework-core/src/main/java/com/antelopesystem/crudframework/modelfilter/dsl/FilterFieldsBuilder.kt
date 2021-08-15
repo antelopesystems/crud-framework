@@ -197,36 +197,6 @@ class FilterFieldsBuilder(private val filterFields: MutableList<FilterField> = m
         }
     }
 
-    @JvmName("stringIn")
-    infix fun String.In(target: Collection<String>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.String, *target.toTypedArray())
-    }
-
-    @JvmName("intIn")
-    infix fun String.In(target: Collection<Int>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Integer, *target.toTypedArray())
-    }
-
-    @JvmName("longIn")
-    infix fun String.In(target: Collection<Long>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Long, *target.toTypedArray())
-    }
-
-    @JvmName("doubleIn")
-    infix fun String.In(target: Collection<Double>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Double, *target.toTypedArray())
-    }
-
-    @JvmName("dateIn")
-    infix fun String.In(target: Collection<Date>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Date, *target.toTypedArray())
-    }
-
-    @JvmName("enumIn")
-    infix fun <T : Enum<T>> String.In(target: Collection<T>) {
-        filterFields += FilterField(this, FilterFieldOperation.In, target.first()::class.java.canonicalName, *(target as Collection<*>).toTypedArray())
-    }
-
     @JvmName("stringRequireNotIn")
     infix fun String.RequireNotIn(target: Collection<String>) {
         if(target.isEmpty()) {
@@ -281,6 +251,36 @@ class FilterFieldsBuilder(private val filterFields: MutableList<FilterField> = m
         }
     }
 
+    @JvmName("stringIn")
+    infix fun String.In(target: Collection<String>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.String, *target.toTypedArray())
+    }
+
+    @JvmName("intIn")
+    infix fun String.In(target: Collection<Int>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Integer, *target.toTypedArray())
+    }
+
+    @JvmName("longIn")
+    infix fun String.In(target: Collection<Long>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Long, *target.toTypedArray())
+    }
+
+    @JvmName("doubleIn")
+    infix fun String.In(target: Collection<Double>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Double, *target.toTypedArray())
+    }
+
+    @JvmName("dateIn")
+    infix fun String.In(target: Collection<Date>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, FilterFieldDataType.Date, *target.toTypedArray())
+    }
+
+    @JvmName("enumIn")
+    infix fun <T : Enum<T>> String.In(target: Collection<T>) {
+        filterFields += FilterField(this, FilterFieldOperation.In, target.first()::class.java.canonicalName, *(target as Collection<*>).toTypedArray())
+    }
+
     @JvmName("stringNotIn")
     infix fun String.NotIn(target: Collection<String>) {
         filterFields += FilterField(this, FilterFieldOperation.NotIn, FilterFieldDataType.String, *target.toTypedArray())
@@ -313,17 +313,21 @@ class FilterFieldsBuilder(private val filterFields: MutableList<FilterField> = m
 
     @JvmName("stringContainsIn")
     infix fun String.ContainsIn(target: Collection<String>) {
-        filterFields += FilterField(this, FilterFieldOperation.ContainsIn, FilterFieldDataType.String, target)
+        filterFields += FilterField(this, FilterFieldOperation.ContainsIn, FilterFieldDataType.String, *(target as Collection<*>).toTypedArray())
     }
 
     @JvmName("stringNotContainsIn")
     infix fun String.NotContainsIn(target: Collection<String>) {
-        filterFields += FilterField(this, FilterFieldOperation.NotContainsIn, FilterFieldDataType.String, target)
+        filterFields += FilterField(this, FilterFieldOperation.NotContainsIn, FilterFieldDataType.String, *(target as Collection<*>).toTypedArray())
     }
 
 
     infix fun String.Between(target: Int): BetweenBuilder<Int> {
         return BetweenBuilder(this, target, FilterFieldDataType.Integer)
+    }
+
+    infix fun String.Between(target: Long): BetweenBuilder<Long> {
+        return BetweenBuilder(this, target, FilterFieldDataType.Long)
     }
 
     infix fun String.Between(target: Double): BetweenBuilder<Double> {
@@ -332,10 +336,6 @@ class FilterFieldsBuilder(private val filterFields: MutableList<FilterField> = m
 
     infix fun String.Between(target: Date): BetweenBuilder<Date> {
         return BetweenBuilder(this, target, FilterFieldDataType.Date)
-    }
-
-    infix fun String.Between(target: Long): BetweenBuilder<Long> {
-        return BetweenBuilder(this, target, FilterFieldDataType.Long)
     }
 
     infix fun String.isNull(condition: Boolean) {
