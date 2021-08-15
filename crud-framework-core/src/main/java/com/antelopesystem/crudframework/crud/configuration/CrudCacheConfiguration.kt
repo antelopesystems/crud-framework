@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 
 @Configuration
-@Import(EhCacheConfiguration::class)
-class CacheConfiguration {
+@Import(CrudEhCacheConfiguration::class)
+class CrudCacheConfiguration {
     @Bean
     @ConditionalOnMissingBean(CacheManagerAdapter::class)
     fun inMemoryCacheManagerAdapter() : CacheManagerAdapter {
@@ -19,7 +19,7 @@ class CacheConfiguration {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(CacheConfiguration::class.java)
+        private val log = LoggerFactory.getLogger(CrudCacheConfiguration::class.java)
     }
 }
 

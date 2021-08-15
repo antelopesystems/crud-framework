@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 @ConditionalOnClass(CacheManager::class)
-class EhCacheConfiguration {
+class CrudEhCacheConfiguration {
     @Bean
     @ConditionalOnBean(CacheManager::class)
     fun ehCacheManagerAdapter(cacheManager: CacheManager): CacheManagerAdapter {
@@ -20,6 +20,6 @@ class EhCacheConfiguration {
     }
 
     companion object {
-        private val log = LoggerFactory.getLogger(EhCacheConfiguration::class.java)
+        private val log = LoggerFactory.getLogger(CrudEhCacheConfiguration::class.java)
     }
 }
