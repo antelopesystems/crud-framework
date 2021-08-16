@@ -6,6 +6,7 @@ import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.decorator.ObjectDecorator;
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks;
 import com.antelopesystem.crudframework.crud.model.EntityMetadataDTO;
+import com.antelopesystem.crudframework.fieldmapper.transformer.base.FieldTransformer;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.modelfilter.FilterField;
@@ -63,4 +64,8 @@ public interface CrudHelper {
 	<Entity> Long getTotalFromPagingCache(Class<Entity> entityClazz, DynamicModelFilter filter);
 
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> CrudDao getCrudDaoForEntity(Class<Entity> entityClazz);
+
+	void registerDefaultTransformer(FieldTransformer transformer);
+
+	void registerDefaultTransformer(FieldTransformer transformer, Class<?> fromType, Class<?> toType);
 }

@@ -451,6 +451,16 @@ public class CrudHelperImpl implements CrudHelper {
 		});
 	}
 
+	@Override
+	public void registerDefaultTransformer(FieldTransformer transformer) {
+		fieldMapper.registerDefaultTransformer(transformer);
+	}
+
+	@Override
+	public void registerDefaultTransformer(FieldTransformer transformer, Class<?> fromType, Class<?> toType) {
+		fieldMapper.registerDefaultTransformer(transformer, fromType, toType);
+	}
+
 	private void initFieldMapper() {
 		for(Map.Entry<String, FieldTransformer> entry : fieldTransformers.entrySet()) {
 			fieldMapper.registerTransformer(entry.getKey(), entry.getValue());

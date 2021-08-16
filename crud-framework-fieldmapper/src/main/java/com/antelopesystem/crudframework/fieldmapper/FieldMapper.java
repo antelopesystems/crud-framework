@@ -53,15 +53,13 @@ public class FieldMapper {
 	}
 
 	public void registerDefaultTransformer(FieldTransformer transformer, Class<?> fromType, Class<?> toType) {
-		if(transformer.isDefault()) {
-			Pair key = new Pair<>(fromType, toType);
-			FieldTransformer existing = defaultTransformers.get(key);
-			if(existing != null) {
-				throw new IllegalStateException("Cannot register default transformer for pair [ " + key + " ] - already registered by [ " + existing.getClass().getName() + " ]");
-			}
-
-			defaultTransformers.put(key, transformer);
+		Pair key = new Pair<>(fromType, toType);
+		FieldTransformer existing = defaultTransformers.get(key);
+		if(existing != null) {
+			throw new IllegalStateException("Cannot register default transformer for pair [ " + key + " ] - already registered by [ " + existing.getClass().getName() + " ]");
 		}
+
+		defaultTransformers.put(key, transformer);
 	}
 
 	public <T> T processMappedFields(Object object, Class<T> toClazz) {
