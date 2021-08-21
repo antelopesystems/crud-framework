@@ -2,9 +2,11 @@ package com.antelopesystem.crudframework.fieldmapper.transformer
 
 import com.antelopesystem.crudframework.fieldmapper.annotation.StringTrimLength
 import com.antelopesystem.crudframework.fieldmapper.transformer.annotation.EnumType
-import org.junit.Assert
-import org.junit.Test
-import java.lang.IllegalStateException
+import org.junit.jupiter.api.Test
+import strikt.api.expectThat
+import strikt.api.expectThrows
+import strikt.assertions.isEqualTo
+import strikt.assertions.isNull
 import java.lang.reflect.Field
 import java.util.*
 
@@ -15,7 +17,8 @@ class TransformerUnitTests {
         val expectedOutcome = Arrays.asList("var1", "var2", "var3", "var4")
         val transformer = CommaDelimitedStringToListTransformer()
         val outcome: List<String?> = transformer.transform(TestPojo.getField("testString"), TestPojo.getField("testStringList"), testString, TestPojo.INSTANCE, TestPojo.INSTANCE) as List<String?>
-        Assert.assertEquals(expectedOutcome, outcome)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
@@ -24,7 +27,8 @@ class TransformerUnitTests {
         val expectedOutcome = "var1,var2,var3,var4"
         val transformer = StringListToCommaDelimitedStringTransformer()
         val outcome = transformer.transform(TestPojo.getField("testStringList"), TestPojo.getField("testString"), testStringList, TestPojo.INSTANCE, TestPojo.INSTANCE)
-        Assert.assertEquals(expectedOutcome, outcome)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
@@ -33,7 +37,8 @@ class TransformerUnitTests {
         val expectedOutcome: Long = 11220
         val transformer = CurrencyDoubleToLongTransformer()
         val outcome = transformer.transform(TestPojo.getField("testDouble"), TestPojo.getField("testLong"), testDouble, TestPojo.INSTANCE, TestPojo.INSTANCE)
-        Assert.assertEquals(expectedOutcome, outcome)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
@@ -42,7 +47,9 @@ class TransformerUnitTests {
         val expectedOutcome = 112.2
         val transformer = LongToCurrencyDoubleTransformer()
         val outcome = transformer.transform(TestPojo.getField("testLong"), TestPojo.getField("testDouble"), testLong, TestPojo.INSTANCE, TestPojo.INSTANCE)
-        Assert.assertEquals(expectedOutcome, outcome, 0.0)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
+
     }
 
     @Test
@@ -51,7 +58,8 @@ class TransformerUnitTests {
         val expectedOutcome = testDate.time
         val transformer = DateToLongTransformer()
         val outcome = transformer.transform(TestPojo.getField("testDate"), TestPojo.getField("testLong"), testDate, TestPojo.INSTANCE, TestPojo.INSTANCE)
-        Assert.assertEquals(expectedOutcome, outcome)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
@@ -60,7 +68,8 @@ class TransformerUnitTests {
         val expectedOutcome = Date(testLong)
         val transformer = LongToDateTransformer()
         val outcome = transformer.transform(TestPojo.getField("testLong"), TestPojo.getField("testDate"), testLong, TestPojo.INSTANCE, TestPojo.INSTANCE)
-        Assert.assertEquals(expectedOutcome, outcome)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
@@ -69,26 +78,33 @@ class TransformerUnitTests {
         val expectedOutcome = testInt.toString()
         val transformer = ToStringTransformer()
         val outcome = transformer.transform(TestPojo.getField("testInt"), TestPojo.getField("testString"), testInt, TestPojo.INSTANCE, TestPojo.INSTANCE)
-        Assert.assertEquals(expectedOutcome, outcome)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
     fun testDefaultTransformer() {
-        Assert.assertEquals(1L, DefaultTransformer().transform(TestPojo.getField("testLong"), TestPojo.getField("testLong"), 1L, TestPojo.INSTANCE, TestPojo.INSTANCE))
+        val outcome = DefaultTransformer().transform(TestPojo.getField("testLong"), TestPojo.getField("testLong"), 1L, TestPojo.INSTANCE, TestPojo.INSTANCE)
+        expectThat(outcome)
+            .isEqualTo(1L)
     }
 
     @Test
     fun testCommaDelimitedStringToEnumListTransformer() {
         val testString = "First,Third"
         val expectedOutcome = Arrays.asList(TestEnum.First, TestEnum.Third)
-        Assert.assertEquals(expectedOutcome, CommaDelimitedStringToEnumListTransformer().transform(TestPojo.getField("testString"), TestPojo.getField("testEnumList"), testString, TestPojo.INSTANCE, TestPojo.INSTANCE))
+        val outcome = CommaDelimitedStringToEnumListTransformer().transform(TestPojo.getField("testString"), TestPojo.getField("testEnumList"), testString, TestPojo.INSTANCE, TestPojo.INSTANCE)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
     fun testEnumListToCommaDelimitedString() {
         val testEnumList = Arrays.asList(TestEnum.Second, TestEnum.First, TestEnum.Second)
         val expectedOutcome = "Second,First,Second"
-        Assert.assertEquals(expectedOutcome, EnumListToCommaDelimitedString().transform(TestPojo.getField("testEnumList"), TestPojo.getField("testString"), testEnumList, TestPojo.INSTANCE, TestPojo.INSTANCE))
+        val outcome = EnumListToCommaDelimitedString().transform(TestPojo.getField("testEnumList"), TestPojo.getField("testString"), testEnumList, TestPojo.INSTANCE, TestPojo.INSTANCE)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     @Test
@@ -96,27 +112,36 @@ class TransformerUnitTests {
         val testEnum = TestEnum.Third
         val expectedOutcome = "Third"
         val enumToStringTransformer = EnumToStringTransformer()
-        Assert.assertEquals(expectedOutcome, enumToStringTransformer.transform(TestPojo.getField("testEnum"), TestPojo.getField("testString"), testEnum, TestPojo.INSTANCE, TestPojo.INSTANCE))
+        val outcome = enumToStringTransformer.transform(TestPojo.getField("testEnum"), TestPojo.getField("testString"), testEnum, TestPojo.INSTANCE, TestPojo.INSTANCE)
+
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `test StringTrimTransformer fails on missing @StringTrimLength annotation`() {
         val transformer = StringTrimTransformer()
-        Assert.assertNull(transformer.transform(TestPojo.getField("testString"), TestPojo.getField("testString"), "test", TestPojo.INSTANCE, TestPojo.INSTANCE))
+        expectThrows<IllegalStateException> {
+            transformer.transform(TestPojo.getField("testString"), TestPojo.getField("testString"), "test", TestPojo.INSTANCE, TestPojo.INSTANCE)
+        }
     }
 
     @Test
     fun `test StringTrimTransformer returns null on null`() {
         val transformer = StringTrimTransformer()
-        Assert.assertNull(transformer.transform(TestPojo.getField("testStringTrim"), TestPojo.getField("testStringTrim"), null, TestPojo.INSTANCE, TestPojo.INSTANCE))
+        val outcome = transformer.transform(TestPojo.getField("testStringTrim"), TestPojo.getField("testStringTrim"), null, TestPojo.INSTANCE, TestPojo.INSTANCE)
+        expectThat(outcome)
+            .isNull()
     }
 
     @Test
     fun `test StringTrimTransformer happy flow`() {
         val transformer = StringTrimTransformer()
         val input = "testing123"
-        val expected = "testi"
-        Assert.assertEquals(expected, transformer.transform(TestPojo.getField("testStringTrim"), TestPojo.getField("testStringTrim"), input, TestPojo.INSTANCE, TestPojo.INSTANCE))
+        val expectedOutcome = "testi"
+        val outcome = transformer.transform(TestPojo.getField("testStringTrim"), TestPojo.getField("testStringTrim"), input, TestPojo.INSTANCE, TestPojo.INSTANCE)
+        expectThat(outcome)
+            .isEqualTo(expectedOutcome)
     }
 
     internal class TestPojo {

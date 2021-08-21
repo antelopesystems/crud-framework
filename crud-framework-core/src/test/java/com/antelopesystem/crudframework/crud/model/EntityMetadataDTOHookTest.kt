@@ -4,8 +4,8 @@ import com.antelopesystem.crudframework.crud.annotation.WithHooks
 import com.antelopesystem.crudframework.crud.hooks.interfaces.CRUDHooks
 import com.antelopesystem.crudframework.crud.test.AbstractTestEntity
 import com.antelopesystem.crudframework.model.BaseCrudEntity
-import org.junit.Assert.assertArrayEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
 import java.io.Serializable
 
 class EntityMetadataDTOHookTest {

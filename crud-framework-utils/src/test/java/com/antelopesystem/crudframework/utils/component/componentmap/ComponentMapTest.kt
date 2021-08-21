@@ -6,15 +6,15 @@ import TestImpl2
 import TestImpl2Duplicate
 import TestMapUser
 import com.antelopesystem.crudframework.utils.component.componentmap.configuration.ComponentMapConfiguration
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.junit.Assert.*
+import org.springframework.test.context.junit.jupiter.SpringExtension
 
 
-@RunWith(SpringJUnit4ClassRunner::class)
+@ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [ComponentMapConfiguration::class, ComponentMapTestConfig::class])
 class ComponentMapTest {
 

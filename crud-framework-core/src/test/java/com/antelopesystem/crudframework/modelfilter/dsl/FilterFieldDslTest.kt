@@ -3,8 +3,9 @@ package com.antelopesystem.crudframework.modelfilter.dsl
 import com.antelopesystem.crudframework.modelfilter.FilterField
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldDataType
 import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import strikt.api.expectThat
+import strikt.api.expectThrows
 import strikt.assertions.isEqualTo
 import java.util.*
 
@@ -883,12 +884,14 @@ class FilterFieldDslTest {
         )
     }
 
-    @Test(expected = NoSuchElementException::class)
+    @Test
     fun `test In#Enum if empty`() {
-        // Since we derive the type from the first element in the collection, this will throw an exception
-        val filterField = and {
-            "test" In listOf<TestEnum>()
-        }.children.first()
+        expectThrows<NoSuchElementException> {
+            // Since we derive the type from the first element in the collection, this will throw an exception
+            and {
+                "test" In listOf<TestEnum>()
+            }.children.first()
+        }
     }
 
     @Test
@@ -982,12 +985,14 @@ class FilterFieldDslTest {
         )
     }
 
-    @Test(expected = NoSuchElementException::class)
+    @Test
     fun `test NotIn#Enum if empty`() {
-        // Since we derive the type from the first element in the collection, this will throw an exception
-        val filterField = and {
-            "test" NotIn listOf<TestEnum>()
-        }.children.first()
+        expectThrows<NoSuchElementException> {
+            // Since we derive the type from the first element in the collection, this will throw an exception
+            and {
+                "test" NotIn listOf<TestEnum>()
+            }.children.first()
+        }
     }
 
     @Test

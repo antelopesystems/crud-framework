@@ -1,15 +1,15 @@
 package com.antelopesystem.crudframework.utils.component.startup
 
-import com.antelopesystem.crudframework.utils.component.componentmap.configuration.ComponentMapConfiguration
 import com.antelopesystem.crudframework.utils.component.startup.configuration.PostStartupConfiguration
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.junit.Assert.*
+import org.springframework.test.context.junit.jupiter.SpringExtension
+import strikt.api.expectThat
+import strikt.assertions.isTrue
 
-@RunWith(SpringJUnit4ClassRunner::class)
+@ExtendWith(SpringExtension::class)
 @ContextConfiguration(classes = [PostStartupConfiguration::class, PostStartUpTestConfig::class])
 class PostStartupTest {
 
@@ -22,6 +22,7 @@ class PostStartupTest {
 
     @Test
     fun `test PostStartUp happy flow`() {
-        assertEquals(true, postStartUpUser.initCalled)
+        expectThat(postStartUpUser.initCalled)
+            .isTrue()
     }
 }

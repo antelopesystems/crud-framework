@@ -28,9 +28,9 @@ class EntityMetadataDTO {
 
     val alwaysPersistCopy: Boolean
 
-    val hookTypesFromAnnotations: MutableSet<Class<CRUDHooks<*, *>>> = mutableSetOf()
+    val hookTypesFromAnnotations: MutableSet<Class<out CRUDHooks<*, *>>> = mutableSetOf()
 
-    val hooksFromAnnotations: MutableSet<CRUDHooks<*, *>> = mutableSetOf()
+    val hooksFromAnnotations: MutableSet<out CRUDHooks<*, *>> = mutableSetOf()
 
     val fields: MutableMap<String, Field> = mutableMapOf()
 
