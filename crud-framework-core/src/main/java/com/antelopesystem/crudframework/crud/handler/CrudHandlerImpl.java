@@ -2,15 +2,33 @@ package com.antelopesystem.crudframework.crud.handler;
 
 import com.antelopesystem.crudframework.crud.enums.ShowByMode;
 import com.antelopesystem.crudframework.crud.exception.CrudException;
-import com.antelopesystem.crudframework.crud.hooks.create.*;
-import com.antelopesystem.crudframework.crud.hooks.create.from.*;
-import com.antelopesystem.crudframework.crud.hooks.delete.*;
-import com.antelopesystem.crudframework.crud.hooks.index.*;
-import com.antelopesystem.crudframework.crud.hooks.show.*;
-import com.antelopesystem.crudframework.crud.hooks.show.by.*;
-import com.antelopesystem.crudframework.crud.hooks.update.*;
-import com.antelopesystem.crudframework.crud.hooks.update.from.*;
-import com.antelopesystem.crudframework.crud.model.*;
+import com.antelopesystem.crudframework.crud.hooks.create.CRUDOnCreateHook;
+import com.antelopesystem.crudframework.crud.hooks.create.CRUDPostCreateHook;
+import com.antelopesystem.crudframework.crud.hooks.create.CRUDPreCreateHook;
+import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDOnCreateFromHook;
+import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDPostCreateFromHook;
+import com.antelopesystem.crudframework.crud.hooks.create.from.CRUDPreCreateFromHook;
+import com.antelopesystem.crudframework.crud.hooks.delete.CRUDOnDeleteHook;
+import com.antelopesystem.crudframework.crud.hooks.delete.CRUDPostDeleteHook;
+import com.antelopesystem.crudframework.crud.hooks.delete.CRUDPreDeleteHook;
+import com.antelopesystem.crudframework.crud.hooks.index.CRUDOnIndexHook;
+import com.antelopesystem.crudframework.crud.hooks.index.CRUDPostIndexHook;
+import com.antelopesystem.crudframework.crud.hooks.index.CRUDPreIndexHook;
+import com.antelopesystem.crudframework.crud.hooks.show.CRUDOnShowHook;
+import com.antelopesystem.crudframework.crud.hooks.show.CRUDPostShowHook;
+import com.antelopesystem.crudframework.crud.hooks.show.CRUDPreShowHook;
+import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDOnShowByHook;
+import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPostShowByHook;
+import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPreShowByHook;
+import com.antelopesystem.crudframework.crud.hooks.update.CRUDOnUpdateHook;
+import com.antelopesystem.crudframework.crud.hooks.update.CRUDPostUpdateHook;
+import com.antelopesystem.crudframework.crud.hooks.update.CRUDPreUpdateHook;
+import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDOnUpdateFromHook;
+import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDPostUpdateFromHook;
+import com.antelopesystem.crudframework.crud.hooks.update.from.CRUDPreUpdateFromHook;
+import com.antelopesystem.crudframework.crud.model.MassUpdateCRUDRequestBuilder;
+import com.antelopesystem.crudframework.crud.model.ReadCRUDRequestBuilder;
+import com.antelopesystem.crudframework.crud.model.UpdateCRUDRequestBuilder;
 import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
@@ -22,25 +40,45 @@ import java.util.List;
 
 @WrapException(CrudException.class)
 public class CrudHandlerImpl implements CrudHandler {
-
-	@Autowired
 	private CrudReadHandler crudReadHandler;
 
-	@Autowired
 	private CrudUpdateHandler crudUpdateHandler;
 
-	@Autowired
 	private CrudDeleteHandler crudDeleteHandler;
 
-	@Autowired
 	private CrudCreateHandler crudCreateHandler;
+
+	@Autowired
+	public void setCrudReadHandler(CrudReadHandler crudReadHandler) {
+		this.crudReadHandler = crudReadHandler;
+	}
+
+	@Autowired
+	public void setCrudUpdateHandler(CrudUpdateHandler crudUpdateHandler) {
+		this.crudUpdateHandler = crudUpdateHandler;
+	}
+
+	@Autowired
+	public void setCrudDeleteHandler(CrudDeleteHandler crudDeleteHandler) {
+		this.crudDeleteHandler = crudDeleteHandler;
+	}
+
+	@Autowired
+	public void setCrudCreateHandler(CrudCreateHandler crudCreateHandler) {
+		this.crudCreateHandler = crudCreateHandler;
+	}
+
+	@Autowired
+	public void setCrudHelper(CrudHelper crudHelper) {
+		this.crudHelper = crudHelper;
+	}
 
 	@Autowired
 	private CrudHelper crudHelper;
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>, PagingDTO<Entity>> index(
-			Filter filter, Class<Entity> clazz) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagingDTO<Entity>> index(
+			DynamicModelFilter filter, Class<Entity> clazz) {
 		return new ReadCRUDRequestBuilder<>(
 				(hooks, fromCache, persistCopy, accessorDTO) -> crudReadHandler.indexInternal(filter, clazz, hooks, fromCache, persistCopy, accessorDTO, false),
 				(hooks, fromCache, persistCopy, accessorDTO) -> crudReadHandler.indexInternal(filter, clazz, hooks, fromCache, persistCopy, accessorDTO, true).getPagingRO().getTotal()
@@ -48,8 +86,8 @@ public class CrudHandlerImpl implements CrudHandler {
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter, RO> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>, PagingDTO<RO>> index(
-			Filter filter, Class<Entity> clazz, Class<RO> toClazz) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagingDTO<RO>> index(
+			DynamicModelFilter filter, Class<Entity> clazz, Class<RO> toClazz) {
 		return new ReadCRUDRequestBuilder<>(
 				(hooks, fromCache, persistCopy, accessorDTO) -> {
 					PagingDTO<Entity> resultDTO = crudReadHandler.indexInternal(filter, clazz, hooks, fromCache, persistCopy, accessorDTO, false);
@@ -159,14 +197,14 @@ public class CrudHandlerImpl implements CrudHandler {
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
-			Filter filter, Class<Entity> clazz) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz) {
 		return showBy(filter, clazz, ShowByMode.THROW_EXCEPTION);
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
-			Filter filter, Class<Entity> clazz, ShowByMode mode) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz, ShowByMode mode) {
 		return new ReadCRUDRequestBuilder<>(
 				(hooks, fromCache, persistCopy, accessorDTO) -> crudReadHandler.showByInternal(filter, clazz, hooks, fromCache, persistCopy, mode, accessorDTO),
 				(hooks, fromCache, persistCopy, accessorDTO) -> crudReadHandler.showByInternal(filter, clazz, hooks, fromCache, persistCopy, mode, accessorDTO) != null ? 1L : 0L
@@ -174,14 +212,14 @@ public class CrudHandlerImpl implements CrudHandler {
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
-			Filter filter, Class<Entity> clazz, Class<RO> toClazz) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz, Class<RO> toClazz) {
 		return showBy(filter, clazz, toClazz, ShowByMode.THROW_EXCEPTION);
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
-			Filter filter, Class<Entity> clazz, Class<RO> toClazz, ShowByMode mode) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz, Class<RO> toClazz, ShowByMode mode) {
 		return new ReadCRUDRequestBuilder<>(
 				(hooks, fromCache, persistCopy, accessorDTO) -> {
 					Entity result = crudReadHandler.showByInternal(filter, clazz, hooks, fromCache, persistCopy, mode, accessorDTO);

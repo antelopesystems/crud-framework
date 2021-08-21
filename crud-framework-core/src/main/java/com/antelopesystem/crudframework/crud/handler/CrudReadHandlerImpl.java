@@ -1,26 +1,35 @@
 package com.antelopesystem.crudframework.crud.handler;
 
+import com.antelopesystem.crudframework.crud.cache.CacheUtils;
 import com.antelopesystem.crudframework.crud.cache.CrudCache;
 import com.antelopesystem.crudframework.crud.dataaccess.model.DataAccessorDTO;
 import com.antelopesystem.crudframework.crud.enums.ShowByMode;
 import com.antelopesystem.crudframework.crud.exception.CrudReadException;
 import com.antelopesystem.crudframework.crud.hooks.HooksDTO;
-import com.antelopesystem.crudframework.crud.hooks.index.*;
-import com.antelopesystem.crudframework.crud.hooks.interfaces.*;
-import com.antelopesystem.crudframework.crud.hooks.show.*;
-import com.antelopesystem.crudframework.crud.hooks.show.by.*;
+import com.antelopesystem.crudframework.crud.hooks.index.CRUDOnIndexHook;
+import com.antelopesystem.crudframework.crud.hooks.index.CRUDPostIndexHook;
+import com.antelopesystem.crudframework.crud.hooks.index.CRUDPreIndexHook;
+import com.antelopesystem.crudframework.crud.hooks.interfaces.IndexHooks;
+import com.antelopesystem.crudframework.crud.hooks.interfaces.ShowByHooks;
+import com.antelopesystem.crudframework.crud.hooks.interfaces.ShowHooks;
+import com.antelopesystem.crudframework.crud.hooks.show.CRUDOnShowHook;
+import com.antelopesystem.crudframework.crud.hooks.show.CRUDPostShowHook;
+import com.antelopesystem.crudframework.crud.hooks.show.CRUDPreShowHook;
+import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDOnShowByHook;
+import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPostShowByHook;
+import com.antelopesystem.crudframework.crud.hooks.show.by.CRUDPreShowByHook;
 import com.antelopesystem.crudframework.exception.WrapException;
 import com.antelopesystem.crudframework.model.BaseCrudEntity;
 import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import com.antelopesystem.crudframework.ro.PagingDTO;
 import com.antelopesystem.crudframework.ro.PagingRO;
-import com.antelopesystem.crudframework.crud.cache.CacheUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.Serializable;
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 @WrapException(CrudReadException.class)
 public class CrudReadHandlerImpl implements CrudReadHandler {
@@ -34,11 +43,11 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 	private static Random random = new Random();
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> PagingDTO<Entity> indexInternal(Filter filter, Class<Entity> clazz,
-			HooksDTO<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>> hooks,
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> PagingDTO<Entity> indexInternal(DynamicModelFilter filter, Class<Entity> clazz,
+			HooksDTO<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>> hooks,
 			boolean fromCache, Boolean persistCopy, DataAccessorDTO accessorDTO, boolean count) {
 		if(filter == null) {
-			filter = (Filter) new DynamicModelFilter();
+			filter = new DynamicModelFilter();
 		}
 
 		crudHelper.validateAndFillFilterFieldMetadata(filter.getFilterFields(), crudHelper.getEntityMetadata(clazz));
@@ -58,7 +67,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			cache = crudHelper.getEntityCache(clazz);
 		}
 
-		for(CRUDPreIndexHook<ID, Entity, Filter> preHook : hooks.getPreHooks()) {
+		for(CRUDPreIndexHook<ID, Entity> preHook : hooks.getPreHooks()) {
 			preHook.run(filter);
 		}
 
@@ -68,10 +77,10 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 		}
 
 
-		Filter finalFilter = filter;
+		DynamicModelFilter finalFilter = filter;
 		PagingDTO<Entity> result = (PagingDTO<Entity>) CacheUtils.getObjectAndCache(() -> crudReadHandlerProxy.indexTransactional(finalFilter, clazz, hooks.getOnHooks(), persistCopy, accessorDTO, count), cacheKey, cache);
 
-		for(CRUDPostIndexHook<ID, Entity, Filter> postHook : hooks.getPostHooks()) {
+		for(CRUDPostIndexHook<ID, Entity> postHook : hooks.getPostHooks()) {
 			postHook.run(filter, result);
 		}
 
@@ -80,8 +89,8 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 
 	@Override
 	@Transactional(readOnly = true)
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> PagingDTO<Entity> indexTransactional(Filter filter, Class<Entity> clazz,
-			List<CRUDOnIndexHook<ID, Entity, Filter>> onHooks,
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> PagingDTO<Entity> indexTransactional(DynamicModelFilter filter, Class<Entity> clazz,
+			List<CRUDOnIndexHook<ID, Entity>> onHooks,
 			Boolean persistCopy, DataAccessorDTO accessorDTO, boolean count) {
 		PagingDTO<Entity> result;
 		if(!count) {
@@ -123,7 +132,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			crudHelper.setTotalToPagingCache(clazz, filter, total);
 		}
 
-		for(CRUDOnIndexHook<ID, Entity, Filter> onHook : onHooks) {
+		for(CRUDOnIndexHook<ID, Entity> onHook : onHooks) {
 			onHook.run(filter, result);
 		}
 
@@ -131,11 +140,11 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 	}
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> Entity showByInternal(Filter filter, Class<Entity> clazz,
-			HooksDTO<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>> hooks, boolean fromCache, Boolean persistCopy, ShowByMode mode, DataAccessorDTO accessorDTO) {
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity showByInternal(DynamicModelFilter filter, Class<Entity> clazz,
+			HooksDTO<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>> hooks, boolean fromCache, Boolean persistCopy, ShowByMode mode, DataAccessorDTO accessorDTO) {
 
 		if(filter == null) {
-			filter = (Filter) new DynamicModelFilter();
+			filter = new DynamicModelFilter();
 		}
 
 		crudHelper.validateAndFillFilterFieldMetadata(filter.getFilterFields(), crudHelper.getEntityMetadata(clazz));
@@ -149,7 +158,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			}
 		}
 
-		for(CRUDPreShowByHook<ID, Entity, Filter> preHook : hooks.getPreHooks()) {
+		for(CRUDPreShowByHook<ID, Entity> preHook : hooks.getPreHooks()) {
 			preHook.run(filter);
 		}
 
@@ -158,7 +167,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 			cache = crudHelper.getEntityCache(clazz);
 		}
 
-		Filter finalFilter = filter;
+		DynamicModelFilter finalFilter = filter;
 		Entity entity = (Entity) CacheUtils.getObjectAndCache(() -> crudReadHandlerProxy.showByTransactional(finalFilter, clazz, hooks.getOnHooks(), persistCopy, mode, accessorDTO), "showBy_" + filter.hashCode(), cache);
 
 		for(CRUDPostShowByHook<ID, Entity> postHook : hooks.getPostHooks()) {
@@ -170,7 +179,7 @@ public class CrudReadHandlerImpl implements CrudReadHandler {
 
 	@Override
 	@Transactional(readOnly = true)
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> Entity showByTransactional(Filter filter, Class<Entity> clazz, List<CRUDOnShowByHook<ID, Entity>> onHooks,
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity showByTransactional(DynamicModelFilter filter, Class<Entity> clazz, List<CRUDOnShowByHook<ID, Entity>> onHooks,
 			Boolean persistCopy,
 			ShowByMode mode,
 			DataAccessorDTO accessorDTO) {

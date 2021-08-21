@@ -21,18 +21,18 @@ import java.util.List;
 
 public interface CrudReadHandler {
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> PagingDTO<Entity> indexInternal(Filter filter, Class<Entity> clazz,
-			HooksDTO<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>> hooks,
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> PagingDTO<Entity> indexInternal(DynamicModelFilter filter, Class<Entity> clazz,
+			HooksDTO<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>> hooks,
 			boolean fromCache, Boolean persistCopy, DataAccessorDTO accessorDTO, boolean count);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> PagingDTO<Entity> indexTransactional(Filter filter, Class<Entity> clazz,
-			List<CRUDOnIndexHook<ID, Entity, Filter>> onHooks,
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> PagingDTO<Entity> indexTransactional(DynamicModelFilter filter, Class<Entity> clazz,
+			List<CRUDOnIndexHook<ID, Entity>> onHooks,
 			Boolean persistCopy, DataAccessorDTO accessorDTO, boolean count);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> Entity showByInternal(Filter filter, Class<Entity> clazz,
-			HooksDTO<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>> hooks, boolean fromCache, Boolean persistCopy, ShowByMode mode, DataAccessorDTO accessorDTO);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity showByInternal(DynamicModelFilter filter, Class<Entity> clazz,
+			HooksDTO<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>> hooks, boolean fromCache, Boolean persistCopy, ShowByMode mode, DataAccessorDTO accessorDTO);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> Entity showByTransactional(Filter filter, Class<Entity> clazz, List<CRUDOnShowByHook<ID, Entity>> onHooks,
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Entity showByTransactional(DynamicModelFilter filter, Class<Entity> clazz, List<CRUDOnShowByHook<ID, Entity>> onHooks,
 			Boolean persistCopy, ShowByMode mode,
 			DataAccessorDTO accessorDTO);
 

@@ -7,8 +7,8 @@ import com.antelopesystem.crudframework.modelfilter.DynamicModelFilter;
 import java.io.Serializable;
 
 @FunctionalInterface
-public interface CRUDPreShowByHook<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> extends CRUDHook {
+public interface CRUDPreShowByHook<ID extends Serializable, Entity extends BaseCrudEntity<ID>> extends CRUDHook {
 
-	void run(Filter filter);
+	void run(DynamicModelFilter filter);
 
 }

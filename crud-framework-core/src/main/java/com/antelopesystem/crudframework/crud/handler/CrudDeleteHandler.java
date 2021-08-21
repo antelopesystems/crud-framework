@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface CrudDeleteHandler {
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> Object deleteInternal(ID id, Class<Entity> clazz,
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> void deleteInternal(ID id, Class<Entity> clazz,
 			HooksDTO<CRUDPreDeleteHook<ID, Entity>, CRUDOnDeleteHook<ID, Entity>, CRUDPostDeleteHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO);
 

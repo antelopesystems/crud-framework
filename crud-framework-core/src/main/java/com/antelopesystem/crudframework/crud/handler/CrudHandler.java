@@ -48,27 +48,25 @@ public interface CrudHandler {
 	 * Index request, returns list of {@code T} entity according to {@code filter}
 	 *
 	 * @param <Entity> {@link BaseCrudEntity} type
-	 * @param <Filter> {@link DynamicModelFilter} type
 	 * @param filter the filter
 	 * @param clazz the entity class
 	 * @return {@link ReadCRUDRequestBuilder} use {@link CRUDRequestBuilder#execute()} to run the request
 	 */
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>, PagingDTO<Entity>> index(
-			Filter filter, Class<Entity> clazz);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagingDTO<Entity>> index(
+			DynamicModelFilter filter, Class<Entity> clazz);
 
 	/**
 	 * Index request, returns list of {@code T}  entity according to {@code filter}
 	 *
 	 * @param <Entity> {@link BaseCrudEntity} type
-	 * @param <Filter> {@link DynamicModelFilter} type
 	 * @param <RO> return object type
 	 * @param filter the filter
 	 * @param clazz the entity class
 	 * @param toClazz the return object class
 	 * @return {@link ReadCRUDRequestBuilder} use {@link CRUDRequestBuilder#execute()} to run the request
 	 */
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter, RO> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity, Filter>, CRUDOnIndexHook<ID, Entity, Filter>, CRUDPostIndexHook<ID, Entity, Filter>, PagingDTO<RO>> index(
-			Filter filter, Class<Entity> clazz, Class<RO> toClazz);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreIndexHook<ID, Entity>, CRUDOnIndexHook<ID, Entity>, CRUDPostIndexHook<ID, Entity>, PagingDTO<RO>> index(
+			DynamicModelFilter filter, Class<Entity> clazz, Class<RO> toClazz);
 
 	/**
 	 * Delete request, deletes according to {@link Deleteable} and {@link DeleteColumn} if {@link Deleteable#softDelete()} is used. Throws runtime exception if given entity is not deletable
@@ -185,17 +183,17 @@ public interface CrudHandler {
 	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> MassUpdateCRUDRequestBuilder<CRUDPreUpdateHook<ID, Entity>, CRUDOnUpdateHook<ID, Entity>, CRUDPostUpdateHook<ID, Entity>, List<RO>> updateByFilter(
 			DynamicModelFilter filter, Class<Entity> entityClazz, Class<RO> toClazz);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
-			Filter filter, Class<Entity> clazz);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
-			Filter filter, Class<Entity> clazz, ShowByMode mode);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, Entity> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz, ShowByMode mode);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
-			Filter filter, Class<Entity> clazz, Class<RO> toClazz);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz, Class<RO> toClazz);
 
-	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity, Filter>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
-			Filter filter, Class<Entity> clazz, Class<RO> toClazz, ShowByMode mode);
+	<ID extends Serializable, Entity extends BaseCrudEntity<ID>, RO> ReadCRUDRequestBuilder<CRUDPreShowByHook<ID, Entity>, CRUDOnShowByHook<ID, Entity>, CRUDPostShowByHook<ID, Entity>, RO> showBy(
+			DynamicModelFilter filter, Class<Entity> clazz, Class<RO> toClazz, ShowByMode mode);
 
 	/**
 	 * Show request, returns a single {@code T} entity according with the given {@code id}

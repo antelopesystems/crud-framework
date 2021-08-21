@@ -6,7 +6,7 @@ import com.antelopesystem.crudframework.ro.PagingDTO;
 
 import java.io.Serializable;
 
-public interface FilterPagingDTOHook<ID extends Serializable, Entity extends BaseCrudEntity<ID>, Filter extends DynamicModelFilter> extends CRUDHook {
+public interface FilterPagingDTOHook<ID extends Serializable, Entity extends BaseCrudEntity<ID>> extends CRUDHook {
 
-	void run(Filter filter, PagingDTO<Entity> result);
+	void run(DynamicModelFilter filter, PagingDTO<Entity> result);
 }

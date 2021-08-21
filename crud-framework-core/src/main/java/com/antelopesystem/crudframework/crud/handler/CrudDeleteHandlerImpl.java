@@ -26,7 +26,7 @@ public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
 	private CrudDeleteHandler crudDeleteHandlerProxy;
 
 	@Override
-	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> Object deleteInternal(ID id, Class<Entity> clazz,
+	public <ID extends Serializable, Entity extends BaseCrudEntity<ID>> void deleteInternal(ID id, Class<Entity> clazz,
 			HooksDTO<CRUDPreDeleteHook<ID, Entity>, CRUDOnDeleteHook<ID, Entity>, CRUDPostDeleteHook<ID, Entity>> hooks,
 			DataAccessorDTO accessorDTO) {
 
@@ -63,8 +63,6 @@ public class CrudDeleteHandlerImpl implements CrudDeleteHandler {
 		for(CRUDPostDeleteHook<ID, Entity> postHook : hooks.getPostHooks()) {
 			postHook.run(entity);
 		}
-
-		return null;
 	}
 
 	@Override
