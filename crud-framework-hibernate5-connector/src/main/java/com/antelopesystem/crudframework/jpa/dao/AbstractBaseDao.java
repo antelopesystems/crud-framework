@@ -151,6 +151,10 @@ public abstract class AbstractBaseDao implements BaseDao {
 				}
 			}
 
+			for(OrderDTO order : dynamicModelFilter.getOrders()) {
+				flatFilterFieldNames.add(order.getBy());
+			}
+
 			createAliases(clazz, criteria, aliases, null, flatFilterFieldNames);
 		}
 
