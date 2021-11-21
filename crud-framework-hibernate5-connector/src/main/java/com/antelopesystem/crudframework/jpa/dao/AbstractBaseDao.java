@@ -11,12 +11,12 @@ import com.antelopesystem.crudframework.modelfilter.enums.FilterFieldOperation;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 public abstract class AbstractBaseDao implements BaseDao {
@@ -310,7 +310,7 @@ public abstract class AbstractBaseDao implements BaseDao {
 			Class type = field.getType();
 			boolean isCollection = false;
 			if(Collection.class.isAssignableFrom(type)) {
-				type = (Class<?>) (((ParameterizedTypeImpl) field.getGenericType()).getActualTypeArguments())[0];
+				type = (Class<?>) (((ParameterizedType) field.getGenericType()).getActualTypeArguments())[0];
 				isCollection = true;
 			}
 

@@ -545,7 +545,7 @@ class FilterFieldDslTest {
     @Test
     fun `test RequireIn#Int`() {
         val filterField = and {
-            "test" RequireIn listOf(1, 2)
+            "test" RequireIn listOf<Int>(1, 2)
         }.children.first()
 
         filterField.runAssertions(
@@ -696,7 +696,7 @@ class FilterFieldDslTest {
     @Test
     fun `test RequireNotIn#Int`() {
         val filterField = and {
-            "test" RequireNotIn listOf(1, 2)
+            "test" RequireNotIn listOf<Int>(1, 2)
         }.children.first()
 
         filterField.runAssertions(
@@ -827,7 +827,7 @@ class FilterFieldDslTest {
     @Test
     fun `test In#Int`() {
         val filterField = and {
-            "test" In listOf(1, 2)
+            "test" In listOf<Int>(1, 2)
         }.children.first()
 
         filterField.runAssertions(
@@ -928,7 +928,7 @@ class FilterFieldDslTest {
     @Test
     fun `test NotIn#NotInt`() {
         val filterField = and {
-            "test" NotIn listOf(1, 2)
+            "test" NotIn listOf<Int>(1, 2)
         }.children.first()
 
         filterField.runAssertions(

@@ -50,8 +50,8 @@
         <!-- Project -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <kotlin.version>1.3.72</kotlin.version>
-        <kotlin.coroutines.version>1.3.8</kotlin.coroutines.version>
+        <kotlin.version>1.6.0</kotlin.version>
+        <kotlin.coroutines.version>1.5.2</kotlin.coroutines.version>
 
         <!-- Dependency versions -->
         <spring.boot.version>2.5.2</spring.boot.version>
